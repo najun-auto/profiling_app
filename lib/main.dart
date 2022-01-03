@@ -36,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   String kkk = "1111";
+  String gpu_usage_g21 = "cat /sys/devices/platform/18500000.mali/utilization";
 
 
   void _start(){
@@ -45,10 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
       oneSec,
       (Timer t) => setState(() {
         wrapMain(() async {
-          var pipeline = Script("echo ${temp}");
-          temp++;
+          var pipeline = Script(gpu_usage_g21);
           kkk = await pipeline.stdout.text;
-          print(kkk);
           // print("${await pipeline.stdout.text} instances of waitFor");
         });
       }),
