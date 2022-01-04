@@ -43,8 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   String kkk = "1111";
   String gpu_usage_g21 = "cat /sys/devices/platform/18500000.mali/utilization";
   List<SalesData> _chartData = [];
+  List<SalesData> _chartData2 = [];
 
   late ChartSeriesController _chartSeriesController;
+  late ChartSeriesController _chartSeriesController2;
 
 
   @override
@@ -52,19 +54,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // _start();
     _chartData = getChartData();
+    _chartData2 = getChartData2();
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
 
   }
 
-  double yeartmp = 2022;
+  double yeartmp = 2027;
+
   void updateDataSource(Timer timer){
     _chartData.add(SalesData(yeartmp++, (math.Random().nextInt(60) + 30)));
-    _chartData.removeAt(0);
+    _chartData2.add(SalesData(yeartmp++, (math.Random().nextInt(60) + 30)));
+      // _chartData.removeAt(0);
+
     _chartSeriesController.updateDataSource(
       addedDataIndex: _chartData.length -1,
-      removedDataIndex: 0
+      // removedDataIndex: 0
     );
+    _chartSeriesController2.updateDataSource(
+      addedDataIndex: _chartData2.length -1,
+      // removedDataIndex: 0
+    );
+
   }
 
   List<SalesData> getChartData(){
@@ -74,10 +85,30 @@ class _MyHomePageState extends State<MyHomePage> {
       SalesData(2019, 24),
       SalesData(2020, 18),
       SalesData(2021, 30),
+      SalesData(2022, 25),
+      SalesData(2023, 12),
+      SalesData(2024, 24),
+      SalesData(2025, 18),
+      SalesData(2027, 30),
     ];
     return chartData;
   }
 
+  List<SalesData> getChartData2(){
+    final List<SalesData> chartData = [
+      SalesData(2017, 25),
+      SalesData(2018, 12),
+      SalesData(2019, 24),
+      SalesData(2020, 18),
+      SalesData(2021, 30),
+      SalesData(2022, 25),
+      SalesData(2023, 12),
+      SalesData(2024, 24),
+      SalesData(2025, 18),
+      SalesData(2027, 30),
+    ];
+    return chartData;
+  }
 
   // void _start(){
   //   int temp = 0;
@@ -99,34 +130,66 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    return SafeArea(child: Scaffold(
-      body: SfCartesianChart(
-        title: ChartTitle(text: 'test'),
-        legend: Legend(isVisible: true),
-        series: <FastLineSeries>[
-          FastLineSeries<SalesData, double>(
-            onRendererCreated: (ChartSeriesController controller) {
-              _chartSeriesController = controller;
-            },
-            name: 'Sales',
-            dataSource: _chartData,
-            xValueMapper: (SalesData sales, _) => sales.year,
-            yValueMapper: (SalesData sales, _) => sales.sales,
-            dataLabelSettings: DataLabelSettings(isVisible: true),
-            color: Colors.orange,
-            width: 10,
-            opacity: 0.5,
-          )
-        ],
-        primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
-        primaryYAxis: NumericAxis(
-            labelFormat: '{value}M',
-            numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
-      ),
-    ));
+    return SafeArea(
+        child: Scaffold(
+            body: Container(
+              child: Column(
+                children: [
+                  Container(child:
+                      SfCartesianChart(
+                        title: ChartTitle(text: 'test'),
+                        legend: Legend(isVisible: true),
+                        series: <SplineSeries>[
+                          SplineSeries<SalesData, double>(
+                            onRendererCreated: (ChartSeriesController controller) {
+                              _chartSeriesController = controller;
+                            },
+                            name: 'Sales',
+                            dataSource: _chartData,
+                            xValueMapper: (SalesData sales, _) => sales.year,
+                            yValueMapper: (SalesData sales, _) => sales.sales,
+                            dataLabelSettings: DataLabelSettings(isVisible: true),
+                            color: Colors.orange,
+                            width: 10,
+                            opacity: 0.5,
+                          )
+                        ],
+                        primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
+                        primaryYAxis: NumericAxis(
+                            labelFormat: '{value}M',
+                            numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
+                      ),
+                  ),
+                  Container(child:
+                    SfCartesianChart(
+                      title: ChartTitle(text: 'test'),
+                      legend: Legend(isVisible: true),
+                      series: <SplineSeries>[
+                        SplineSeries<SalesData, double>(
+                          onRendererCreated: (ChartSeriesController controller) {
+                            _chartSeriesController2 = controller;
+                          },
+                          name: 'Sales',
+                          dataSource: _chartData2,
+                          xValueMapper: (SalesData sales, _) => sales.year,
+                          yValueMapper: (SalesData sales, _) => sales.sales,
+                          dataLabelSettings: DataLabelSettings(isVisible: true),
+                          color: Colors.orange,
+                          width: 10,
+                          opacity: 0.5,
+                        )
+                      ],
+                      primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
+                      primaryYAxis: NumericAxis(
+                          labelFormat: '{value}M',
+                          numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ));
   }
-
-
 }
 
 class SalesData{
@@ -134,3 +197,6 @@ class SalesData{
   final double year;
   final double sales;
 }
+
+
+
