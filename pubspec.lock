@@ -29,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.1"
-  cli_script:
-    dependency: "direct main"
-    description:
-      name: cli_script
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.3+1"
   clock:
     dependency: transitive
     description:
@@ -88,13 +81,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  glob:
-    dependency: transitive
-    description:
-      name: glob
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.2"
   intl:
     dependency: transitive
     description:
@@ -130,13 +116,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
-  quiver:
+  platform:
     dependency: transitive
     description:
-      name: quiver
+      name: platform
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1+1"
+    version: "3.1.0"
+  process:
+    dependency: transitive
+    description:
+      name: process
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.4"
+  root:
+    dependency: "direct main"
+    description:
+      name: root
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  shell:
+    dependency: "direct main"
+    description:
+      name: shell
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -198,13 +205,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.3"
-  tuple:
-    dependency: transitive
-    description:
-      name: tuple
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   typed_data:
     dependency: transitive
     description:
@@ -221,3 +221,4 @@ packages:
     version: "2.1.1"
 sdks:
   dart: ">=2.15.1 <3.0.0"
+  flutter: ">=1.20.0"

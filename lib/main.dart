@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:cli_script/cli_script.dart';
+import 'package:root/root.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
+
+import 'package:file/local.dart';
+import 'package:shell/shell.dart';
 
 // https://pub.dev/packages/syncfusion_flutter_charts
 
@@ -51,6 +54,20 @@ class _MyHomePageState extends State<MyHomePage> {
   String old_cpu_usage_temp = "";
   int cpu_core_num = 8;
 
+  String _result = "";
+
+  Future<void> setCommand() async {
+    var res = await Root.exec(cmd: "cat /proc/stat");
+    setState(() {
+      _result = res.toString();
+    });
+    print(_result);
+  }
+
+
+
+  var shell = new Shell();
+
 
   late ChartSeriesController _chartSeriesController;
   late ChartSeriesController _chartSeriesController2;
@@ -60,9 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
 
     // _start();
+
     _chartData = getChartData();
     _chartData2 = getChartData2();
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
+    setCommand();
     super.initState();
 
   }
@@ -122,8 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void gpuUsage() async{
-    var pipeline = Script(gpu_usage_g21);
-    gpu_usage_result = int.parse(await pipeline.stdout.text);
 
     setState(() {   });
     // print("${await pipeline.stdout.text} instances of waitFor");
@@ -165,15 +182,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // var pipeline = Script(net_usage_g21);
     // cpu_usage_temp = await pipeline.stdout.text;
 
-    var pipeline = Script("cat /proc/stat") |
-    Script("grep cpu0") |
-    Script("tail -n1");
-    await for (var file in pipeline.stdout.lines) {
-      if (await check("grep -q needle", args: [file])) print(file);
-    }
-    //
-    print("test!!!");
-    print(cpu_usage_temp);
+    // var echo = await shell.start('cat', arguments: ['/proc/stat']);
+    // var echoText = await echo.stderr.toString();
+    // print(echoText);
+
 
     // for(int j = 0; j < cpu_core_num; j++){
     //   if(old_cpu_usage_temp != ""){
