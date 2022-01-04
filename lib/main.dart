@@ -42,8 +42,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String kkk = "1111";
   String gpu_usage_g21 = "cat /sys/devices/platform/18500000.mali/utilization";
+  String cpu_usage_g21 = "cat /proc/stat";
+  String net_usage_g21 = "cat /proc/net/dev";
   List<SalesData> _chartData = [];
   List<SalesData> _chartData2 = [];
+  int gpu_usage_result = 0;
+  int cpu_usage_result = 0;
+  String old_cpu_usage_temp = "";
+  int cpu_core_num = 8;
+
 
   late ChartSeriesController _chartSeriesController;
   late ChartSeriesController _chartSeriesController2;
@@ -60,20 +67,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
-  double yeartmp = 2027;
+  int yeartmp = 2027;
 
   void updateDataSource(Timer timer){
-    _chartData.add(SalesData(yeartmp++, (math.Random().nextInt(60) + 30)));
-    _chartData2.add(SalesData(yeartmp++, (math.Random().nextInt(60) + 30)));
-      // _chartData.removeAt(0);
+    cpuUsage();
+    // gpuUsage();
+    _chartData.add(SalesData(yeartmp++, cpu_usage_result));
+    _chartData2.add(SalesData(yeartmp++, gpu_usage_result));
+    _chartData.removeAt(0);
+    _chartData2.removeAt(0);
+
 
     _chartSeriesController.updateDataSource(
       addedDataIndex: _chartData.length -1,
-      // removedDataIndex: 0
+      removedDataIndex: 0
     );
     _chartSeriesController2.updateDataSource(
       addedDataIndex: _chartData2.length -1,
-      // removedDataIndex: 0
+      removedDataIndex: 0
     );
 
   }
@@ -110,20 +121,105 @@ class _MyHomePageState extends State<MyHomePage> {
     return chartData;
   }
 
-  // void _start(){
-  //   int temp = 0;
-  //   const oneSec = Duration(seconds:1);
-  //   Timer.periodic(
-  //     oneSec,
-  //     (Timer t) => setState(() {
-  //       wrapMain(() async {
-  //         var pipeline = Script(gpu_usage_g21);
-  //         kkk = await pipeline.stdout.text;
-  //         // print("${await pipeline.stdout.text} instances of waitFor");
-  //       });
-  //     }),
-  //   );
-  // }
+  void gpuUsage() async{
+    var pipeline = Script(gpu_usage_g21);
+    gpu_usage_result = int.parse(await pipeline.stdout.text);
+
+    setState(() {   });
+    // print("${await pipeline.stdout.text} instances of waitFor");
+  }
+
+  void cpuUsage() async{
+    int old_user = 0;
+    int old_nice = 0;
+    int old_system = 0;
+    int old_idle = 0;
+    int old_iowait = 0;
+    int old_irq = 0;
+    int old_softirq = 0;
+    int old_steal = 0;
+    int old_guest = 0;
+    int old_guest_nice = 0;
+    int d_user = 0;
+    int d_nice = 0;
+    int d_system = 0;
+    int d_idle = 0;
+    int d_iowait = 0;
+    int d_irq = 0;
+    int d_softirq = 0;
+    int d_steal = 0;
+    int d_guest = 0;
+    int d_guest_nice = 0;
+    String cpu_usage_temp = "";
+    int previous_idle = 0;
+    int current_idle = 0;
+    int previous_non_idle = 0;
+    int current_non_idle = 0;
+    int previous_total = 0;
+    int current_total = 0;
+    double diff_total = 0;
+    double diff_idle = 0;
+    double cpu_total = 0;
+
+
+    // var pipeline = Script(net_usage_g21);
+    // cpu_usage_temp = await pipeline.stdout.text;
+
+    var pipeline = Script("cat /proc/stat") |
+    Script("grep cpu0") |
+    Script("tail -n1");
+    await for (var file in pipeline.stdout.lines) {
+      if (await check("grep -q needle", args: [file])) print(file);
+    }
+    //
+    print("test!!!");
+    print(cpu_usage_temp);
+
+    // for(int j = 0; j < cpu_core_num; j++){
+    //   if(old_cpu_usage_temp != ""){
+    //     old_user = int.parse(old_cpu_usage_temp[12+j*11]);
+    //     old_nice = int.parse(old_cpu_usage_temp[13+j*11]);
+    //     old_system = int.parse(old_cpu_usage_temp[14+j*11]);
+    //     old_idle = int.parse(old_cpu_usage_temp[15+j*11]);
+    //     old_iowait = int.parse(old_cpu_usage_temp[16+j*11]);
+    //     old_irq = int.parse(old_cpu_usage_temp[17+j*11]);
+    //     old_softirq = int.parse(old_cpu_usage_temp[18+j*11]);
+    //     old_steal = int.parse(old_cpu_usage_temp[19+j*11]);
+    //     old_guest = int.parse(old_cpu_usage_temp[20+j*11]);
+    //     old_guest_nice = int.parse(old_cpu_usage_temp[21+j*11]);
+    //   }
+    //
+    //   d_user = int.parse(cpu_usage_temp[12+j*11]);
+    //   d_nice = int.parse(cpu_usage_temp[13+j*11]);
+    //   d_system = int.parse(cpu_usage_temp[14+j*11]);
+    //   d_idle = int.parse(cpu_usage_temp[15+j*11]);
+    //   d_iowait = int.parse(cpu_usage_temp[16+j*11]);
+    //   d_irq = int.parse(cpu_usage_temp[17+j*11]);
+    //   d_softirq = int.parse(cpu_usage_temp[18+j*11]);
+    //   d_steal = int.parse(cpu_usage_temp[19+j*11]);
+    //   d_guest = int.parse(cpu_usage_temp[20+j*11]);
+    //   d_guest_nice = int.parse(cpu_usage_temp[21+j*11]);
+    //
+    //   previous_idle = old_idle + old_iowait;
+    //   current_idle = d_idle + d_iowait;
+    //
+    //   previous_non_idle = old_user + old_nice + old_system + old_irq + old_softirq + old_steal;
+    //   current_non_idle = d_user + d_nice + d_system + d_irq + d_softirq + d_steal;
+    //
+    //   previous_total = previous_idle + previous_non_idle;
+    //   current_total = current_idle + current_non_idle;
+    //
+    //   diff_total = (current_total - previous_total).toDouble();
+    //   diff_idle = (current_idle - previous_idle).toDouble();
+    //
+    //   cpu_total = ((diff_total - diff_idle) / diff_total * 100 )+ cpu_total;
+    //
+    // }
+    // cpu_usage_result = (cpu_total/8).toInt();
+    // // print(cpu_usage_result);
+    // old_cpu_usage_temp = cpu_usage_temp;
+
+  }
 
 
 
@@ -135,16 +231,18 @@ class _MyHomePageState extends State<MyHomePage> {
             body: Container(
               child: Column(
                 children: [
-                  Container(child:
+                  Container(
+                    height: 300,
+                    child:
                       SfCartesianChart(
-                        title: ChartTitle(text: 'test'),
-                        legend: Legend(isVisible: true),
+                        title: ChartTitle(text: 'CPU Usage'),
+                        // legend: Legend(isVisible: true),
                         series: <SplineSeries>[
-                          SplineSeries<SalesData, double>(
+                          SplineSeries<SalesData, int>(
                             onRendererCreated: (ChartSeriesController controller) {
                               _chartSeriesController = controller;
                             },
-                            name: 'Sales',
+                            name: 'CPU Usage',
                             dataSource: _chartData,
                             xValueMapper: (SalesData sales, _) => sales.year,
                             yValueMapper: (SalesData sales, _) => sales.sales,
@@ -155,34 +253,34 @@ class _MyHomePageState extends State<MyHomePage> {
                           )
                         ],
                         primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
-                        primaryYAxis: NumericAxis(
-                            labelFormat: '{value}M',
-                            numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
+                        // primaryYAxis: NumericAxis(
+                        //     labelFormat: '{value}M',
+                        //     numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
                       ),
                   ),
                   Container(child:
                     SfCartesianChart(
-                      title: ChartTitle(text: 'test'),
-                      legend: Legend(isVisible: true),
+                      title: ChartTitle(text: 'GPU Usage'),
+                      // legend: Legend(isVisible: true),
                       series: <SplineSeries>[
-                        SplineSeries<SalesData, double>(
+                        SplineSeries<SalesData, int>(
                           onRendererCreated: (ChartSeriesController controller) {
                             _chartSeriesController2 = controller;
                           },
-                          name: 'Sales',
+                          name: 'GPU Usage',
                           dataSource: _chartData2,
                           xValueMapper: (SalesData sales, _) => sales.year,
                           yValueMapper: (SalesData sales, _) => sales.sales,
                           dataLabelSettings: DataLabelSettings(isVisible: true),
                           color: Colors.orange,
-                          width: 10,
+                          width: 12,
                           opacity: 0.5,
                         )
                       ],
                       primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
-                      primaryYAxis: NumericAxis(
-                          labelFormat: '{value}M',
-                          numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
+                      // primaryYAxis: NumericAxis(
+                      //     // labelFormat: '{value}M',
+                      //     numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
                     ),
                   ),
                 ],
@@ -194,9 +292,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class SalesData{
   SalesData(this.year, this.sales);
-  final double year;
-  final double sales;
+  final int year;
+  final int sales;
 }
+
 
 
 
