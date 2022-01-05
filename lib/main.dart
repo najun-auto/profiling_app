@@ -4,11 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:root/root.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart';
-import 'dart:math' as math;
 
-import 'package:file/local.dart';
-import 'package:shell/shell.dart';
+
 
 // https://pub.dev/packages/syncfusion_flutter_charts
 
@@ -44,29 +41,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   String kkk = "1111";
-  String gpu_usage_g21 = "cat /sys/devices/platform/18500000.mali/utilization";
-  String cpu_usage_g21 = "cat /proc/stat";
-  String net_usage_g21 = "cat /proc/net/dev";
+  String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
+  String cpuUsageG21 = "cat /proc/stat";
+  String netUsageG21 = "cat /proc/net/dev";
   List<SalesData> _chartData = [];
   List<SalesData> _chartData2 = [];
-  int gpu_usage_result = 0;
-  int cpu_usage_result = 0;
-  String old_cpu_usage_temp = "";
-  int cpu_core_num = 8;
+  int gpuUsageResult = 0;
+  int cpuUsageResult = 0;
+  List<String> oldCpuUsageTemp = [];
+  int cpuCoreNum = 8;
 
-  String _result = "";
-
-  Future<void> setCommand() async {
-    var res = await Root.exec(cmd: "cat /proc/stat");
-    setState(() {
-      _result = res.toString();
-    });
-    print(_result);
-  }
-
-
-
-  var shell = new Shell();
 
 
   late ChartSeriesController _chartSeriesController;
@@ -81,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _chartData = getChartData();
     _chartData2 = getChartData2();
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
-    setCommand();
     super.initState();
 
   }
@@ -90,9 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void updateDataSource(Timer timer){
     cpuUsage();
-    // gpuUsage();
-    _chartData.add(SalesData(yeartmp++, cpu_usage_result));
-    _chartData2.add(SalesData(yeartmp++, gpu_usage_result));
+    gpuUsage();
+    _chartData.add(SalesData(yeartmp++, cpuUsageResult));
+    _chartData2.add(SalesData(yeartmp++, gpuUsageResult));
     _chartData.removeAt(0);
     _chartData2.removeAt(0);
 
@@ -141,96 +124,105 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void gpuUsage() async{
-
-    setState(() {   });
+    var res = await Root.exec(cmd: gpuUsageG21);
+    setState(() {
+      gpuUsageResult = int.parse(res.toString());
+    });
     // print("${await pipeline.stdout.text} instances of waitFor");
   }
 
   void cpuUsage() async{
-    int old_user = 0;
-    int old_nice = 0;
-    int old_system = 0;
-    int old_idle = 0;
-    int old_iowait = 0;
-    int old_irq = 0;
-    int old_softirq = 0;
-    int old_steal = 0;
-    int old_guest = 0;
-    int old_guest_nice = 0;
-    int d_user = 0;
-    int d_nice = 0;
-    int d_system = 0;
-    int d_idle = 0;
-    int d_iowait = 0;
-    int d_irq = 0;
-    int d_softirq = 0;
-    int d_steal = 0;
-    int d_guest = 0;
-    int d_guest_nice = 0;
-    String cpu_usage_temp = "";
-    int previous_idle = 0;
-    int current_idle = 0;
-    int previous_non_idle = 0;
-    int current_non_idle = 0;
-    int previous_total = 0;
-    int current_total = 0;
-    double diff_total = 0;
-    double diff_idle = 0;
-    double cpu_total = 0;
+    int oldUser = 0;
+    int oldNice = 0;
+    int oldSystem = 0;
+    int oldIdle = 0;
+    int oldIowait = 0;
+    int oldIrq = 0;
+    int oldSoftirq = 0;
+    int oldSteal = 0;
+    int oldQuest = 0;
+    int oldQuestNice = 0;
+    int dUser = 0;
+    int dNice = 0;
+    int dSystem = 0;
+    int dIdle = 0;
+    int dIowait = 0;
+    int dIrq = 0;
+    int dSoftirq = 0;
+    int dSteal = 0;
+    int dQuest = 0;
+    int dQuestNice = 0;
+    List<String> cpuUsageTemp = [];
+    int previousIdle = 0;
+    int currentIdle = 0;
+    int previousNonIdle = 0;
+    int currentNonIdle = 0;
+    int previousTotal = 0;
+    int currentTotal = 0;
+    double diffTotal = 0;
+    double diffIdle = 0;
+    double cpuTotal = 0;
 
 
-    // var pipeline = Script(net_usage_g21);
-    // cpu_usage_temp = await pipeline.stdout.text;
 
-    // var echo = await shell.start('cat', arguments: ['/proc/stat']);
-    // var echoText = await echo.stderr.toString();
-    // print(echoText);
-
-
-    // for(int j = 0; j < cpu_core_num; j++){
-    //   if(old_cpu_usage_temp != ""){
-    //     old_user = int.parse(old_cpu_usage_temp[12+j*11]);
-    //     old_nice = int.parse(old_cpu_usage_temp[13+j*11]);
-    //     old_system = int.parse(old_cpu_usage_temp[14+j*11]);
-    //     old_idle = int.parse(old_cpu_usage_temp[15+j*11]);
-    //     old_iowait = int.parse(old_cpu_usage_temp[16+j*11]);
-    //     old_irq = int.parse(old_cpu_usage_temp[17+j*11]);
-    //     old_softirq = int.parse(old_cpu_usage_temp[18+j*11]);
-    //     old_steal = int.parse(old_cpu_usage_temp[19+j*11]);
-    //     old_guest = int.parse(old_cpu_usage_temp[20+j*11]);
-    //     old_guest_nice = int.parse(old_cpu_usage_temp[21+j*11]);
-    //   }
-    //
-    //   d_user = int.parse(cpu_usage_temp[12+j*11]);
-    //   d_nice = int.parse(cpu_usage_temp[13+j*11]);
-    //   d_system = int.parse(cpu_usage_temp[14+j*11]);
-    //   d_idle = int.parse(cpu_usage_temp[15+j*11]);
-    //   d_iowait = int.parse(cpu_usage_temp[16+j*11]);
-    //   d_irq = int.parse(cpu_usage_temp[17+j*11]);
-    //   d_softirq = int.parse(cpu_usage_temp[18+j*11]);
-    //   d_steal = int.parse(cpu_usage_temp[19+j*11]);
-    //   d_guest = int.parse(cpu_usage_temp[20+j*11]);
-    //   d_guest_nice = int.parse(cpu_usage_temp[21+j*11]);
-    //
-    //   previous_idle = old_idle + old_iowait;
-    //   current_idle = d_idle + d_iowait;
-    //
-    //   previous_non_idle = old_user + old_nice + old_system + old_irq + old_softirq + old_steal;
-    //   current_non_idle = d_user + d_nice + d_system + d_irq + d_softirq + d_steal;
-    //
-    //   previous_total = previous_idle + previous_non_idle;
-    //   current_total = current_idle + current_non_idle;
-    //
-    //   diff_total = (current_total - previous_total).toDouble();
-    //   diff_idle = (current_idle - previous_idle).toDouble();
-    //
-    //   cpu_total = ((diff_total - diff_idle) / diff_total * 100 )+ cpu_total;
-    //
+    var res = await Root.exec(cmd: cpuUsageG21);
+    cpuUsageTemp = res.toString().split(" ");
+    // String test = "";
+    // int number = 0;
+    // for(test in cpuUsageTemp){
+    //     print("${number} 횟수");
+    //     print(test);
+    //     number++;
     // }
-    // cpu_usage_result = (cpu_total/8).toInt();
-    // // print(cpu_usage_result);
-    // old_cpu_usage_temp = cpu_usage_temp;
 
+
+    for(int j = 0; j < cpuCoreNum; j++){
+      if(oldCpuUsageTemp.isNotEmpty) {
+        oldUser = int.parse(oldCpuUsageTemp[12 + j * 10]);
+        oldNice = int.parse(oldCpuUsageTemp[13 + j * 10]);
+        oldSystem = int.parse(oldCpuUsageTemp[14 + j * 10]);
+        oldIdle = int.parse(oldCpuUsageTemp[15 + j * 10]);
+        oldIowait = int.parse(oldCpuUsageTemp[16 + j * 10]);
+        oldIrq = int.parse(oldCpuUsageTemp[17 + j * 10]);
+        oldSoftirq = int.parse(oldCpuUsageTemp[18 + j * 10]);
+        oldSteal = int.parse(oldCpuUsageTemp[19 + j * 10]);
+        oldQuest = int.parse(oldCpuUsageTemp[20 + j * 10]);
+        // oldQuestNice = int.parse(oldCpuUsageTemp[21 + j * 10]);
+      }
+
+      dUser = int.parse(cpuUsageTemp[12+j*10]);
+      dNice = int.parse(cpuUsageTemp[13+j*10]);
+      dSystem = int.parse(cpuUsageTemp[14+j*10]);
+      dIdle = int.parse(cpuUsageTemp[15+j*10]);
+      dIowait = int.parse(cpuUsageTemp[16+j*10]);
+      dIrq = int.parse(cpuUsageTemp[17+j*10]);
+      dSoftirq = int.parse(cpuUsageTemp[18+j*10]);
+      dSteal = int.parse(cpuUsageTemp[19+j*10]);
+      dQuest = int.parse(cpuUsageTemp[20+j*10]);
+      // dQuestNice = int.parse(cpuUsageTemp[21+j*11]);
+
+      previousIdle = oldIdle + oldIowait;
+      currentIdle = dIdle + dIowait;
+
+      previousNonIdle = oldUser + oldNice + oldSystem + oldIrq + oldSoftirq + oldSteal;
+      currentNonIdle = dUser + dNice + dSystem + dIrq + dSoftirq + dSteal;
+
+      previousTotal = previousIdle + previousNonIdle;
+      currentTotal = currentIdle + currentNonIdle;
+
+      diffTotal = (currentTotal - previousTotal).toDouble();
+      diffIdle = (currentIdle - previousIdle).toDouble();
+
+      cpuTotal = ((diffTotal - diffIdle) / diffTotal * 100 )+ cpuTotal;
+
+    }
+    cpuUsageResult = (cpuTotal/8).toInt();
+    print(cpuUsageResult);
+    oldCpuUsageTemp = cpuUsageTemp;
+
+    setState(() {
+
+    });
   }
 
 
