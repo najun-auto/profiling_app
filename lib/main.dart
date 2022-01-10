@@ -64,21 +64,23 @@ class _MyHomePageState extends State<MyHomePage> {
   String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp";
 
 
-  List<SalesData> _cpuUsageChartData = [];
-  List<SalesData> _gpuUsageChartData = [];
-  List<SalesData> _cpu0FreqChartData = [];
-  List<SalesData> _cpu4FreqChartData = [];
-  List<SalesData> _cpu7FreqChartData = [];
-  List<SalesData> _gpuFreqChartData = [];
-  List<SalesData> _fpsChartData = [];
-  List<SalesData> _networkChartData = [];
-  List<SalesData> _temperature0ChartData = [];
+  List<trackData> _cpuUsageChartData = [];
+  List<trackData> _gpuUsageChartData = [];
+  List<trackData> _cpu0FreqChartData = [];
+  List<trackData> _cpu4FreqChartData = [];
+  List<trackData> _cpu7FreqChartData = [];
+  List<trackData> _gpuFreqChartData = [];
+  List<trackData> _fpsChartData = [];
+  List<trackData> _networkChartData = [];
+  List<trackData> _temperature0ChartData = [];
 
   List<String> oldCpuUsageTemp = [];
   int oldFpsValue = 0;
   int oldNetTraffic = 0;
 
   late ChartSeriesController _chartSeriesController;
+  Timer _timer = Timer(const Duration(seconds: 100), (){});
+  int floatingCounter = 0;
 
   @override
   void initState() {
@@ -95,26 +97,26 @@ class _MyHomePageState extends State<MyHomePage> {
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
 
-    Timer.periodic(const Duration(seconds: 1), updateDataSource);
+    // _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
 
   }
 
-  int yeartmp = 2027;
+
+  int xAxistmp = 8;
 
 
-  List<SalesData> getChartData(){
-    final List<SalesData> chartData = [
-      SalesData(2017, 25),
-      SalesData(2018, 12),
-      SalesData(2019, 24),
-      SalesData(2020, 18),
-      SalesData(2021, 30),
-      SalesData(2022, 25),
-      SalesData(2023, 12),
-      SalesData(2024, 24),
-      SalesData(2025, 18),
-      SalesData(2027, 30),
+  List<trackData> getChartData(){
+    final List<trackData> chartData = [
+      trackData(1, 1),
+      trackData(2, 1),
+      trackData(3, 1),
+      trackData(4, 1),
+      trackData(5, 1),
+      trackData(6, 1),
+      trackData(7, 1),
+      // trackData(2025, 18),
+      // trackData(2027, 30),
     ];
     return chartData;
   }
@@ -128,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
     fpsResult();
     netResult();
     tempResult();
-
+    xAxistmp++;
     _chartSeriesController.updateDataSource(
       addedDataIndex: _cpuUsageChartData.length -1,
       removedDataIndex: 0
@@ -141,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var res = await Root.exec(cmd: gpuUsageG21);
     setState(() {
       gpuUsageResult = int.parse(res.toString());
-      _gpuUsageChartData.add(SalesData(yeartmp++, gpuUsageResult));
+      _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
       _gpuUsageChartData.removeAt(0);
     });
     // print("${await pipeline.stdout.text} instances of waitFor");
@@ -238,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(cpuUsageResult);
     oldCpuUsageTemp = cpuUsageTemp;
 
-    _cpuUsageChartData.add(SalesData(yeartmp++, cpuUsageResult));
+    _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
 
     setState(() {
@@ -264,13 +266,13 @@ class _MyHomePageState extends State<MyHomePage> {
     cpu4FreqResult = int.parse(res4.toString())/1000000;
     cpu7FreqResult = int.parse(res7.toString())/1000000;
 
-    _cpu0FreqChartData.add(SalesData(yeartmp++, cpu0FreqResult.toInt()));
+    _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
     _cpu0FreqChartData.removeAt(0);
 
-    _cpu4FreqChartData.add(SalesData(yeartmp++, cpu4FreqResult.toInt()));
+    _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
     _cpu4FreqChartData.removeAt(0);
 
-    _cpu7FreqChartData.add(SalesData(yeartmp++, cpu7FreqResult.toInt()));
+    _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
     _cpu7FreqChartData.removeAt(0);
     setState(() {
 
@@ -285,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     gpuFreqResult = int.parse(res0.toString())/1000000;
 
-    _gpuFreqChartData.add(SalesData(yeartmp++, gpuFreqResult.toInt()));
+    _gpuFreqChartData.add(trackData(xAxistmp, gpuFreqResult.toInt()));
     _gpuFreqChartData.removeAt(0);
 
     setState(() {
@@ -306,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _fpsValueResult = _fpsnum - oldFpsValue;
 
-    _fpsChartData.add(SalesData(yeartmp++, _fpsValueResult));
+    _fpsChartData.add(trackData(xAxistmp, _fpsValueResult));
     _fpsChartData.removeAt(0);
 
     oldFpsValue = _fpsnum;
@@ -330,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     oldNetTraffic = _netRecv + _netSend;
 
-    _networkChartData.add(SalesData(yeartmp++, _netTraffic.toInt()));
+    _networkChartData.add(trackData(xAxistmp, _netTraffic.toInt()));
     _networkChartData.removeAt(0);
 
     setState(() {
@@ -344,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var res = await Root.exec(cmd: temperature0G21);
     _temp0Result = int.parse(res.toString());
 
-    _temperature0ChartData.add(SalesData(yeartmp++, _temp0Result));
+    _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
     _temperature0ChartData.removeAt(0);
 
     setState(() {
@@ -372,10 +374,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: (){
+              if(floatingCounter % 2 == 1) {
+                _timer.cancel();
+              }else{
+                _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+              }
+              floatingCounter++;
+            },
+            child: Icon(Icons.not_started_sharp),
+          ),
         ));
   }
 
-  Widget graphArc(List<SalesData> _cpuUsageChartData, double height, String title){
+  Widget graphArc(List<trackData> _cpuUsageChartData, double height, String title){
 
     return Container(
       height: height,
@@ -384,14 +397,14 @@ class _MyHomePageState extends State<MyHomePage> {
         title: ChartTitle(text: title),
         // legend: Legend(isVisible: true),
         series: <SplineSeries>[
-          SplineSeries<SalesData, int>(
+          SplineSeries<trackData, int>(
             onRendererCreated: (ChartSeriesController controller) {
               _chartSeriesController = controller;
             },
             name: title,
             dataSource: _cpuUsageChartData,
-            xValueMapper: (SalesData sales, _) => sales.year,
-            yValueMapper: (SalesData sales, _) => sales.sales,
+            xValueMapper: (trackData yAxis, _) => yAxis.xAxis,
+            yValueMapper: (trackData yAxis, _) => yAxis.yAxis,
             dataLabelSettings: DataLabelSettings(isVisible: true),
             color: Colors.orange,
             width: 10,
@@ -407,10 +420,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class SalesData{
-  SalesData(this.year, this.sales);
-  final int year;
-  final int sales;
+class trackData{
+  trackData(this.xAxis, this.yAxis);
+  final int xAxis;
+  final int yAxis;
 }
 
 
