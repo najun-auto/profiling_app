@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<SalesData> _gpuFreqChartData = [];
   List<SalesData> _fpsChartData = [];
   List<SalesData> _networkChartData = [];
-  List<SalesData> _temperatureChartData = [];
+  List<SalesData> _temperature0ChartData = [];
 
   List<String> oldCpuUsageTemp = [];
   int oldFpsValue = 0;
@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _gpuFreqChartData = getChartData();
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
-    _temperatureChartData = getChartData();
+    _temperature0ChartData = getChartData();
 
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
@@ -339,25 +339,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void tempResult() async{
-    // List<String> _netResult = [];
-    // int _netRecv = 0;
-    // int _netSend = 0;
-    // double _netTraffic = 0;
     int _temp0Result = 0;
 
     var res = await Root.exec(cmd: temperature0G21);
     _temp0Result = int.parse(res.toString());
 
-    // _netResult = res.toString().split(" ");
-    // _netRecv = int.parse(_netResult[5]);
-    // _netSend = int.parse(_netResult[44]);
-    // _netTraffic = ((_netRecv + _netSend) - oldNetTraffic)/1000;
-    //
-    // oldNetTraffic = _netRecv + _netSend;
-    //
-    // _networkChartData.add(SalesData(yeartmp++, _netTraffic.toInt()));
-    // _networkChartData.removeAt(0);
-    //
+    _temperature0ChartData.add(SalesData(yeartmp++, _temp0Result));
+    _temperature0ChartData.removeAt(0);
 
     setState(() {
     });
@@ -380,6 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   graphArc(_gpuFreqChartData, 150, "GPU Freq"),
                   graphArc(_fpsChartData, 150, "FPS Value"),
                   graphArc(_networkChartData, 150, "Network Traffic"),
+                  graphArc(_temperature0ChartData, 150, "Temperature"),
                 ],
               ),
             ),
