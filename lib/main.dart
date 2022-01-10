@@ -357,6 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //
     // _networkChartData.add(SalesData(yeartmp++, _netTraffic.toInt()));
     // _networkChartData.removeAt(0);
+    //
 
     setState(() {
     });
