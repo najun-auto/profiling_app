@@ -40,10 +40,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  String kkk = "1111";
   String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
   String cpuUsageG21 = "cat /proc/stat";
-  String netUsageG21 = "cat /proc/net/dev";
+  String netUsageG21 = "cat /proc/net/dev | grep lo| tail -n1";
   String cpu0FreqG21 = "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq";
   String cpu1FreqG21 = "cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq";
   String cpu2FreqG21 = "cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq";
@@ -52,14 +51,32 @@ class _MyHomePageState extends State<MyHomePage> {
   String cpu5FreqG21 = "cat /sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq";
   String cpu6FreqG21 = "cat /sys/devices/system/cpu/cpu6/cpufreq/scaling_cur_freq";
   String cpu7FreqG21 = "cat /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq";
+  String gpuFreqG21 = "cat /sys/devices/platform/18500000.mali/clock";
+  String fpsG21 = "dumpsys SurfaceFlinger | grep default-format=4 | head -1";
+  String temperature0G21 = "su -c cat /sys/class/thermal/thermal_zone0/temp";
+  String temperature1G21 = "su -c cat /sys/class/thermal/thermal_zone1/temp";
+  String temperature2G21 = "su -c cat /sys/class/thermal/thermal_zone2/temp";
+  String temperature3G21 = "su -c cat /sys/class/thermal/thermal_zone3/temp";
+  String temperature4G21 = "su -c cat /sys/class/thermal/thermal_zone4/temp";
+  String temperature5G21 = "su -c cat /sys/class/thermal/thermal_zone5/temp";
+  String temperature6G21 = "su -c cat /sys/class/thermal/thermal_zone6/temp";
+  String temperature7G21 = "su -c cat /sys/class/thermal/thermal_zone7/temp";
+  String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp";
 
-  List<SalesData> _chartData = [];
-  List<SalesData> _chartData2 = [];
-  List<SalesData> _chartData3 = [];
-  List<SalesData> _chartData4 = [];
-  List<SalesData> _chartData5 = [];
+
+  List<SalesData> _cpuUsageChartData = [];
+  List<SalesData> _gpuUsageChartData = [];
+  List<SalesData> _cpu0FreqChartData = [];
+  List<SalesData> _cpu4FreqChartData = [];
+  List<SalesData> _cpu7FreqChartData = [];
+  List<SalesData> _gpuFreqChartData = [];
+  List<SalesData> _fpsChartData = [];
+  List<SalesData> _networkChartData = [];
+  List<SalesData> _temperatureChartData = [];
 
   List<String> oldCpuUsageTemp = [];
+  int oldFpsValue = 0;
+  int oldNetTraffic = 0;
 
   late ChartSeriesController _chartSeriesController;
 
@@ -68,11 +85,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // _start();
 
-    _chartData = getChartData();
-    _chartData2 = getChartData2();
-    _chartData3 = getChartData3();
-    _chartData4 = getChartData4();
-    _chartData5 = getChartData5();
+    _cpuUsageChartData = getChartData();
+    _gpuUsageChartData = getChartData();
+    _cpu0FreqChartData = getChartData();
+    _cpu4FreqChartData = getChartData();
+    _cpu7FreqChartData = getChartData();
+    _gpuFreqChartData = getChartData();
+    _fpsChartData = getChartData();
+    _networkChartData = getChartData();
+    _temperatureChartData = getChartData();
 
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
@@ -81,17 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int yeartmp = 2027;
 
-  void updateDataSource(Timer timer){
-    cpuUsage();
-    gpuUsage();
-    cpuFreq();
-
-    _chartSeriesController.updateDataSource(
-      addedDataIndex: _chartData.length -1,
-      removedDataIndex: 0
-    );
-
-  }
 
   List<SalesData> getChartData(){
     final List<SalesData> chartData = [
@@ -108,65 +118,22 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return chartData;
   }
-  List<SalesData> getChartData2(){
-    final List<SalesData> chartData = [
-      SalesData(2017, 25),
-      SalesData(2018, 12),
-      SalesData(2019, 24),
-      SalesData(2020, 18),
-      SalesData(2021, 30),
-      SalesData(2022, 25),
-      SalesData(2023, 12),
-      SalesData(2024, 24),
-      SalesData(2025, 18),
-      SalesData(2027, 30),
-    ];
-    return chartData;
-  }
-  List<SalesData> getChartData3(){
-    final List<SalesData> chartData = [
-      SalesData(2017, 25),
-      SalesData(2018, 12),
-      SalesData(2019, 24),
-      SalesData(2020, 18),
-      SalesData(2021, 30),
-      SalesData(2022, 25),
-      SalesData(2023, 12),
-      SalesData(2024, 24),
-      SalesData(2025, 18),
-      SalesData(2027, 30),
-    ];
-    return chartData;
-  }
-  List<SalesData> getChartData4(){
-    final List<SalesData> chartData = [
-      SalesData(2017, 25),
-      SalesData(2018, 12),
-      SalesData(2019, 24),
-      SalesData(2020, 18),
-      SalesData(2021, 30),
-      SalesData(2022, 25),
-      SalesData(2023, 12),
-      SalesData(2024, 24),
-      SalesData(2025, 18),
-      SalesData(2027, 30),
-    ];
-    return chartData;
-  }
-  List<SalesData> getChartData5(){
-    final List<SalesData> chartData = [
-      SalesData(2017, 25),
-      SalesData(2018, 12),
-      SalesData(2019, 24),
-      SalesData(2020, 18),
-      SalesData(2021, 30),
-      SalesData(2022, 25),
-      SalesData(2023, 12),
-      SalesData(2024, 24),
-      SalesData(2025, 18),
-      SalesData(2027, 30),
-    ];
-    return chartData;
+
+
+  void updateDataSource(Timer timer){
+    cpuUsage();
+    gpuUsage();
+    cpuFreq();
+    gpuFreq();
+    fpsResult();
+    netResult();
+    tempResult();
+
+    _chartSeriesController.updateDataSource(
+      addedDataIndex: _cpuUsageChartData.length -1,
+      removedDataIndex: 0
+    );
+
   }
 
   void gpuUsage() async{
@@ -174,8 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
     var res = await Root.exec(cmd: gpuUsageG21);
     setState(() {
       gpuUsageResult = int.parse(res.toString());
-      _chartData2.add(SalesData(yeartmp++, gpuUsageResult));
-      _chartData2.removeAt(0);
+      _gpuUsageChartData.add(SalesData(yeartmp++, gpuUsageResult));
+      _gpuUsageChartData.removeAt(0);
     });
     // print("${await pipeline.stdout.text} instances of waitFor");
   }
@@ -271,8 +238,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(cpuUsageResult);
     oldCpuUsageTemp = cpuUsageTemp;
 
-    _chartData.add(SalesData(yeartmp++, cpuUsageResult));
-    _chartData.removeAt(0);
+    _cpuUsageChartData.add(SalesData(yeartmp++, cpuUsageResult));
+    _cpuUsageChartData.removeAt(0);
 
     setState(() {
 
@@ -297,20 +264,104 @@ class _MyHomePageState extends State<MyHomePage> {
     cpu4FreqResult = int.parse(res4.toString())/1000000;
     cpu7FreqResult = int.parse(res7.toString())/1000000;
 
-    _chartData3.add(SalesData(yeartmp++, cpu0FreqResult.toInt()));
-    _chartData3.removeAt(0);
+    _cpu0FreqChartData.add(SalesData(yeartmp++, cpu0FreqResult.toInt()));
+    _cpu0FreqChartData.removeAt(0);
 
-    _chartData4.add(SalesData(yeartmp++, cpu4FreqResult.toInt()));
-    _chartData4.removeAt(0);
+    _cpu4FreqChartData.add(SalesData(yeartmp++, cpu4FreqResult.toInt()));
+    _cpu4FreqChartData.removeAt(0);
 
-    _chartData5.add(SalesData(yeartmp++, cpu7FreqResult.toInt()));
-    _chartData5.removeAt(0);
+    _cpu7FreqChartData.add(SalesData(yeartmp++, cpu7FreqResult.toInt()));
+    _cpu7FreqChartData.removeAt(0);
     setState(() {
 
     });
 
   }
 
+  void gpuFreq() async{
+    double gpuFreqResult = 0;
+
+    var res0 = await Root.exec(cmd: gpuFreqG21);
+
+    gpuFreqResult = int.parse(res0.toString())/1000000;
+
+    _gpuFreqChartData.add(SalesData(yeartmp++, gpuFreqResult.toInt()));
+    _gpuFreqChartData.removeAt(0);
+
+    setState(() {
+
+    });
+
+  }
+
+  void fpsResult() async{
+    List<String> _fpsResult = [];
+    int _fpsnum = 0;
+    int _framecounterEnd = 14;
+    int _fpsValueResult = 0;
+
+    var res = await Root.exec(cmd: fpsG21);
+    _fpsResult = res.toString().split(" ");
+    _fpsnum = int.parse(_fpsResult[7].substring(_framecounterEnd, _fpsResult[7].length));
+
+    _fpsValueResult = _fpsnum - oldFpsValue;
+
+    _fpsChartData.add(SalesData(yeartmp++, _fpsValueResult));
+    _fpsChartData.removeAt(0);
+
+    oldFpsValue = _fpsnum;
+
+    setState(() {
+    });
+
+  }
+
+  void netResult() async{
+    List<String> _netResult = [];
+    int _netRecv = 0;
+    int _netSend = 0;
+    double _netTraffic = 0;
+
+    var res = await Root.exec(cmd: netUsageG21);
+    _netResult = res.toString().split(" ");
+    _netRecv = int.parse(_netResult[5]);
+    _netSend = int.parse(_netResult[44]);
+    _netTraffic = ((_netRecv + _netSend) - oldNetTraffic)/1000;
+
+    oldNetTraffic = _netRecv + _netSend;
+
+    _networkChartData.add(SalesData(yeartmp++, _netTraffic.toInt()));
+    _networkChartData.removeAt(0);
+
+    setState(() {
+    });
+
+  }
+
+  void tempResult() async{
+    // List<String> _netResult = [];
+    // int _netRecv = 0;
+    // int _netSend = 0;
+    // double _netTraffic = 0;
+    int _temp0Result = 0;
+
+    var res = await Root.exec(cmd: temperature0G21);
+    _temp0Result = int.parse(res.toString());
+
+    // _netResult = res.toString().split(" ");
+    // _netRecv = int.parse(_netResult[5]);
+    // _netSend = int.parse(_netResult[44]);
+    // _netTraffic = ((_netRecv + _netSend) - oldNetTraffic)/1000;
+    //
+    // oldNetTraffic = _netRecv + _netSend;
+    //
+    // _networkChartData.add(SalesData(yeartmp++, _netTraffic.toInt()));
+    // _networkChartData.removeAt(0);
+
+    setState(() {
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -320,18 +371,21 @@ class _MyHomePageState extends State<MyHomePage> {
             body: Container(
               child: ListView(
                 children: [
-                  graphArc(_chartData, 150, "CPU usage"),
-                  graphArc(_chartData2, 150, "GPU usage"),
-                  graphArc(_chartData3, 150, "CPU 0 Freq"),
-                  graphArc(_chartData4, 150, "CPU 4 Freq"),
-                  graphArc(_chartData5, 150, "CPU 7 Freq"),
+                  graphArc(_cpuUsageChartData, 150, "CPU usage"),
+                  graphArc(_gpuUsageChartData, 150, "GPU usage"),
+                  graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
+                  graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
+                  graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
+                  graphArc(_gpuFreqChartData, 150, "GPU Freq"),
+                  graphArc(_fpsChartData, 150, "FPS Value"),
+                  graphArc(_networkChartData, 150, "Network Traffic"),
                 ],
               ),
             ),
         ));
   }
 
-  Widget graphArc(List<SalesData> _chartData, double height, String title){
+  Widget graphArc(List<SalesData> _cpuUsageChartData, double height, String title){
 
     return Container(
       height: height,
@@ -345,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _chartSeriesController = controller;
             },
             name: title,
-            dataSource: _chartData,
+            dataSource: _cpuUsageChartData,
             xValueMapper: (SalesData sales, _) => sales.year,
             yValueMapper: (SalesData sales, _) => sales.sales,
             dataLabelSettings: DataLabelSettings(isVisible: true),
