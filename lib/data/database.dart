@@ -2,6 +2,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'profiling.dart';
+
 class DatabaseHelper {
   static final _databaseName = "profiling.db";
   static final _databaseVersion = 1;
@@ -37,5 +39,25 @@ class DatabaseHelper {
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {}
+
+  Future<int> insertProfiling(Profiling profiling) async {
+    Database db = await instance.database;
+
+    if(profiling.id == null){
+      Map<String, dynamic> row = {
+        "title": profiling.title,
+        "date": profiling.date,
+        "value": profiling.value
+      };
+      return await db.insert(profilingTable, row);
+    }else{
+      Map<String, dynamic> row = {
+        "title": profiling.title,
+        "date": profiling.date,
+        "value": profiling.value
+      };
+      return await db.update(profilingTable, row, where: "id = ?", whereArgs: [profiling.id]);
+    }
+  }
 
 }
