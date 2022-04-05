@@ -1,3 +1,6 @@
+
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -160,8 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
     int oldIrq = 0;
     int oldSoftirq = 0;
     int oldSteal = 0;
-    int oldQuest = 0;
-    int oldQuestNice = 0;
+    // int oldQuest = 0;
+    // int oldQuestNice = 0;
     int dUser = 0;
     int dNice = 0;
     int dSystem = 0;
@@ -170,8 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
     int dIrq = 0;
     int dSoftirq = 0;
     int dSteal = 0;
-    int dQuest = 0;
-    int dQuestNice = 0;
+    // int dQuest = 0;
+    // int dQuestNice = 0;
     List<String> cpuUsageTemp = [];
     int previousIdle = 0;
     int currentIdle = 0;
@@ -206,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
         oldIrq = int.parse(oldCpuUsageTemp[17 + j * 10]);
         oldSoftirq = int.parse(oldCpuUsageTemp[18 + j * 10]);
         oldSteal = int.parse(oldCpuUsageTemp[19 + j * 10]);
-        oldQuest = int.parse(oldCpuUsageTemp[20 + j * 10]);
+        // oldQuest = int.parse(oldCpuUsageTemp[20 + j * 10]);
         // oldQuestNice = int.parse(oldCpuUsageTemp[21 + j * 10]);
       }
 
@@ -218,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
       dIrq = int.parse(cpuUsageTemp[17+j*10]);
       dSoftirq = int.parse(cpuUsageTemp[18+j*10]);
       dSteal = int.parse(cpuUsageTemp[19+j*10]);
-      dQuest = int.parse(cpuUsageTemp[20+j*10]);
+      // dQuest = int.parse(cpuUsageTemp[20+j*10]);
       // dQuestNice = int.parse(cpuUsageTemp[21+j*11]);
 
       previousIdle = oldIdle + oldIowait;
@@ -236,7 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
       cpuTotal = ((diffTotal - diffIdle) / diffTotal * 100 )+ cpuTotal;
 
     }
-    cpuUsageResult = (cpuTotal/8).toInt();
+    // cpuUsageResult = (cpuTotal/8).toInt();
+    cpuUsageResult = cpuTotal ~/ 8;
     // print(cpuUsageResult);
     oldCpuUsageTemp = cpuUsageTemp;
 
@@ -384,6 +388,22 @@ class _MyHomePageState extends State<MyHomePage> {
               floatingCounter++;
             },
             child: Icon(Icons.not_started_sharp),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.today_outlined),
+                label: "Profiling"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.abc_outlined),
+                label: "Profilied"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.more_horiz),
+                label: "Setting"
+              ),
+            ],
           ),
         ));
   }
