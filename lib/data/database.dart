@@ -60,4 +60,11 @@ class DatabaseHelper {
     }
   }
 
+  Future<List<Profiling>> getAllProfiling() async {
+    Database db = await instance.database;
+    List<Profiling> profiling = [];
+
+    
+  }
+
 }
