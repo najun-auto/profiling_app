@@ -384,21 +384,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return SafeArea(
         child: Scaffold(
-            body: Container(
-              child: ListView(
-                children: [
-                  graphArc(_cpuUsageChartData, 150, "CPU usage"),
-                  graphArc(_gpuUsageChartData, 150, "GPU usage"),
-                  graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
-                  graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
-                  graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
-                  graphArc(_gpuFreqChartData, 150, "GPU Freq"),
-                  graphArc(_fpsChartData, 150, "FPS Value"),
-                  graphArc(_networkChartData, 150, "Network Traffic"),
-                  graphArc(_temperature0ChartData, 150, "Temperature"),
-                ],
-              ),
-            ),
+          body:Container(child: getPage()),
+            // body: Container(
+            //   child: ListView(
+            //     children: [
+            //       graphArc(_cpuUsageChartData, 150, "CPU usage"),
+            //       graphArc(_gpuUsageChartData, 150, "GPU usage"),
+            //       graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
+            //       graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
+            //       graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
+            //       graphArc(_gpuFreqChartData, 150, "GPU Freq"),
+            //       graphArc(_fpsChartData, 150, "FPS Value"),
+            //       graphArc(_networkChartData, 150, "Network Traffic"),
+            //       graphArc(_temperature0ChartData, 150, "Temperature"),
+            //     ],
+            //   ),
+            // ),
           floatingActionButton: FloatingActionButton(
             onPressed: (){
               if(floatingCounter % 2 == 1) {
@@ -430,12 +431,50 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 selectIndex = idx;
               });
-              if(selectIndex == 2){
-              }
             },
           ),
         ));
   }
+
+  Widget getPage(){
+    if (selectIndex == 0){
+      return getCurrentProfiling();
+    }else if(selectIndex == 1){
+      return getOldProfiling();
+    }else{
+      return getCurrentProfiling();
+    }
+  }
+
+  Widget getCurrentProfiling(){
+    return Container(
+      child: ListView(
+        children: [
+          graphArc(_cpuUsageChartData, 150, "CPU usage"),
+          graphArc(_gpuUsageChartData, 150, "GPU usage"),
+          graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
+          graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
+          graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
+          graphArc(_gpuFreqChartData, 150, "GPU Freq"),
+          graphArc(_fpsChartData, 150, "FPS Value"),
+          graphArc(_networkChartData, 150, "Network Traffic"),
+          graphArc(_temperature0ChartData, 150, "Temperature"),
+        ],
+      ),
+    );
+  }
+
+  Widget getOldProfiling(){
+    return Container(
+      child: Column(
+        children: [
+          Text("Hello world"),
+          Text("Bye world"),
+        ],
+      ),
+    );
+  }
+
 
   Widget graphArc(List<trackData> _cpuUsageChartData, double height, String title){
 
