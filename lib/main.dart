@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:root/root.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:untitled2/data/database.dart';
+import 'package:untitled2/data/profiling.dart';
+
+import 'data/util.dart';
 
 
 
@@ -43,8 +47,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
-  String cpuUsageG21 = "cat /proc/stat";
+  final dbHelper = DatabaseHelper.instance;
+
+  List<Profiling> profilings = [];
+  late Profiling todayProfiling;
+
+  int selectIndex = 0;
+
+  String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";  String cpuUsageG21 = "cat /proc/stat";
   String netUsageG21 = "cat /proc/net/dev | grep lo| tail -n1";
   String cpu0FreqG21 = "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq";
   String cpu1FreqG21 = "cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq";
@@ -99,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
+    getTodayProfiling();
 
     // _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
@@ -106,9 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
+  void getTodayProfiling() async {
+    profilings = await dbHelper.getProfilingByDate(Utils.getFormatTime(DateTime.now()));
+    setState(() {
+    });
+  }
+
+
   int xAxistmp = 8;
-
-
   List<trackData> getChartData(){
     final List<trackData> chartData = [
       trackData(1, 1),
@@ -246,6 +262,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
+
+    todayProfiling.title = "CPU Usage";
+    todayProfiling.date = xAxistmp;
+    todayProfiling.value = cpuUsageResult;
+    await dbHelper.insertProfiling(todayProfiling);
 
     setState(() {
 
@@ -404,6 +425,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 label: "Setting"
               ),
             ],
+            currentIndex: selectIndex,
+            onTap: (idx){
+              setState(() {
+                selectIndex = idx;
+              });
+              if(selectIndex == 2){
+              }
+            },
           ),
         ));
   }

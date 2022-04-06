@@ -1,4 +1,5 @@
 
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,13 +14,18 @@ class DatabaseHelper {
 
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  static Database _database;
+  static Database? _database;
 
-  Future<Database> get database async {
-    if(_database != null) return _database;
-    _database = await _initDatabase();
-    return _database;
-  }
+  Future<Database> get database async =>
+      _database ??= await _initDatabase();
+  //
+  // Future<Database> get database async {
+  //   if(_database != null) return _database;
+  //   _database = await _initDatabase();
+  //   return _database;
+  // }
+
+
 
   _initDatabase() async {
     var databasePath = await getDatabasesPath();
@@ -62,9 +68,37 @@ class DatabaseHelper {
 
   Future<List<Profiling>> getAllProfiling() async {
     Database db = await instance.database;
-    List<Profiling> profiling = [];
+    List<Profiling> profilings = [];
 
-    
+    var queries = await db.query(profilingTable);
+
+    for(var q in queries){
+      profilings.add(Profiling(
+        id: q["id"],
+        title: q["title"],
+        date: q["date"],
+        value: q["value"]
+      ));
+    }
+    return profilings;
+  }
+
+
+  Future<List<Profiling>> getProfilingByDate(int date) async {
+    Database db = await instance.database;
+    List<Profiling> profilings = [];
+
+    var queries = await db.query(profilingTable, where: "date = ?", whereArgs: [date]);
+
+    for(var q in queries){
+      profilings.add(Profiling(
+          id: q["id"],
+          title: q["title"],
+          date: q["date"],
+          value: q["value"]
+      ));
+    }
+    return profilings;
   }
 
 }
