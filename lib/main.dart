@@ -50,7 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final dbHelper = DatabaseHelper.instance;
 
   List<Profiling> profilings = [];
-  late Profiling todayProfiling;
+  List<Profiling> allprofilings = [];
+  Profiling todayProfiling;
+
+  todayProfiling.title = "CPU Usage";
+  todayProfiling.date = xAxistmp;
+  todayProfiling.value = 100;
 
   int selectIndex = 0;
 
@@ -87,6 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> _networkChartData = [];
   List<trackData> _temperature0ChartData = [];
 
+  int cpuUsageTemp_f = 0;
+
   List<String> oldCpuUsageTemp = [];
   int oldFpsValue = 0;
   int oldNetTraffic = 0;
@@ -99,6 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
 
     // _start();
+
+
 
     _cpuUsageChartData = getChartData();
     _gpuUsageChartData = getChartData();
@@ -118,7 +127,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   void getTodayProfiling() async {
-    profilings = await dbHelper.getProfilingByDate(Utils.getFormatTime(DateTime.now()));
+    profilings = await dbHelper.getProfilingByDate(xAxistmp);
+    setState(() {
+    });
+  }
+
+  void getAllProfiling() async {
+    allprofilings = await dbHelper.getAllProfiling();
     setState(() {
     });
   }
@@ -149,6 +164,9 @@ class _MyHomePageState extends State<MyHomePage> {
     fpsResult();
     netResult();
     tempResult();
+
+    getTodayProfiling();
+
     xAxistmp++;
     _chartSeriesController.updateDataSource(
       addedDataIndex: _cpuUsageChartData.length -1,
@@ -259,6 +277,8 @@ class _MyHomePageState extends State<MyHomePage> {
     cpuUsageResult = cpuTotal ~/ 8;
     // print(cpuUsageResult);
     oldCpuUsageTemp = cpuUsageTemp;
+
+    // cpuUsageTemp_f = cpuUsageResult;
 
     _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
@@ -411,6 +431,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Icon(Icons.not_started_sharp),
           ),
+
           bottomNavigationBar: BottomNavigationBar(
             items: [
               BottomNavigationBarItem(
@@ -431,6 +452,9 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 selectIndex = idx;
               });
+              if(selectIndex == 1){
+                getAllProfiling();
+              }
             },
           ),
         ));
@@ -459,17 +483,18 @@ class _MyHomePageState extends State<MyHomePage> {
           graphArc(_fpsChartData, 150, "FPS Value"),
           graphArc(_networkChartData, 150, "Network Traffic"),
           graphArc(_temperature0ChartData, 150, "Temperature"),
+
         ],
       ),
     );
   }
 
   Widget getOldProfiling(){
-    return Container(
+    return allprofilings.isEmpty ? Container() :Container(
       child: Column(
         children: [
           Text("Hello world"),
-          Text("Bye world"),
+          Text("${profilings[0].value}개"),
         ],
       ),
     );
