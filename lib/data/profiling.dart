@@ -1,10 +1,21 @@
 
 
 class Profiling {
-  late String title;
-  late int date;
-  late int value;
-  late int id;
+  final int? id;
+  final int? date;
+  final String? title;
+  final int? value;
 
-  Profiling({required this.date, required this.title, required this.value, required this.id});
+  Profiling({
+    this.id,
+    this.date,
+    this.title,
+    this.value
+  });
+
+  Map<String, dynamic> toMap() => {
+    'date': this.date,
+    'title': this.title,
+    'value': this.value
+  };
 }

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:root/root.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:untitled2/data/database.dart';
+import 'package:untitled2/data/database2.dart';
 import 'package:untitled2/data/profiling.dart';
 
 import 'data/util.dart';
@@ -47,15 +47,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  final dbHelper = DatabaseHelper.instance;
+  final dbHelper = DatabaseHelper();
 
   List<Profiling> profilings = [];
   List<Profiling> allprofilings = [];
-  Profiling todayProfiling;
+  // Profiling todayProfiling;
 
-  todayProfiling.title = "CPU Usage";
-  todayProfiling.date = xAxistmp;
-  todayProfiling.value = 100;
+  var todayProfiling = Profiling(
+    id: 1,
+    title: "CPUUSage",
+    date: 10,
+    value: 100,
+  );
 
   int selectIndex = 0;
 
@@ -118,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
-    getTodayProfiling();
+    // getTodayProfiling();
 
     // _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
@@ -126,17 +129,30 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-  void getTodayProfiling() async {
-    profilings = await dbHelper.getProfilingByDate(xAxistmp);
-    setState(() {
-    });
-  }
+  // void getTodayProfiling() async {
+  //   profilings = await dbHelper.getProfilingByDate(xAxistmp);
+  //   setState(() {
+  //   });
+  // }
+  //
+  // void getAllProfiling() async {
+  //   // allprofilings = await dbHelper.getAllProfiling();
+  //
+  //   await dbHelper.getAllProfiling().then((value) => value.forEach((element) {
+  //     print(
+  //         "id: ${element.id}\nname: ${element.title}\nage: ${element.value}");
+  //   }));
+  //
+  //   setState(() {
+  //   });
+  // }
 
-  void getAllProfiling() async {
-    allprofilings = await dbHelper.getAllProfiling();
-    setState(() {
-    });
-  }
+//   void putProfiling(Profiling pro) async {
+//     await dbHelper.insertProfiling(pro);
+//     setState(() {
+//
+//     });
+// }
 
 
   int xAxistmp = 8;
@@ -158,14 +174,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void updateDataSource(Timer timer){
     cpuUsage();
-    gpuUsage();
-    cpuFreq();
-    gpuFreq();
-    fpsResult();
-    netResult();
-    tempResult();
+    // gpuUsage();
+    // cpuFreq();
+    // gpuFreq();
+    // fpsResult();
+    // netResult();
+    // tempResult();
 
-    getTodayProfiling();
+    // print(todayProfiling.title);
+    // putProfiling(todayProfiling);
+    // getAllProfiling();
+
 
     xAxistmp++;
     _chartSeriesController.updateDataSource(
@@ -283,10 +302,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
 
-    todayProfiling.title = "CPU Usage";
-    todayProfiling.date = xAxistmp;
-    todayProfiling.value = cpuUsageResult;
-    await dbHelper.insertProfiling(todayProfiling);
+    // todayProfiling.title = "CPU Usage";
+    // todayProfiling.date = xAxistmp;
+    // todayProfiling.value = cpuUsageResult;
+    // await dbHelper.insertProfiling(todayProfiling);
 
     setState(() {
 
@@ -421,11 +440,21 @@ class _MyHomePageState extends State<MyHomePage> {
             //   ),
             // ),
           floatingActionButton: FloatingActionButton(
-            onPressed: (){
+            onPressed: () async{
               if(floatingCounter % 2 == 1) {
-                _timer.cancel();
+                // _timer.cancel();
               }else{
-                _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+                await dbHelper.InsertProfiling(
+                    Profiling(
+                        date: 3,
+                        title: "CPUUsage",
+                        value: 20
+                         )
+                );
+                // _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+
+                // putProfiling(todayProfiling);
+                // getAllProfiling();
               }
               floatingCounter++;
             },
@@ -453,7 +482,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 selectIndex = idx;
               });
               if(selectIndex == 1){
-                getAllProfiling();
+                var db = dbHelper.database;
+                print("=============hewre=======");
+                // getAllProfiling();
+                // print(allprofilings[0].title);
               }
             },
           ),
