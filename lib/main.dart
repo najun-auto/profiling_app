@@ -53,12 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Profiling> allprofilings = [];
   // Profiling todayProfiling;
 
-  var todayProfiling = Profiling(
-    id: 1,
-    title: "CPUUSage",
-    date: 10,
-    value: 100,
-  );
 
   int selectIndex = 0;
 
@@ -439,26 +433,28 @@ class _MyHomePageState extends State<MyHomePage> {
             //     ],
             //   ),
             // ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async{
-              if(floatingCounter % 2 == 1) {
-                // _timer.cancel();
-              }else{
-                await dbHelper.InsertProfiling(
-                    Profiling(
-                        date: 3,
-                        title: "CPUUsage",
-                        value: 20
-                         )
-                );
-                // _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
-
-                // putProfiling(todayProfiling);
-                // getAllProfiling();
-              }
-              floatingCounter++;
-            },
-            child: Icon(Icons.not_started_sharp),
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                child: Icon(Icons.arrow_back_ios_new),
+                  onPressed: (){
+                    if(floatingCounter % 2 == 1) {
+                      _timer.cancel();
+                    }else{
+                      _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+                      // putProfiling(todayProfiling);
+                      // getAllProfiling();
+                    }
+                    floatingCounter++;
+                  }),
+              FloatingActionButton(
+                child: Icon(Icons.arrow_back_outlined),
+                onPressed: () async{
+                  // await dbHelper.InsertProfiling();
+                },
+              )
+            ],
           ),
 
           bottomNavigationBar: BottomNavigationBar(
@@ -526,7 +522,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: [
           Text("Hello world"),
-          Text("${profilings[0].value}개"),
+          
         ],
       ),
     );
