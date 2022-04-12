@@ -90,4 +90,12 @@ class DatabaseHelper {
     });
   }
 
+  // Future<void> delAllProfilinig() async {
+  //   var db = await database;
+  //
+  //   await db.delete(
+  //       'ProfilingTable',
+  //   );
+  // }
+
 }

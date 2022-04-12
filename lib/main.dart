@@ -122,7 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
 
     });
-}
+  }
+
 
 
   int xAxistmp = 8;
@@ -437,7 +438,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                   // await dbHelper.InsertProfiling(todayProfiling);
                 },
-              )
+              ),
+              // FloatingActionButton(
+              //   child: Icon(Icons.arrow_back_rounded),
+              //   onPressed: () async{
+              //     await dbHelper.delAllProfilinig();
+              //     setState(() {
+              //     });
+              //     // await dbHelper.InsertProfiling(todayProfiling);
+              //   },
+              // )
             ],
           ),
 
@@ -500,18 +510,33 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getOldProfiling(){
-    return profilings.isEmpty ? Container() :Container(
-      // height: 200,
-      child: ListView(
-        scrollDirection: Axis.vertical,
-        children: List.generate(profilings.length, (index){
-          return Container(
-            width: 50,
-            child: Text("value ${profilings[index].CPUusage}"),
-          );
-        }),
-      ),
+    final List<trackData> chartData = [
+      trackData(2010, 35),
+      trackData(2011, 28),
+      trackData(2012, 34),
+      trackData(2013, 32),
+      trackData(2014, 40)
+    ];
+
+    return profilings.isEmpty ? Container() : Scaffold(
+        body: Center(
+            child: Container(
+              height: 150,
+                child: SfCartesianChart(
+                    series: <ChartSeries>[
+                      // Renders line chart
+                      LineSeries<trackData, int>(
+                          dataSource: profilings,
+                          xValueMapper: (trackData data, _) => data.xAxis,
+                          yValueMapper: (trackData data, _) => data.yAxis
+                      )
+                    ]
+                )
+            )
+        )
     );
+
+
   }
 
 
