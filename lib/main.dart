@@ -510,33 +510,59 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getOldProfiling(){
-    final List<trackData> chartData = [
-      trackData(2010, 35),
-      trackData(2011, 28),
-      trackData(2012, 34),
-      trackData(2013, 32),
-      trackData(2014, 40)
-    ];
+    final List<trackData> chartData = [ trackData(1, 0), trackData(2, 0)];
 
-    return profilings.isEmpty ? Container() : Scaffold(
-        body: Center(
-            child: Container(
-              height: 150,
-                child: SfCartesianChart(
-                    series: <ChartSeries>[
-                      // Renders line chart
-                      LineSeries<trackData, int>(
-                          dataSource: profilings,
-                          xValueMapper: (trackData data, _) => data.xAxis,
-                          yValueMapper: (trackData data, _) => data.yAxis
-                      )
-                    ]
-                )
-            )
-        )
+    List<trackData> _cpuUsage_temp = [];
+    List<trackData> _gpuUsage_temp = [];
+    List<trackData> _cpu0Freq_temp = [];
+    List<trackData> _cpu4Freq_temp = [];
+    List<trackData> _cpu7Freq_temp = [];
+    List<trackData> _gpuFreq_temp = [];
+    List<trackData> _fps_temp = [];
+    List<trackData> _network_temp = [];
+    List<trackData> _temperature0_temp = [];
+
+    for(var profiling in profilings){
+      if(profiling.count == testCounter){
+        _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
+        _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));
+        _cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));
+        _cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));
+        _cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));
+        _temperature0_temp.add(trackData(profiling.time, profiling.Temp0));
+      }
+
+    }
+
+    return profilings.isEmpty ? Container() : Container(
+      child: ListView(
+        children: [
+          oldgraph(_cpuUsage_temp),
+          oldgraph(_gpuUsage_temp),
+          oldgraph(_cpu0Freq_temp),
+          oldgraph(_cpu4Freq_temp),
+          oldgraph(_cpu7Freq_temp),
+          oldgraph(_temperature0_temp),
+        ],
+      ),
     );
 
+  }
 
+  Widget oldgraph(List<trackData> chartData){
+    return Container(
+        height: 100,
+        child: SfCartesianChart(
+            series: <ChartSeries>[
+              // Renders line chart
+              LineSeries<trackData, int>(
+                  dataSource: chartData,
+                  xValueMapper: (trackData data, _) => data.xAxis,
+                  yValueMapper: (trackData data, _) => data.yAxis
+              )
+            ]
+        )
+    );
   }
 
 
@@ -574,8 +600,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class trackData{
   trackData(this.xAxis, this.yAxis);
-  final int xAxis;
-  final int yAxis;
+  final int? xAxis;
+  final int? yAxis;
 }
 
 
