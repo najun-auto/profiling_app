@@ -50,9 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final dbHelper = DatabaseHelper();
 
   List<Profiling> profilings = [];
-  List<Profiling> allprofilings = [];
-  // Profiling todayProfiling;
-
 
   int selectIndex = 0;
 
@@ -90,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> _temperature0ChartData = [];
 
   int cpuUsageTemp_f = 0;
+  int testCounter = 0;
 
   List<String> oldCpuUsageTemp = [];
   int oldFpsValue = 0;
@@ -103,9 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
 
     // _start();
-
-
-
     _cpuUsageChartData = getChartData();
     _gpuUsageChartData = getChartData();
     _cpu0FreqChartData = getChartData();
@@ -115,38 +110,19 @@ class _MyHomePageState extends State<MyHomePage> {
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
-    // getTodayProfiling();
 
-    // _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+
     super.initState();
 
   }
 
 
-  // void getTodayProfiling() async {
-  //   profilings = await dbHelper.getProfilingByDate(xAxistmp);
-  //   setState(() {
-  //   });
-  // }
-  //
-  // void getAllProfiling() async {
-  //   // allprofilings = await dbHelper.getAllProfiling();
-  //
-  //   await dbHelper.getAllProfiling().then((value) => value.forEach((element) {
-  //     print(
-  //         "id: ${element.id}\nname: ${element.title}\nage: ${element.value}");
-  //   }));
-  //
-  //   setState(() {
-  //   });
-  // }
+  void putProfiling(Profiling pro) async {
+    await dbHelper.InsertProfiling(pro);
+    setState(() {
 
-//   void putProfiling(Profiling pro) async {
-//     await dbHelper.insertProfiling(pro);
-//     setState(() {
-//
-//     });
-// }
+    });
+}
 
 
   int xAxistmp = 8;
@@ -167,17 +143,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   void updateDataSource(Timer timer){
-    cpuUsage();
-    // gpuUsage();
-    // cpuFreq();
-    // gpuFreq();
-    // fpsResult();
-    // netResult();
-    // tempResult();
 
-    // print(todayProfiling.title);
-    // putProfiling(todayProfiling);
-    // getAllProfiling();
+    cpuUsage();
+    gpuUsage();
+    cpuFreq();
+    gpuFreq();
+    fpsResult();
+    netResult();
+    tempResult();
+
+    Profiling todayProfiling = Profiling(
+        time: xAxistmp,
+        count: testCounter,
+        CPUusage: _cpuUsageChartData[_cpuUsageChartData.length-1].yAxis,
+        GPUusage: _gpuUsageChartData[_gpuUsageChartData.length-1].yAxis,
+        CPU0Freq: _cpu0FreqChartData[_cpu0FreqChartData.length-1].yAxis,
+        CPU4Freq: _cpu4FreqChartData[_cpu4FreqChartData.length-1].yAxis,
+        CPU7Freq: _cpu7FreqChartData[_cpu7FreqChartData.length-1].yAxis,
+        GPUFreq: _gpuFreqChartData[_gpuFreqChartData.length-1].yAxis,
+        FPS: _fpsChartData[_fpsChartData.length-1].yAxis,
+        Network: _networkChartData[_networkChartData.length-1].yAxis,
+        Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis
+    );
+
+    putProfiling(todayProfiling);
 
 
     xAxistmp++;
@@ -196,6 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
       _gpuUsageChartData.removeAt(0);
     });
+
     // print("${await pipeline.stdout.text} instances of waitFor");
   }
 
@@ -288,18 +278,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     // cpuUsageResult = (cpuTotal/8).toInt();
     cpuUsageResult = cpuTotal ~/ 8;
-    // print(cpuUsageResult);
+
     oldCpuUsageTemp = cpuUsageTemp;
 
-    // cpuUsageTemp_f = cpuUsageResult;
 
     _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
 
-    // todayProfiling.title = "CPU Usage";
-    // todayProfiling.date = xAxistmp;
-    // todayProfiling.value = cpuUsageResult;
-    // await dbHelper.insertProfiling(todayProfiling);
+
 
     setState(() {
 
@@ -327,11 +313,18 @@ class _MyHomePageState extends State<MyHomePage> {
     _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
     _cpu0FreqChartData.removeAt(0);
 
+
+
     _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
     _cpu4FreqChartData.removeAt(0);
 
+
+
     _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
     _cpu7FreqChartData.removeAt(0);
+
+
+
     setState(() {
 
     });
@@ -347,6 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _gpuFreqChartData.add(trackData(xAxistmp, gpuFreqResult.toInt()));
     _gpuFreqChartData.removeAt(0);
+
 
     setState(() {
 
@@ -368,6 +362,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _fpsChartData.add(trackData(xAxistmp, _fpsValueResult));
     _fpsChartData.removeAt(0);
+
 
     oldFpsValue = _fpsnum;
 
@@ -393,6 +388,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _networkChartData.add(trackData(xAxistmp, _netTraffic.toInt()));
     _networkChartData.removeAt(0);
 
+
     setState(() {
     });
 
@@ -407,6 +403,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
     _temperature0ChartData.removeAt(0);
 
+
     setState(() {
     });
 
@@ -418,21 +415,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
         child: Scaffold(
           body:Container(child: getPage()),
-            // body: Container(
-            //   child: ListView(
-            //     children: [
-            //       graphArc(_cpuUsageChartData, 150, "CPU usage"),
-            //       graphArc(_gpuUsageChartData, 150, "GPU usage"),
-            //       graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
-            //       graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
-            //       graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
-            //       graphArc(_gpuFreqChartData, 150, "GPU Freq"),
-            //       graphArc(_fpsChartData, 150, "FPS Value"),
-            //       graphArc(_networkChartData, 150, "Network Traffic"),
-            //       graphArc(_temperature0ChartData, 150, "Temperature"),
-            //     ],
-            //   ),
-            // ),
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -443,15 +425,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       _timer.cancel();
                     }else{
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
-                      // putProfiling(todayProfiling);
-                      // getAllProfiling();
+                      testCounter++;
                     }
                     floatingCounter++;
                   }),
               FloatingActionButton(
                 child: Icon(Icons.arrow_back_outlined),
                 onPressed: () async{
-                  // await dbHelper.InsertProfiling();
+                  profilings = await dbHelper.getAllProfilinig();
+                  setState(() {
+                  });
+                  // await dbHelper.InsertProfiling(todayProfiling);
                 },
               )
             ],
@@ -478,8 +462,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 selectIndex = idx;
               });
               if(selectIndex == 1){
-                var db = dbHelper.database;
-                print("=============hewre=======");
                 // getAllProfiling();
                 // print(allprofilings[0].title);
               }
@@ -518,12 +500,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getOldProfiling(){
-    return allprofilings.isEmpty ? Container() :Container(
-      child: Column(
-        children: [
-          Text("Hello world"),
-          
-        ],
+    return profilings.isEmpty ? Container() :Container(
+      // height: 200,
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: List.generate(profilings.length, (index){
+          return Container(
+            width: 50,
+            child: Text("value ${profilings[index].CPUusage}"),
+          );
+        }),
       ),
     );
   }

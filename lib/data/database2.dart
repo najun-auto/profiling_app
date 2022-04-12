@@ -11,7 +11,7 @@ import 'profiling.dart';
 
 class DatabaseHelper {
   static final _databaseName = "profiling.db";
-  static final _databaseVersion = 5;
+  static final _databaseVersion = 1;
   // static final profilingTable = "profilingtable";
 
   Database? _database;
@@ -36,10 +36,19 @@ class DatabaseHelper {
   FutureOr<void> _onCreate(Database db, int version) {
     String sql = '''
   CREATE TABLE ProfilingTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    date INTEGER DEFAULT 0, 
-    title String, 
-    value INTEGER DEFAULT 0)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    count INTEGER DEFAULT 0, 
+    time INTEGER DEFAULT 0, 
+    CPUusage INTEGER DEFAULT 0,
+    GPUusage INTEGER DEFAULT 0,
+    CPU0Freq INTEGER DEFAULT 0,
+    CPU4Freq INTEGER DEFAULT 0,
+    CPU7Freq INTEGER DEFAULT 0,
+    GPUFreq INTEGER DEFAULT 0,
+    FPS INTEGER DEFAULT 0,
+    Network INTEGER DEFAULT 0,
+    Temp0 INTEGER DEFAULT 0
+    )
   ''';
 
     db.execute(sql);
@@ -55,6 +64,30 @@ class DatabaseHelper {
         'ProfilingTable',
         item.toMap()
     );
+  }
+
+  Future<List<Profiling>> getAllProfilinig() async {
+    var db = await database;
+
+    // testTable 테이블에 있는 모든 field 값을 maps에 저장한다.
+    final List<Map<String, dynamic>> maps = await db.query('ProfilingTable');
+
+    return List.generate(maps.length, (index) {
+      return Profiling(
+          id: maps[index]['id'] as int,
+          count: maps[index]['count'] as int,
+          time: maps[index]['time'] as int,
+          CPUusage: maps[index]['CPUusage'] as int,
+          GPUusage: maps[index]['GPUusage'] as int,
+          CPU0Freq: maps[index]['CPU0Freq'] as int,
+          CPU4Freq: maps[index]['CPU4Freq'] as int,
+          CPU7Freq: maps[index]['CPU7Freq'] as int,
+          GPUFreq: maps[index]['GPUFreq'] as int,
+          FPS: maps[index]['FPS'] as int,
+          Network: maps[index]['Network'] as int,
+          Temp0: maps[index]['Temp0'] as int
+      );
+    });
   }
 
 }

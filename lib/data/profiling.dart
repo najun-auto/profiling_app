@@ -2,6 +2,7 @@
 
 class Profiling {
   final int? id;
+  final int? count;
   final int? time;
   final int? CPUusage;
   final int? GPUusage;
@@ -16,6 +17,7 @@ class Profiling {
 
   Profiling({
     this.id,
+    this.count,
     this.time,
     this.CPUusage,
     this.GPUusage,
@@ -29,6 +31,7 @@ class Profiling {
   });
 
   Map<String, dynamic> toMap() => {
+    'count': this.count,
     'time': this.time,
     'CPUUsage': this.CPUusage,
     'GPUUsage': this.GPUusage,
