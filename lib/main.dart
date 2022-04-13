@@ -11,7 +11,8 @@ import 'package:untitled2/data/database2.dart';
 import 'package:untitled2/data/profiling.dart';
 
 import 'data/util.dart';
-
+import 'package:flutter_background/flutter_background.dart';
+import 'package:intl/intl.dart';
 
 
 // https://pub.dev/packages/syncfusion_flutter_charts
@@ -100,6 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
 
+
+    bakgroundset();
     // _start();
     _cpuUsageChartData = getChartData();
     _gpuUsageChartData = getChartData();
@@ -115,7 +118,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
   }
-
+  void bakgroundset() async {
+    final androidConfig = FlutterBackgroundAndroidConfig(
+      notificationTitle: "flutter_background example app",
+      notificationText: "Background notification for keeping the example app running in the background",
+      notificationImportance: AndroidNotificationImportance.Default,
+      notificationIcon: AndroidResource(name: 'background_icon', defType: 'drawable'), // Default is ic_launcher from folder mipmap
+    );
+    bool success = await FlutterBackground.initialize(androidConfig: androidConfig);
+}
 
   void putProfiling(Profiling pro) async {
     await dbHelper.InsertProfiling(pro);
@@ -136,6 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
       trackData(5, 1),
       trackData(6, 1),
       trackData(7, 1),
+      trackData(8, 1),
+      trackData(9, 1),
+      trackData(10, 1),
+      trackData(11, 1),
+      trackData(12, 1)
       // trackData(2025, 18),
       // trackData(2027, 30),
     ];
@@ -558,7 +574,12 @@ class _MyHomePageState extends State<MyHomePage> {
               LineSeries<trackData, int>(
                   dataSource: chartData,
                   xValueMapper: (trackData data, _) => data.xAxis,
-                  yValueMapper: (trackData data, _) => data.yAxis
+                  yValueMapper: (trackData data, _) => data.yAxis,
+                  // markerSettings: MarkerSettings(isVisible: true),
+                  // dataLabelSettings: DataLabelSettings(isVisible: true),
+                  // color: Colors.orange,
+                  width: 5,
+                  opacity: 0.5,
               )
             ]
         )
