@@ -141,17 +141,17 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> getChartData(){
     final List<trackData> chartData = [
       trackData(1, 1),
-      trackData(2, 1),
-      trackData(3, 1),
-      trackData(4, 1),
-      trackData(5, 1),
-      trackData(6, 1),
-      trackData(7, 1),
-      trackData(8, 1),
-      trackData(9, 1),
-      trackData(10, 1),
-      trackData(11, 1),
-      trackData(12, 1)
+      // trackData(2, 1),
+      // trackData(3, 1),
+      // trackData(4, 1),
+      // trackData(5, 1),
+      // trackData(6, 1),
+      // trackData(7, 1),
+      // trackData(8, 1),
+      // trackData(9, 1),
+      // trackData(10, 1),
+      // trackData(11, 1),
+      // trackData(12, 1)
       // trackData(2025, 18),
       // trackData(2027, 30),
     ];
@@ -415,7 +415,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int _temp0Result = 0;
 
     var res = await Root.exec(cmd: temperature0G21);
-    _temp0Result = int.parse(res.toString());
+    _temp0Result = (int.parse(res.toString())/1000).floor();
 
     _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
     _temperature0ChartData.removeAt(0);
@@ -542,9 +542,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if(profiling.count == testCounter){
         _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
         _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));
-        _cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));
-        _cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));
-        _cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));
+        // _cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));
+        // _cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));
+        // _cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));
         _temperature0_temp.add(trackData(profiling.time, profiling.Temp0));
       }
 
@@ -555,9 +555,9 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           oldgraph(_cpuUsage_temp),
           oldgraph(_gpuUsage_temp),
-          oldgraph(_cpu0Freq_temp),
-          oldgraph(_cpu4Freq_temp),
-          oldgraph(_cpu7Freq_temp),
+          // oldgraph(_cpu0Freq_temp),
+          // oldgraph(_cpu4Freq_temp),
+          // oldgraph(_cpu7Freq_temp),
           oldgraph(_temperature0_temp),
         ],
       ),
@@ -567,7 +567,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget oldgraph(List<trackData> chartData){
     return Container(
-        height: 100,
+        height: 200,
         child: SfCartesianChart(
             series: <ChartSeries>[
               // Renders line chart
