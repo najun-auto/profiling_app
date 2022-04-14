@@ -49,6 +49,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final dbHelper = DatabaseHelper();
+  late TooltipBehavior _tooltipBehavior;
 
   List<Profiling> profilings = [];
 
@@ -114,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
 
-
+    _tooltipBehavior =  TooltipBehavior(enable: true);
     super.initState();
 
   }
@@ -538,6 +539,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
 
+
     for(var profiling in profilings){
       if(profiling.count == testCounter){
         _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
@@ -559,6 +561,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // oldgraph(_cpu4Freq_temp),
           // oldgraph(_cpu7Freq_temp),
           oldgraph(_temperature0_temp),
+          // Text("${testCounter}")
         ],
       ),
     );
@@ -566,12 +569,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget oldgraph(List<trackData> chartData){
+    // _tooltipBehavior =  TooltipBehavior(enable: true);
+    
     return Container(
         height: 200,
         child: SfCartesianChart(
+            tooltipBehavior: _tooltipBehavior,
+            primaryXAxis: CategoryAxis(),
             series: <ChartSeries>[
               // Renders line chart
               LineSeries<trackData, int>(
+                  enableTooltip: true,
                   dataSource: chartData,
                   xValueMapper: (trackData data, _) => data.xAxis,
                   yValueMapper: (trackData data, _) => data.yAxis,
