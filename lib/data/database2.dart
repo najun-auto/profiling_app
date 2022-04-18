@@ -90,6 +90,14 @@ class DatabaseHelper {
     });
   }
 
+  Future<int> getLastRow() async {
+    var db = await database;
+    final data = await db.rawQuery('SELECT * FROM ProfilingTable');
+    final lastCounter = int.parse(data.last['count'].toString());
+
+    // print(lastCounter);
+    return lastCounter;
+  }
   // Future<void> delAllProfilinig() async {
   //   var db = await database;
   //

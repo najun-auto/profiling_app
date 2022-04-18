@@ -103,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
 
 
+    getCounter();
     bakgroundset();
     // _start();
     _cpuUsageChartData = getChartData();
@@ -136,9 +137,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void getCounter() async{
+    testCounter = await dbHelper.getLastRow();
+    setState(() {
+
+    });
+    // final data = await dbHelper.rawQuery()
+    // profilings = await dbHelper.getAllProfilinig();
+    // testCounter = profilings.
+  }
 
 
-  int xAxistmp = 8;
+
+  int xAxistmp = 2;
   List<trackData> getChartData(){
     final List<trackData> chartData = [
       trackData(1, 1),
@@ -442,8 +453,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     if(floatingCounter % 2 == 1) {
                       _timer.cancel();
                     }else{
-                      _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
                       testCounter++;
+                      _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+
                     }
                     floatingCounter++;
                   }),
@@ -451,6 +463,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Icon(Icons.arrow_back_outlined),
                 onPressed: () async{
                   profilings = await dbHelper.getAllProfilinig();
+                  xAxistmp = 2;
                   setState(() {
                   });
                   // await dbHelper.InsertProfiling(todayProfiling);
@@ -561,7 +574,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // oldgraph(_cpu4Freq_temp),
           // oldgraph(_cpu7Freq_temp),
           oldgraph(_temperature0_temp),
-          // Text("${testCounter}")
+          Text("${testCounter}")
         ],
       ),
     );
@@ -570,7 +583,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget oldgraph(List<trackData> chartData){
     // _tooltipBehavior =  TooltipBehavior(enable: true);
-    
+
     return Container(
         height: 200,
         child: SfCartesianChart(
