@@ -50,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final dbHelper = DatabaseHelper();
   late TooltipBehavior _tooltipBehavior;
+  late ZoomPanBehavior _zoomPanBehavior;
 
   List<Profiling> profilings = [];
 
@@ -117,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _temperature0ChartData = getChartData();
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
+    _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
     super.initState();
 
   }
@@ -463,6 +465,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Icon(Icons.arrow_back_outlined),
                 onPressed: () async{
                   profilings = await dbHelper.getAllProfilinig();
+                  // testCounter++;
                   xAxistmp = 2;
                   setState(() {
                   });
@@ -525,14 +528,14 @@ class _MyHomePageState extends State<MyHomePage> {
       child: ListView(
         children: [
           graphArc(_cpuUsageChartData, 150, "CPU usage"),
-          graphArc(_gpuUsageChartData, 150, "GPU usage"),
-          graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
-          graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
-          graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
-          graphArc(_gpuFreqChartData, 150, "GPU Freq"),
-          graphArc(_fpsChartData, 150, "FPS Value"),
-          graphArc(_networkChartData, 150, "Network Traffic"),
-          graphArc(_temperature0ChartData, 150, "Temperature"),
+          // graphArc(_gpuUsageChartData, 150, "GPU usage"),
+          // graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
+          // graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
+          // graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
+          // graphArc(_gpuFreqChartData, 150, "GPU Freq"),
+          // graphArc(_fpsChartData, 150, "FPS Value"),
+          // graphArc(_networkChartData, 150, "Network Traffic"),
+          // graphArc(_temperature0ChartData, 150, "Temperature"),
 
         ],
       ),
@@ -587,6 +590,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
         height: 200,
         child: SfCartesianChart(
+            zoomPanBehavior: _zoomPanBehavior,
             tooltipBehavior: _tooltipBehavior,
             primaryXAxis: CategoryAxis(),
             series: <ChartSeries>[

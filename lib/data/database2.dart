@@ -11,7 +11,7 @@ import 'profiling.dart';
 
 class DatabaseHelper {
   static final _databaseName = "profiling.db";
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 2;
   // static final profilingTable = "profilingtable";
 
   Database? _database;
