@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:root/root.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:untitled2/alldata.dart';
 import 'package:untitled2/data/database2.dart';
 import 'package:untitled2/data/profiling.dart';
 
@@ -134,6 +135,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void putProfiling(Profiling pro) async {
     await dbHelper.InsertProfiling(pro);
+    setState(() {
+
+    });
+  }
+  void getAllProfilingData() async{
+    profilings = await dbHelper.getAllProfilinig();
     setState(() {
 
     });
@@ -450,7 +457,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FloatingActionButton(
-                child: Icon(Icons.arrow_back_ios_new),
+                child: Icon(Icons.wb_incandescent_rounded),
                   onPressed: (){
                     if(floatingCounter % 2 == 1) {
                       _timer.cancel();
@@ -462,9 +469,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     floatingCounter++;
                   }),
               FloatingActionButton(
-                child: Icon(Icons.arrow_back_outlined),
-                onPressed: () async{
-                  profilings = await dbHelper.getAllProfilinig();
+                child: Icon(Icons.wb_incandescent_outlined),
+                onPressed: () {
+                  // profilings = await dbHelper.getAllProfilinig();
                   // testCounter++;
                   xAxistmp = 2;
                   setState(() {
@@ -472,15 +479,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   // await dbHelper.InsertProfiling(todayProfiling);
                 },
               ),
-              // FloatingActionButton(
-              //   child: Icon(Icons.arrow_back_rounded),
-              //   onPressed: () async{
-              //     await dbHelper.delAllProfilinig();
-              //     setState(() {
-              //     });
-              //     // await dbHelper.InsertProfiling(todayProfiling);
-              //   },
-              // )
+
             ],
           ),
 
@@ -496,7 +495,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.more_horiz),
-                label: "Setting"
+                label: "AllData"
               ),
             ],
             currentIndex: selectIndex,
@@ -505,6 +504,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 selectIndex = idx;
               });
               if(selectIndex == 1){
+                getAllProfilingData();
                 // getAllProfiling();
                 // print(allprofilings[0].title);
               }
@@ -519,7 +519,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }else if(selectIndex == 1){
       return getOldProfiling();
     }else{
-      return getCurrentProfiling();
+      return getAllData();
     }
   }
 
@@ -582,6 +582,32 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
+  }
+
+  Widget getAllData(){
+    int temp = 0;
+    return profilings.isEmpty ? Container() : Container(
+      margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: List.generate(testCounter, (_idx){
+          temp++;
+          return InkWell(child: Container(
+            height: 70,
+            width: 700,
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Text("${temp}"),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue),
+                // borderRadius: BorderRadius.circular(50)
+            ),
+          ),onTap: () async{
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx++,)) );
+          },
+          );
+        }),
+      ),
+    );
   }
 
   Widget oldgraph(List<trackData> chartData){
