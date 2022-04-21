@@ -50,6 +50,12 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   Widget build(BuildContext context){
     return Scaffold(
       body: Container(child: getOldProfiling()),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
     );
   }
 
