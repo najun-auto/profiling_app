@@ -11,7 +11,7 @@ class GetAllDataPage extends StatefulWidget{
 
   final int testCounter;
 
-  const GetAllDataPage({Key? key, required this.testCounter}) : super(key: key);
+  GetAllDataPage({Key? key, required this.testCounter}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -33,6 +33,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     // TODO: implement initState
     getAllProfilingData();
     testCounter = widget.testCounter;
+    testCounter++;
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);

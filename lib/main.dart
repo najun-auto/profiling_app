@@ -515,7 +515,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget getPage(){
     if (selectIndex == 0){
-      return getCurrentProfiling();
+      return Container();
     }else if(selectIndex == 1){
       return getOldProfiling();
     }else{
@@ -602,7 +602,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // borderRadius: BorderRadius.circular(50)
             ),
           ),onTap: () async{
-            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx++,)) );
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx,)) );
           },
           );
         }),
