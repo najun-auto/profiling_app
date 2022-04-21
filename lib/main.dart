@@ -57,6 +57,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int selectIndex = 0;
 
+  bool _cpuChecked = true;
+  bool _gpuChecked = true;
+  bool _cpu0freqChecked = true;
+  bool _cpu4freqChecked = true;
+  bool _cpu7freqChecked = true;
+  bool _gpufreqChecked = true;
+  bool _fpsChecked = true;
+  bool _networkChecked = true;
+  bool _temp0Checked = true;
+
   String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";  String cpuUsageG21 = "cat /proc/stat";
   String netUsageG21 = "cat /proc/net/dev | grep lo| tail -n1";
   String cpu0FreqG21 = "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq";
@@ -97,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int oldFpsValue = 0;
   int oldNetTraffic = 0;
 
-  late ChartSeriesController _chartSeriesController;
+  // late ChartSeriesController _chartSeriesController;
   Timer _timer = Timer(const Duration(seconds: 100), (){});
   int floatingCounter = 0;
 
@@ -120,6 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
+
+
     super.initState();
 
   }
@@ -208,10 +220,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
     xAxistmp++;
-    _chartSeriesController.updateDataSource(
-      addedDataIndex: _cpuUsageChartData.length -1,
-      removedDataIndex: 0
-    );
+    // _chartSeriesController.updateDataSource(
+    //   addedDataIndex: _cpuUsageChartData.length -1,
+    //   removedDataIndex: 0
+    // );
 
   }
 
@@ -319,6 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     oldCpuUsageTemp = cpuUsageTemp;
 
+    print(cpuUsageResult);
 
     _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
@@ -471,8 +484,7 @@ class _MyHomePageState extends State<MyHomePage> {
               FloatingActionButton(
                 child: Icon(Icons.wb_incandescent_outlined),
                 onPressed: () {
-                  // profilings = await dbHelper.getAllProfilinig();
-                  // testCounter++;
+
                   xAxistmp = 2;
                   setState(() {
                   });
@@ -515,7 +527,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget getPage(){
     if (selectIndex == 0){
-      return Container();
+      return getCurrentProfiling();
     }else if(selectIndex == 1){
       return getOldProfiling();
     }else{
@@ -524,21 +536,186 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getCurrentProfiling(){
-    return Container(
-      child: ListView(
-        children: [
-          graphArc(_cpuUsageChartData, 150, "CPU usage"),
-          // graphArc(_gpuUsageChartData, 150, "GPU usage"),
-          // graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
-          // graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
-          // graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
-          // graphArc(_gpuFreqChartData, 150, "GPU Freq"),
-          // graphArc(_fpsChartData, 150, "FPS Value"),
-          // graphArc(_networkChartData, 150, "Network Traffic"),
-          // graphArc(_temperature0ChartData, 150, "Temperature"),
 
-        ],
+    return Container(
+      child: Center(
+        child: ListView(
+            children: [
+              cpucheckedBox(),
+              cpu0freqcheckedBox(),
+              cpu4freqcheckedBox(),
+              cpu7freqcheckedBox(),
+              gpucheckedBox(),
+              gpufreqcheckedBox(),
+              fpscheckedBox(),
+              netcheckedBox(),
+              temp0checkedBox(),
+            ],
+
+              // child: CheckboxListTile(
+              //     title: Text("test"),
+              //     value: _isChecked[index],
+              //     onChanged: (bool? value){
+              //       setState(() {
+              //         _isChecked[index] = value;
+              //       });
+              //     },
+              //   ),
+            )
       ),
+
+    // return Container(
+    //   child: ListView(
+    //   child: CheckboxListTile(
+    //     title: const Text('test'),
+    //     value: cpucheck,
+    //     onChanged: (bool? value){
+    //       setState(() {
+    //         cpucheck = value!;
+    //       });
+    //     },
+    //   ),
+    //   ),
+      // child: ListView(
+      //   children: [
+      //     graphArc(_cpuUsageChartData, 150, "CPU usage"),
+      //     // graphArc(_gpuUsageChartData, 150, "GPU usage"),
+      //     // graphArc(_cpu0FreqChartData, 150, "CPU 0 Freq"),
+      //     // graphArc(_cpu4FreqChartData, 150, "CPU 4 Freq"),
+      //     // graphArc(_cpu7FreqChartData, 150, "CPU 7 Freq"),
+      //     // graphArc(_gpuFreqChartData, 150, "GPU Freq"),
+      //     // graphArc(_fpsChartData, 150, "FPS Value"),
+      //     // graphArc(_networkChartData, 150, "Network Traffic"),
+      //     // graphArc(_temperature0ChartData, 150, "Temperature"),
+      //
+      //   ],
+      // ),
+    );
+  }
+
+  Widget cpucheckedBox(){
+    return Container(
+         child: CheckboxListTile(
+            title: const Text('CPU Usage'),
+            value: _cpuChecked,
+            onChanged: (bool? value){
+              setState(() {
+                _cpuChecked = value!;
+              });
+            },
+          )
+    );
+  }
+
+  Widget gpucheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('GPU Usage'),
+          value: _gpuChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _gpuChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget cpu0freqcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('CPU 0 Freq'),
+          value: _cpu0freqChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _cpu0freqChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget cpu4freqcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('CPU 4 Freq'),
+          value: _cpu4freqChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _cpu4freqChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget cpu7freqcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('CPU 4 Freq'),
+          value: _cpu7freqChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _cpu7freqChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget gpufreqcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('GPU Freq'),
+          value: _gpufreqChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _gpufreqChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget fpscheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('FPS'),
+          value: _fpsChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _fpsChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget netcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('NETWORK Traffic'),
+          value: _networkChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _networkChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget temp0checkedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Temp 0'),
+          value: _temp0Checked,
+          onChanged: (bool? value){
+            setState(() {
+              _temp0Checked = value!;
+            });
+          },
+        )
     );
   }
 
@@ -558,12 +735,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for(var profiling in profilings){
       if(profiling.count == testCounter){
-        _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
-        _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));
-        // _cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));
-        // _cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));
-        // _cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));
-        _temperature0_temp.add(trackData(profiling.time, profiling.Temp0));
+        if(_cpuChecked == true){_cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));}
+        if(_gpuChecked == true){ _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));}
+        if(_cpu0freqChecked == true){_cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));}
+        if(_cpu4freqChecked == true){_cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));}
+        if(_cpu7freqChecked == true){_cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
+        if(_gpufreqChecked == true){_gpuFreq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
+        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
+        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
+        if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
       }
 
     }
@@ -571,13 +751,22 @@ class _MyHomePageState extends State<MyHomePage> {
     return profilings.isEmpty ? Container() : Container(
       child: ListView(
         children: [
-          oldgraph(_cpuUsage_temp),
-          oldgraph(_gpuUsage_temp),
+          oldgraph(_cpuUsage_temp, _cpuChecked),
+          oldgraph(_cpu0Freq_temp, _cpu0freqChecked),
+          oldgraph(_cpu4Freq_temp, _cpu4freqChecked),
+          oldgraph(_cpu7Freq_temp, _cpu7freqChecked),
+          oldgraph(_gpuUsage_temp, _gpuChecked),
+          oldgraph(_gpuFreq_temp, _gpufreqChecked),
+          oldgraph(_fps_temp, _fpsChecked),
+          oldgraph(_network_temp, _networkChecked),
+          oldgraph(_temperature0_temp, _temp0Checked),
+          // Text("${_cpu0freqChecked}"),
+
+
           // oldgraph(_cpu0Freq_temp),
           // oldgraph(_cpu4Freq_temp),
           // oldgraph(_cpu7Freq_temp),
-          oldgraph(_temperature0_temp),
-          Text("${testCounter}")
+          // oldgraph(_temperature0_temp),
         ],
       ),
     );
@@ -610,10 +799,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget oldgraph(List<trackData> chartData){
+  Widget oldgraph(List<trackData> chartData, bool temp){
     // _tooltipBehavior =  TooltipBehavior(enable: true);
 
-    return Container(
+    return temp == false ? Container(
+      height: 1,
+    ) : Container(
         height: 200,
         child: SfCartesianChart(
             zoomPanBehavior: _zoomPanBehavior,
@@ -638,36 +829,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-  Widget graphArc(List<trackData> _cpuUsageChartData, double height, String title){
-
-    return Container(
-      height: height,
-      child:
-      SfCartesianChart(
-        title: ChartTitle(text: title),
-        // legend: Legend(isVisible: true),
-        series: <SplineSeries>[
-          SplineSeries<trackData, int>(
-            onRendererCreated: (ChartSeriesController controller) {
-              _chartSeriesController = controller;
-            },
-            name: title,
-            dataSource: _cpuUsageChartData,
-            xValueMapper: (trackData yAxis, _) => yAxis.xAxis,
-            yValueMapper: (trackData yAxis, _) => yAxis.yAxis,
-            dataLabelSettings: DataLabelSettings(isVisible: true),
-            color: Colors.orange,
-            width: 10,
-            opacity: 0.5,
-          )
-        ],
-        primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
-        // primaryYAxis: NumericAxis(
-        //     labelFormat: '{value}M',
-        //     numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
-      ),
-    );
-  }
+  // Widget graphArc(List<trackData> _cpuUsageChartData, double height, String title){
+  //
+  //   return Container(
+  //     height: height,
+  //     child:
+  //     SfCartesianChart(
+  //       title: ChartTitle(text: title),
+  //       // legend: Legend(isVisible: true),
+  //       series: <SplineSeries>[
+  //         SplineSeries<trackData, int>(
+  //           onRendererCreated: (ChartSeriesController controller) {
+  //             _chartSeriesController = controller;
+  //           },
+  //           name: title,
+  //           dataSource: _cpuUsageChartData,
+  //           xValueMapper: (trackData yAxis, _) => yAxis.xAxis,
+  //           yValueMapper: (trackData yAxis, _) => yAxis.yAxis,
+  //           dataLabelSettings: DataLabelSettings(isVisible: true),
+  //           color: Colors.orange,
+  //           width: 10,
+  //           opacity: 0.5,
+  //         )
+  //       ],
+  //       primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
+  //       // primaryYAxis: NumericAxis(
+  //       //     labelFormat: '{value}M',
+  //       //     numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
+  //     ),
+  //   );
+  // }
 }
 
 class trackData{
