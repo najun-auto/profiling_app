@@ -202,6 +202,18 @@ class _MyHomePageState extends State<MyHomePage> {
     netResult();
     tempResult();
 
+
+    // if(_cpuChecked == true){cpuUsage();}
+    // if(_gpuChecked == true){ gpuUsage();}
+    // if(_cpu0freqChecked == true){cpuFreq();}
+    // if(_cpu4freqChecked == true){cpuFreq();}
+    // if(_cpu7freqChecked == true){cpuFreq();}
+    // if(_gpufreqChecked == true){gpuFreq();}
+    // if(_fpsChecked == true){fpsResult();}
+    // if(_networkChecked == true){netResult();}
+    // if(_temp0Checked == true){tempResult();}
+
+
     Profiling todayProfiling = Profiling(
         time: xAxistmp,
         count: testCounter,
@@ -330,8 +342,6 @@ class _MyHomePageState extends State<MyHomePage> {
     cpuUsageResult = cpuTotal ~/ 8;
 
     oldCpuUsageTemp = cpuUsageTemp;
-
-    print(cpuUsageResult);
 
     _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     _cpuUsageChartData.removeAt(0);
@@ -551,31 +561,8 @@ class _MyHomePageState extends State<MyHomePage> {
               netcheckedBox(),
               temp0checkedBox(),
             ],
+    )));
 
-              // child: CheckboxListTile(
-              //     title: Text("test"),
-              //     value: _isChecked[index],
-              //     onChanged: (bool? value){
-              //       setState(() {
-              //         _isChecked[index] = value;
-              //       });
-              //     },
-              //   ),
-            )
-      ),
-
-    // return Container(
-    //   child: ListView(
-    //   child: CheckboxListTile(
-    //     title: const Text('test'),
-    //     value: cpucheck,
-    //     onChanged: (bool? value){
-    //       setState(() {
-    //         cpucheck = value!;
-    //       });
-    //     },
-    //   ),
-    //   ),
       // child: ListView(
       //   children: [
       //     graphArc(_cpuUsageChartData, 150, "CPU usage"),
@@ -590,7 +577,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //
       //   ],
       // ),
-    );
+    // );
   }
 
   Widget cpucheckedBox(){
@@ -751,15 +738,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return profilings.isEmpty ? Container() : Container(
       child: ListView(
         children: [
-          oldgraph(_cpuUsage_temp, _cpuChecked),
-          oldgraph(_cpu0Freq_temp, _cpu0freqChecked),
-          oldgraph(_cpu4Freq_temp, _cpu4freqChecked),
-          oldgraph(_cpu7Freq_temp, _cpu7freqChecked),
-          oldgraph(_gpuUsage_temp, _gpuChecked),
-          oldgraph(_gpuFreq_temp, _gpufreqChecked),
-          oldgraph(_fps_temp, _fpsChecked),
-          oldgraph(_network_temp, _networkChecked),
-          oldgraph(_temperature0_temp, _temp0Checked),
+          oldgraph(_cpuUsage_temp, _cpuChecked, "CPU Usage"),
+          oldgraph(_cpu0Freq_temp, _cpu0freqChecked, "CPU 0 Freq"),
+          oldgraph(_cpu4Freq_temp, _cpu4freqChecked, "CPU 4 Freq"),
+          oldgraph(_cpu7Freq_temp, _cpu7freqChecked, "CPU 7 Freq"),
+          oldgraph(_gpuUsage_temp, _gpuChecked, "GPU Usage"),
+          oldgraph(_gpuFreq_temp, _gpufreqChecked, "GPU Freq"),
+          oldgraph(_fps_temp, _fpsChecked, "FPS"),
+          oldgraph(_network_temp, _networkChecked, "Network"),
+          oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
           // Text("${_cpu0freqChecked}"),
 
 
@@ -791,7 +778,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 // borderRadius: BorderRadius.circular(50)
             ),
           ),onTap: () async{
-            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx,)) );
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked,)) );
+
           },
           );
         }),
@@ -799,14 +787,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget oldgraph(List<trackData> chartData, bool temp){
+  Widget oldgraph(List<trackData> chartData, bool temp, String Tempstr){
     // _tooltipBehavior =  TooltipBehavior(enable: true);
+
 
     return temp == false ? Container(
       height: 1,
     ) : Container(
         height: 200,
         child: SfCartesianChart(
+            title: ChartTitle(
+              text: Tempstr,
+            ),
             zoomPanBehavior: _zoomPanBehavior,
             tooltipBehavior: _tooltipBehavior,
             primaryXAxis: CategoryAxis(),
