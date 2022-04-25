@@ -749,6 +749,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return profilings.isEmpty ? Container() : Container(
       child: ListView(
         children: [
+          Text("${time}"),
           oldgraph(_cpuUsage_temp, _cpuChecked, "CPU Usage"),
           oldgraph(_cpu0Freq_temp, _cpu0freqChecked, "CPU 0 Freq"),
           oldgraph(_cpu4Freq_temp, _cpu4freqChecked, "CPU 4 Freq"),
@@ -758,7 +759,7 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_fps_temp, _fpsChecked, "FPS"),
           oldgraph(_network_temp, _networkChecked, "Network"),
           oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
-          Text("${time}"),
+
 
 
           // oldgraph(_cpu0Freq_temp),
