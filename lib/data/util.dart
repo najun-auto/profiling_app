@@ -2,7 +2,7 @@
 class Utils {
 
   static int getFormatTime(DateTime date){
-    return int.parse("${date.year}${makeTwoDigit(date.month)}${makeTwoDigit(date.year)}");
+    return int.parse("${date.year}${makeTwoDigit(date.month)}${makeTwoDigit(date.day)}${makeTwoDigit(date.hour)}${makeTwoDigit(date.minute)}");
   }
 
   static DateTime numTwoDateTime(int date){

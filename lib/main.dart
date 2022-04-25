@@ -55,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Profiling> profilings = [];
 
+  // DateTime time = DateTime.now();
+  int timE = 0;
   int selectIndex = 0;
   bool currentState = false;
 
@@ -176,8 +178,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> getChartData(){
     final List<trackData> chartData = [
       trackData(1, 1),
-      // trackData(2, 1),
-      // trackData(3, 1),
+      trackData(2, 1),
+      trackData(3, 1),
       // trackData(4, 1),
       // trackData(5, 1),
       // trackData(6, 1),
@@ -227,7 +229,8 @@ class _MyHomePageState extends State<MyHomePage> {
         GPUFreq: _gpuFreqChartData[_gpuFreqChartData.length-1].yAxis,
         FPS: _fpsChartData[_fpsChartData.length-1].yAxis,
         Network: _networkChartData[_networkChartData.length-1].yAxis,
-        Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis
+        Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
+        ttime: timE,
     );
 
     putProfiling(todayProfiling);
@@ -491,6 +494,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       testCounter++;
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
                       currentState = true;
+                      timE = Utils.getFormatTime(DateTime.now());
                     }
                     floatingCounter++;
                   }),
@@ -563,7 +567,8 @@ class _MyHomePageState extends State<MyHomePage> {
               fpscheckedBox(),
               netcheckedBox(),
               temp0checkedBox(),
-              Text("${currentState}")
+              Text("${currentState}"),
+              // Text("${timE}")
             ],
     )));
 
@@ -722,6 +727,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _fps_temp = [];
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
+    int? time = 0;
 
 
     for(var profiling in profilings){
@@ -735,6 +741,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
+        time = profiling.ttime;
       }
 
     }
@@ -751,7 +758,7 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_fps_temp, _fpsChecked, "FPS"),
           oldgraph(_network_temp, _networkChecked, "Network"),
           oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
-          // Text("${_cpu0freqChecked}"),
+          Text("${time}"),
 
 
           // oldgraph(_cpu0Freq_temp),
