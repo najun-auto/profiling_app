@@ -56,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Profiling> profilings = [];
 
   int selectIndex = 0;
+  bool currentState = false;
 
   bool _cpuChecked = true;
   bool _gpuChecked = true;
@@ -67,7 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _networkChecked = true;
   bool _temp0Checked = true;
 
-  String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";  String cpuUsageG21 = "cat /proc/stat";
+  String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
+  String cpuUsageG21 = "cat /proc/stat";
   String netUsageG21 = "cat /proc/net/dev | grep lo| tail -n1";
   String cpu0FreqG21 = "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq";
   String cpu1FreqG21 = "cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq";
@@ -397,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var res0 = await Root.exec(cmd: gpuFreqG21);
 
-    gpuFreqResult = int.parse(res0.toString())/1000000;
+    gpuFreqResult = int.parse(res0.toString())/1000;
 
     _gpuFreqChartData.add(trackData(xAxistmp, gpuFreqResult.toInt()));
     _gpuFreqChartData.removeAt(0);
@@ -484,10 +486,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: (){
                     if(floatingCounter % 2 == 1) {
                       _timer.cancel();
+                      currentState = false;
                     }else{
                       testCounter++;
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
-
+                      currentState = true;
                     }
                     floatingCounter++;
                   }),
@@ -560,6 +563,7 @@ class _MyHomePageState extends State<MyHomePage> {
               fpscheckedBox(),
               netcheckedBox(),
               temp0checkedBox(),
+              Text("${currentState}")
             ],
     )));
 
@@ -727,9 +731,9 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_cpu0freqChecked == true){_cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));}
         if(_cpu4freqChecked == true){_cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));}
         if(_cpu7freqChecked == true){_cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
-        if(_gpufreqChecked == true){_gpuFreq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
-        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
-        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
+        if(_gpufreqChecked == true){_gpuFreq_temp.add(trackData(profiling.time, profiling.GPUFreq));}
+        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
+        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
       }
 
