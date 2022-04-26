@@ -111,9 +111,9 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_cpu0freqChecked == true){_cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));}
         if(_cpu4freqChecked == true){_cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));}
         if(_cpu7freqChecked == true){_cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
-        if(_gpufreqChecked == true){_gpuFreq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
-        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
-        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
+        if(_gpufreqChecked == true){_gpuFreq_temp.add(trackData(profiling.time, profiling.GPUFreq));}
+        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
+        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
         time = profiling.ttime;
       }
