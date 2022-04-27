@@ -93,6 +93,15 @@ class _MyHomePageState extends State<MyHomePage> {
   String temperature7G21 = "su -c cat /sys/class/thermal/thermal_zone7/temp";
   String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp";
 
+  String cpu0GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
+  String cpu1GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor";
+  String cpu2GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor";
+  String cpu3GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor";
+  String cpu4GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor";
+  String cpu5GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor";
+  String cpu6GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor";
+  String cpu7GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor";
+
 
   List<trackData> _cpuUsageChartData = [];
   List<trackData> _gpuUsageChartData = [];
@@ -131,6 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
+
+    cpuGovernor();
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
@@ -241,6 +252,23 @@ class _MyHomePageState extends State<MyHomePage> {
     //   addedDataIndex: _cpuUsageChartData.length -1,
     //   removedDataIndex: 0
     // );
+
+  }
+
+  void cpuGovernor() async{
+
+    await Root.exec(cmd: cpu0GovernorPerf);
+    await Root.exec(cmd: cpu1GovernorPerf);
+    await Root.exec(cmd: cpu2GovernorPerf);
+    await Root.exec(cmd: cpu3GovernorPerf);
+    await Root.exec(cmd: cpu4GovernorPerf);
+    await Root.exec(cmd: cpu5GovernorPerf);
+    await Root.exec(cmd: cpu6GovernorPerf);
+    await Root.exec(cmd: cpu7GovernorPerf);
+
+    setState(() {
+
+    });
 
   }
 
