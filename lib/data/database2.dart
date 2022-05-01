@@ -48,7 +48,8 @@ class DatabaseHelper {
     FPS INTEGER DEFAULT 0,
     Network INTEGER DEFAULT 0,
     Temp0 INTEGER DEFAULT 0, 
-    ttime INTEGER DEFAULT 0
+    ttime INTEGER DEFAULT 0,
+    textf String
     )
   ''';
 
@@ -88,6 +89,7 @@ class DatabaseHelper {
           Network: maps[index]['Network'] as int,
           Temp0: maps[index]['Temp0'] as int,
           ttime: maps[index]['ttime'] as int,
+          textf: maps[index]['textf'] as int,
       );
     });
   }

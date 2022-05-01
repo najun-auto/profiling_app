@@ -102,6 +102,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
     int? time = 0;
+    int? textf = 0;
 
 
     for(var profiling in profilings){
@@ -116,6 +117,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
         time = profiling.ttime;
+        textf = profiling.textf;
       }
 
     }
@@ -124,6 +126,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
       child: ListView(
         children: [
           Text("${time}"),
+          Text("${textf}"),
           oldgraph(_cpuUsage_temp, _cpuChecked, "CPU Usage"),
           oldgraph(_cpu0Freq_temp, _cpu0freqChecked, "CPU 0 Freq"),
           oldgraph(_cpu4Freq_temp, _cpu4freqChecked, "CPU 4 Freq"),

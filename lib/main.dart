@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
   String cpuUsageG21 = "cat /proc/stat";
-  String netUsageG21 = "cat /proc/net/dev | grep lo| tail -n1";
+  String netUsageG21 = "cat /proc/net/dev | grep rmnet1| tail -n1";
   String cpu0FreqG21 = "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq";
   String cpu1FreqG21 = "cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq";
   String cpu2FreqG21 = "cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq";
@@ -93,14 +93,36 @@ class _MyHomePageState extends State<MyHomePage> {
   String temperature7G21 = "su -c cat /sys/class/thermal/thermal_zone7/temp";
   String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp";
 
-  String cpu0GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
-  String cpu1GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor";
-  String cpu2GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor";
-  String cpu3GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor";
-  String cpu4GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor";
-  String cpu5GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor";
-  String cpu6GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor";
-  String cpu7GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor";
+  // String cpu0GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
+  // String cpu1GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor";
+  // String cpu2GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor";
+  // String cpu3GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor";
+  // String cpu4GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor";
+  // String cpu5GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor";
+  // String cpu6GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor";
+  // String cpu7GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor";
+  //
+  // String dvfs3172 = "echo 3172000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfs2730 = "echo 2730000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfs2535 = "echo 2535000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfs2288 = "echo 2288000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfs2028 = "echo 2028000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfs1716 = "echo 1716000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfsout = "cat /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
+  // String dvfsouttemp = "";
+
+  bool temp3172 = false;
+  bool temp2730 = false;
+  bool temp2535 = false;
+  bool temp2288 = false;
+  bool temp2028 = false;
+  bool temp1716 = false;
+
+  final myController = TextEditingController();
+  final cpu0freqctrl = TextEditingController();
+  final cpu4freqctrl = TextEditingController();
+
+
 
 
   List<trackData> _cpuUsageChartData = [];
@@ -141,8 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
 
-    cpuGovernor();
+    // cpuGovernor();
 
+    // clockSet();
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
 
@@ -150,6 +173,33 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
   }
+
+  void clockSet() async{
+
+    int clocktemp0 = int.parse(cpu0freqctrl.text);
+    await Root.exec(
+        cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq");
+    await Root.exec(
+        cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq");
+
+
+    int clocktemp4 = int.parse(cpu4freqctrl.text);
+
+    await Root.exec(
+        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq");
+    await Root.exec(
+        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq");
+
+    await Root.exec(
+        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq");
+    await Root.exec(
+        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq");
+
+
+    setState(() {
+    });
+  }
+
   void bakgroundset() async {
     final androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: "flutter_background example app",
@@ -242,8 +292,8 @@ class _MyHomePageState extends State<MyHomePage> {
         Network: _networkChartData[_networkChartData.length-1].yAxis,
         Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
         ttime: timE,
+        textf: int.tryParse(myController.text),
     );
-
     putProfiling(todayProfiling);
 
 
@@ -252,23 +302,6 @@ class _MyHomePageState extends State<MyHomePage> {
     //   addedDataIndex: _cpuUsageChartData.length -1,
     //   removedDataIndex: 0
     // );
-
-  }
-
-  void cpuGovernor() async{
-
-    await Root.exec(cmd: cpu0GovernorPerf);
-    await Root.exec(cmd: cpu1GovernorPerf);
-    await Root.exec(cmd: cpu2GovernorPerf);
-    await Root.exec(cmd: cpu3GovernorPerf);
-    await Root.exec(cmd: cpu4GovernorPerf);
-    await Root.exec(cmd: cpu5GovernorPerf);
-    await Root.exec(cmd: cpu6GovernorPerf);
-    await Root.exec(cmd: cpu7GovernorPerf);
-
-    setState(() {
-
-    });
 
   }
 
@@ -400,9 +433,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // var res6 = await Root.exec(cmd: cpu6FreqG21);
     var res7 = await Root.exec(cmd: cpu7FreqG21);
 
-    cpu0FreqResult = int.parse(res0.toString())/1000000;
-    cpu4FreqResult = int.parse(res4.toString())/1000000;
-    cpu7FreqResult = int.parse(res7.toString())/1000000;
+    cpu0FreqResult = int.parse(res0.toString())/1000;
+    cpu4FreqResult = int.parse(res4.toString())/1000;
+    cpu7FreqResult = int.parse(res7.toString())/1000;
 
     _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
     _cpu0FreqChartData.removeAt(0);
@@ -473,8 +506,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var res = await Root.exec(cmd: netUsageG21);
     _netResult = res.toString().split(" ");
-    _netRecv = int.parse(_netResult[5]);
-    _netSend = int.parse(_netResult[44]);
+    _netRecv = int.parse(_netResult[1]);
+
+    _netSend = int.parse(_netResult[42]);
+
     _netTraffic = ((_netRecv + _netSend) - oldNetTraffic)/1000;
 
     oldNetTraffic = _netRecv + _netSend;
@@ -523,6 +558,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
                       currentState = true;
                       timE = Utils.getFormatTime(DateTime.now());
+                      clockSet();
                     }
                     floatingCounter++;
                   }),
@@ -596,6 +632,39 @@ class _MyHomePageState extends State<MyHomePage> {
               netcheckedBox(),
               temp0checkedBox(),
               Text("${currentState}"),
+              Container(
+                margin: EdgeInsets.all(8),
+                child: TextField(
+                  controller: myController,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(8),
+                child: TextField(
+                  controller: cpu0freqctrl,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(8),
+                child: TextField(
+                  controller: cpu4freqctrl,
+                ),
+              ),
+              // dvfs3172checkedBox(),
+              // dvfs2730checkedBox(),
+              // dvfs2535checkedBox(),
+              // dvfs2288checkedBox(),
+              // dvfs2028checkedBox(),
+              // dvfs1716checkedBox(),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+              // Text("${dvfsouttemp}"),
+
               // Text("${timE}")
             ],
     )));
@@ -743,6 +812,96 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // Widget dvfs3172checkedBox(){
+  //   return Container(
+  //       child: CheckboxListTile(
+  //         title: const Text('DVFS 3172 on'),
+  //         value: temp3172,
+  //         onChanged: (bool? value){
+  //           setState(() {
+  //             temp3172 = value!;
+  //             getdvfs3172();
+  //           });
+  //         },
+  //       )
+  //   );
+  // }
+  //
+  // Widget dvfs2730checkedBox(){
+  //   bool temp = false;
+  //   return Container(
+  //       child: CheckboxListTile(
+  //         title: const Text('DVFS 2730 on'),
+  //         value: temp2730,
+  //         onChanged: (bool? value){
+  //           setState(() {
+  //             temp2730 = value!;
+  //             getdvfs2730();
+  //           });
+  //         },
+  //       )
+  //   );
+  // }
+  // Widget dvfs2535checkedBox(){
+  //   bool temp = false;
+  //   return Container(
+  //       child: CheckboxListTile(
+  //         title: const Text('DVFS 2535 on'),
+  //         value: temp2535,
+  //         onChanged: (bool? value){
+  //           setState(() {
+  //             temp2535 = value!;
+  //             getdvfs2535();
+  //           });
+  //         },
+  //       )
+  //   );
+  // }
+  // Widget dvfs2288checkedBox(){
+  //   bool temp = false;
+  //   return Container(
+  //       child: CheckboxListTile(
+  //         title: const Text('DVFS 2288 on'),
+  //         value: temp2288,
+  //         onChanged: (bool? value){
+  //           setState(() {
+  //             temp2288 = value!;
+  //             getdvfs2288();
+  //           });
+  //         },
+  //       )
+  //   );
+  // }
+  // Widget dvfs2028checkedBox(){
+  //   bool temp = false;
+  //   return Container(
+  //       child: CheckboxListTile(
+  //         title: const Text('DVFS 2028 on'),
+  //         value: temp2028,
+  //         onChanged: (bool? value){
+  //           setState(() {
+  //             temp2028 = value!;
+  //             getdvfs2028();
+  //           });
+  //         },
+  //       )
+  //   );
+  // }
+  // Widget dvfs1716checkedBox(){
+  //   bool temp = false;
+  //   return Container(
+  //       child: CheckboxListTile(
+  //         title: const Text('DVFS 1716 on'),
+  //         value: temp1716,
+  //         onChanged: (bool? value){
+  //           setState(() {
+  //             temp1716 = value!;
+  //             getdvfs1716();
+  //           });
+  //         },
+  //       )
+  //   );
+  // }
   Widget getOldProfiling(){
     final List<trackData> chartData = [ trackData(1, 0), trackData(2, 0)];
 
@@ -756,6 +915,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
     int? time = 0;
+    int? textf = 0;
 
 
     for(var profiling in profilings){
@@ -770,6 +930,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
         time = profiling.ttime;
+        textf = profiling.textf;
       }
 
     }
@@ -778,6 +939,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: ListView(
         children: [
           Text("${time}"),
+          Text("${textf}"),
+
           oldgraph(_cpuUsage_temp, _cpuChecked, "CPU Usage"),
           oldgraph(_cpu0Freq_temp, _cpu0freqChecked, "CPU 0 Freq"),
           oldgraph(_cpu4Freq_temp, _cpu4freqChecked, "CPU 4 Freq"),
@@ -799,6 +962,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
   }
+
 
   Widget getAllData(){
     int temp = 0;
