@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final myController = TextEditingController();
   final cpu0freqctrl = TextEditingController();
-  final cpu4freqctrl = TextEditingController();
+  // final cpu4freqctrl = TextEditingController();
 
 
 
@@ -178,22 +178,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
     int clocktemp0 = int.parse(cpu0freqctrl.text);
     await Root.exec(
-        cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq");
-    await Root.exec(
-        cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq");
-
-
-    int clocktemp4 = int.parse(cpu4freqctrl.text);
-
-    await Root.exec(
-        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq");
-    await Root.exec(
-        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq");
-
-    await Root.exec(
-        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq");
-    await Root.exec(
-        cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq");
+        cmd: "su -c echo $clocktemp0 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max");
+    // await Root.exec(
+    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq");
+    //
+    //
+    // int clocktemp4 = int.parse(cpu4freqctrl.text);
+    //
+    // await Root.exec(
+    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq");
+    // await Root.exec(
+    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq");
+    //
+    // await Root.exec(
+    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq");
+    // await Root.exec(
+    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq");
 
 
     setState(() {
@@ -506,9 +506,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var res = await Root.exec(cmd: netUsageG21);
     _netResult = res.toString().split(" ");
-    _netRecv = int.parse(_netResult[1]);
 
-    _netSend = int.parse(_netResult[42]);
+    // _netRecv = int.parse(_netResult[1]);
+    // _netSend = int.parse(_netResult[42]);
+
+    _netRecv = 10000;
+    _netSend = 10000;
 
     _netTraffic = ((_netRecv + _netSend) - oldNetTraffic)/1000;
 
@@ -644,12 +647,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   controller: cpu0freqctrl,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(8),
-                child: TextField(
-                  controller: cpu4freqctrl,
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.all(8),
+              //   child: TextField(
+              //     controller: cpu4freqctrl,
+              //   ),
+              // ),
               // dvfs3172checkedBox(),
               // dvfs2730checkedBox(),
               // dvfs2535checkedBox(),
