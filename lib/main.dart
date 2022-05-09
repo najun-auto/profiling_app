@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _fpsChecked = true;
   bool _networkChecked = true;
   bool _temp0Checked = true;
+  bool _ddrclkChecked = true;
 
   String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
   String cpuUsageG21 = "cat /proc/stat";
@@ -92,6 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String temperature6G21 = "su -c cat /sys/class/thermal/thermal_zone6/temp";
   String temperature7G21 = "su -c cat /sys/class/thermal/thermal_zone7/temp";
   String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp";
+  String ddrclk = "su -c /data/local/tmp/clk_s.sh -d";
+
 
   // String cpu0GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
   // String cpu1GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor";
@@ -134,6 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> _fpsChartData = [];
   List<trackData> _networkChartData = [];
   List<trackData> _temperature0ChartData = [];
+  List<trackData> _ddrclkChartData = [];
+
 
   int cpuUsageTemp_f = 0;
   int testCounter = 0;
@@ -162,6 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
+    _ddrclkChartData = getChartData();
 
     // cpuGovernor();
 
@@ -176,22 +182,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void clockSet() async{
 
-    int clocktemp0 = int.parse(cpu0freqctrl.text);
+    String clocktemp0 = cpu0freqctrl.text;
     await Root.exec(
         cmd: "su -c echo $clocktemp0 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max");
     // await Root.exec(
-    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq");
-    //
-    //
-    // int clocktemp4 = int.parse(cpu4freqctrl.text);
-    //
+    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_governor");
+    // //
+    // //
+    // // int clocktemp4 = int.parse(cpu4freqctrl.text);
+    // //
     // await Root.exec(
-    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq");
+    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_governor");
+    // // await Root.exec(
+    // //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq");
+    // //
     // await Root.exec(
-    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq");
-    //
-    // await Root.exec(
-    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq");
+    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_governor");
     // await Root.exec(
     //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq");
 
@@ -266,6 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
     fpsResult();
     netResult();
     tempResult();
+    ddrResult();
 
 
     // if(_cpuChecked == true){cpuUsage();}
@@ -293,6 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
         ttime: timE,
         textf: int.tryParse(myController.text),
+        ddrclk: _ddrclkChartData[_ddrclkChartData.length-1].yAxis,
     );
     putProfiling(todayProfiling);
 
@@ -526,6 +534,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+  void ddrResult() async{
+    // List<String> _ddrResult = [];
+    String _ddrResult;
+    double _ddrtemp = 0;
+
+    var res = await Root.exec(cmd: ddrclk);
+    // _ddrResult = res.toString().replaceAll("[^0-9]","");
+    // _ddrResult = res.toString();
+    _ddrResult = res.toString().replaceAll(RegExp(r'[^0-9]'),"");
+    // print(_ddrResult);
+    
+    _ddrtemp = int.parse(_ddrResult)/1000;
+    // print(_ddrtemp);
+    // _ddrtemp = int.parse(_ddrResult[1]);
+
+    _ddrclkChartData.add(trackData(xAxistmp, _ddrtemp.toInt()));
+    _ddrclkChartData.removeAt(0);
+
+
+    setState(() {
+    });
+
+  }
+
   void tempResult() async{
     int _temp0Result = 0;
 
@@ -634,6 +666,7 @@ class _MyHomePageState extends State<MyHomePage> {
               fpscheckedBox(),
               netcheckedBox(),
               temp0checkedBox(),
+              ddrclkcheckedBox(),
               Text("${currentState}"),
               Container(
                 margin: EdgeInsets.all(8),
@@ -653,20 +686,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //     controller: cpu4freqctrl,
               //   ),
               // ),
-              // dvfs3172checkedBox(),
-              // dvfs2730checkedBox(),
-              // dvfs2535checkedBox(),
-              // dvfs2288checkedBox(),
-              // dvfs2028checkedBox(),
-              // dvfs1716checkedBox(),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
-              // Text("${dvfsouttemp}"),
+
 
               // Text("${timE}")
             ],
@@ -815,96 +835,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Widget dvfs3172checkedBox(){
-  //   return Container(
-  //       child: CheckboxListTile(
-  //         title: const Text('DVFS 3172 on'),
-  //         value: temp3172,
-  //         onChanged: (bool? value){
-  //           setState(() {
-  //             temp3172 = value!;
-  //             getdvfs3172();
-  //           });
-  //         },
-  //       )
-  //   );
-  // }
-  //
-  // Widget dvfs2730checkedBox(){
-  //   bool temp = false;
-  //   return Container(
-  //       child: CheckboxListTile(
-  //         title: const Text('DVFS 2730 on'),
-  //         value: temp2730,
-  //         onChanged: (bool? value){
-  //           setState(() {
-  //             temp2730 = value!;
-  //             getdvfs2730();
-  //           });
-  //         },
-  //       )
-  //   );
-  // }
-  // Widget dvfs2535checkedBox(){
-  //   bool temp = false;
-  //   return Container(
-  //       child: CheckboxListTile(
-  //         title: const Text('DVFS 2535 on'),
-  //         value: temp2535,
-  //         onChanged: (bool? value){
-  //           setState(() {
-  //             temp2535 = value!;
-  //             getdvfs2535();
-  //           });
-  //         },
-  //       )
-  //   );
-  // }
-  // Widget dvfs2288checkedBox(){
-  //   bool temp = false;
-  //   return Container(
-  //       child: CheckboxListTile(
-  //         title: const Text('DVFS 2288 on'),
-  //         value: temp2288,
-  //         onChanged: (bool? value){
-  //           setState(() {
-  //             temp2288 = value!;
-  //             getdvfs2288();
-  //           });
-  //         },
-  //       )
-  //   );
-  // }
-  // Widget dvfs2028checkedBox(){
-  //   bool temp = false;
-  //   return Container(
-  //       child: CheckboxListTile(
-  //         title: const Text('DVFS 2028 on'),
-  //         value: temp2028,
-  //         onChanged: (bool? value){
-  //           setState(() {
-  //             temp2028 = value!;
-  //             getdvfs2028();
-  //           });
-  //         },
-  //       )
-  //   );
-  // }
-  // Widget dvfs1716checkedBox(){
-  //   bool temp = false;
-  //   return Container(
-  //       child: CheckboxListTile(
-  //         title: const Text('DVFS 1716 on'),
-  //         value: temp1716,
-  //         onChanged: (bool? value){
-  //           setState(() {
-  //             temp1716 = value!;
-  //             getdvfs1716();
-  //           });
-  //         },
-  //       )
-  //   );
-  // }
+  Widget ddrclkcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('DDR CLK'),
+          value: _ddrclkChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _ddrclkChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
   Widget getOldProfiling(){
     final List<trackData> chartData = [ trackData(1, 0), trackData(2, 0)];
 
@@ -917,6 +861,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _fps_temp = [];
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
+    List<trackData> _ddrclk_temp = [];
     int? time = 0;
     int? textf = 0;
 
@@ -932,6 +877,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
+        if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         time = profiling.ttime;
         textf = profiling.textf;
       }
@@ -953,6 +899,7 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_fps_temp, _fpsChecked, "FPS"),
           oldgraph(_network_temp, _networkChecked, "Network"),
           oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
+          oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
 
 
 
@@ -985,7 +932,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // borderRadius: BorderRadius.circular(50)
             ),
           ),onTap: () async{
-            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked,)) );
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, ddrclkChecked: _ddrclkChecked,)) );
 
           },
           );

@@ -15,6 +15,7 @@ class Profiling {
   final int? Temp0;
   final int? ttime;
   final int? textf;
+  final int? ddrclk;
 
 
   Profiling({
@@ -32,6 +33,7 @@ class Profiling {
     this.Temp0,
     this.ttime,
     this.textf,
+    this.ddrclk,
   });
 
   Map<String, dynamic> toMap() => {
@@ -48,5 +50,6 @@ class Profiling {
     'Temp0': this.Temp0,
     'ttime': this.ttime,
     'textf': this.textf,
+    'ddrclk': this.ddrclk,
   };
 }

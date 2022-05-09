@@ -11,7 +11,7 @@ import 'profiling.dart';
 
 class DatabaseHelper {
   static final _databaseName = "profiling.db";
-  static final _databaseVersion = 5;
+  static final _databaseVersion = 1;
   // static final profilingTable = "profilingtable";
 
   Database? _database;
@@ -49,7 +49,8 @@ class DatabaseHelper {
     Network INTEGER DEFAULT 0,
     Temp0 INTEGER DEFAULT 0, 
     ttime INTEGER DEFAULT 0,
-    textf String
+    textf INTEGER DEFAULT 0,
+    ddrclk INTEGER DEFAULT 0
     )
   ''';
 
@@ -90,6 +91,7 @@ class DatabaseHelper {
           Temp0: maps[index]['Temp0'] as int,
           ttime: maps[index]['ttime'] as int,
           textf: maps[index]['textf'] as int,
+          ddrclk: maps[index]['ddrclk'] as int,
       );
     });
   }

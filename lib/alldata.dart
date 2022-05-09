@@ -19,9 +19,10 @@ class GetAllDataPage extends StatefulWidget{
   final bool fpsChecked;
   final bool networkChecked;
   final bool temp0Checked;
+  final bool ddrclkChecked;
 
 
-  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked}) : super(key: key);
+  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.ddrclkChecked}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -46,6 +47,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   bool _fpsChecked = true;
   bool _networkChecked = true;
   bool _temp0Checked = true;
+  bool _ddrclkChecked = true;
 
 
   @override
@@ -64,6 +66,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     _fpsChecked = widget.fpsChecked;
     _networkChecked = widget.networkChecked;
     _temp0Checked = widget.temp0Checked;
+    _ddrclkChecked = widget.ddrclkChecked;
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
@@ -101,6 +104,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _fps_temp = [];
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
+    List<trackData> _ddrclk_temp = [];
     int? time = 0;
     int? textf = 0;
 
@@ -116,6 +120,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
+        if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         time = profiling.ttime;
         textf = profiling.textf;
       }
@@ -136,6 +141,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_fps_temp, _fpsChecked, "FPS"),
           oldgraph(_network_temp, _networkChecked, "Network"),
           oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
+          oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
 
       // time = profiling.ttime;
           // Text("${_cpu0freqChecked}"),
