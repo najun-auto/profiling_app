@@ -83,7 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String cpu6FreqG21 = "cat /sys/devices/system/cpu/cpu6/cpufreq/scaling_cur_freq";
   String cpu7FreqG21 = "cat /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq";
   String gpuFreqG21 = "cat /sys/devices/platform/18500000.mali/clock";
-  String fpsG21 = "dumpsys SurfaceFlinger | grep default-format=4 | head -1";
+  // String fpsG21 = "dumpsys SurfaceFlinger | grep default-format=4 | head -1"; // Galaxy S21+
+  String fpsG21 = "dumpsys SurfaceFlinger | grep \"HWC frame count\""; // Galaxy S21 Ultra Game
   String temperature0G21 = "su -c cat /sys/class/thermal/thermal_zone0/temp";
   String temperature1G21 = "su -c cat /sys/class/thermal/thermal_zone1/temp";
   String temperature2G21 = "su -c cat /sys/class/thermal/thermal_zone2/temp";
@@ -484,22 +485,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void fpsResult() async{
-    List<String> _fpsResult = [];
-    int _fpsnum = 0;
+    // List<String> _fpsResult = [];
+    int _fpsResult;
+    // double _fpstemp;
+    // int _fpsnum = 0;
     int _framecounterEnd = 14;
     int _fpsValueResult = 0;
 
+    // print(fpsG21);
     var res = await Root.exec(cmd: fpsG21);
-    _fpsResult = res.toString().split(" ");
-    _fpsnum = int.parse(_fpsResult[7].substring(_framecounterEnd, _fpsResult[7].length));
+    // _fpsResult = res.toString().split(" ");
 
-    _fpsValueResult = _fpsnum - oldFpsValue;
+    _fpsResult = int.parse(res.toString().replaceAll(RegExp(r'[^0-9]'),""));
+    // print(_fpsResult);
+    // _fpsnum = int.parse(_fpsResult[7].substring(_framecounterEnd, _fpsResult[7].length));
+
+    _fpsValueResult = _fpsResult - oldFpsValue;
 
     _fpsChartData.add(trackData(xAxistmp, _fpsValueResult));
     _fpsChartData.removeAt(0);
 
 
-    oldFpsValue = _fpsnum;
+    oldFpsValue = _fpsResult;
 
     setState(() {
     });
@@ -544,7 +551,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // _ddrResult = res.toString();
     _ddrResult = res.toString().replaceAll(RegExp(r'[^0-9]'),"");
     // print(_ddrResult);
-    
+
     _ddrtemp = int.parse(_ddrResult)/1000;
     // print(_ddrtemp);
     // _ddrtemp = int.parse(_ddrResult[1]);
@@ -973,7 +980,6 @@ class _MyHomePageState extends State<MyHomePage> {
         )
     );
   }
-
 
   // Widget graphArc(List<trackData> _cpuUsageChartData, double height, String title){
   //

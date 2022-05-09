@@ -99,7 +99,11 @@ class DatabaseHelper {
   Future<int> getLastRow() async {
     var db = await database;
     final data = await db.rawQuery('SELECT * FROM ProfilingTable');
-    final lastCounter = int.parse(data.last['count'].toString());
+    int lastCounter = 0;
+    if(data.last['count'].toString().isEmpty)
+      lastCounter = 0;
+    else
+      lastCounter = int.parse(data.last['count'].toString());
 
     // print(lastCounter);
     return lastCounter;
