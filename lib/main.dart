@@ -69,6 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _fpsChecked = true;
   bool _networkChecked = true;
   bool _temp0Checked = true;
+  bool _temp1Checked = true;
+  bool _temp2Checked = true;
+  bool _temp3Checked = true;
+  bool _temp8Checked = true;
+
   bool _ddrclkChecked = true;
 
   String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
@@ -85,47 +90,21 @@ class _MyHomePageState extends State<MyHomePage> {
   String gpuFreqG21 = "cat /sys/devices/platform/18500000.mali/clock";
   // String fpsG21 = "dumpsys SurfaceFlinger | grep default-format=4 | head -1"; // Galaxy S21+
   String fpsG21 = "dumpsys SurfaceFlinger | grep \"HWC frame count\""; // Galaxy S21 Ultra Game
-  String temperature0G21 = "su -c cat /sys/class/thermal/thermal_zone0/temp";
-  String temperature1G21 = "su -c cat /sys/class/thermal/thermal_zone1/temp";
-  String temperature2G21 = "su -c cat /sys/class/thermal/thermal_zone2/temp";
-  String temperature3G21 = "su -c cat /sys/class/thermal/thermal_zone3/temp";
+  String temperature0G21 = "su -c cat /sys/class/thermal/thermal_zone0/temp"; // BIG
+  String temperature1G21 = "su -c cat /sys/class/thermal/thermal_zone1/temp"; // MID
+  String temperature2G21 = "su -c cat /sys/class/thermal/thermal_zone2/temp"; // LITTLE
+  String temperature3G21 = "su -c cat /sys/class/thermal/thermal_zone3/temp"; // G3D
   String temperature4G21 = "su -c cat /sys/class/thermal/thermal_zone4/temp";
   String temperature5G21 = "su -c cat /sys/class/thermal/thermal_zone5/temp";
   String temperature6G21 = "su -c cat /sys/class/thermal/thermal_zone6/temp";
-  String temperature7G21 = "su -c cat /sys/class/thermal/thermal_zone7/temp";
-  String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp";
+  String temperature7G21 = "su -c cat /sys/class/thermal/thermal_zone7/temp"; // AC
+  String temperature8G21 = "su -c cat /sys/class/thermal/thermal_zone8/temp"; // Battery
   String ddrclk = "su -c /data/local/tmp/clk_s.sh -d";
 
 
-  // String cpu0GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
-  // String cpu1GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor";
-  // String cpu2GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor";
-  // String cpu3GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor";
-  // String cpu4GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor";
-  // String cpu5GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor";
-  // String cpu6GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor";
-  // String cpu7GovernorPerf = "echo performance >> /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor";
-  //
-  // String dvfs3172 = "echo 3172000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfs2730 = "echo 2730000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfs2535 = "echo 2535000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfs2288 = "echo 2288000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfs2028 = "echo 2028000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfs1716 = "echo 1716000 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfsout = "cat /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max";
-  // String dvfsouttemp = "";
-
-  bool temp3172 = false;
-  bool temp2730 = false;
-  bool temp2535 = false;
-  bool temp2288 = false;
-  bool temp2028 = false;
-  bool temp1716 = false;
 
   final myController = TextEditingController();
   final cpu0freqctrl = TextEditingController();
-  // final cpu4freqctrl = TextEditingController();
-
 
 
 
@@ -138,6 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> _fpsChartData = [];
   List<trackData> _networkChartData = [];
   List<trackData> _temperature0ChartData = [];
+  List<trackData> _temperature1ChartData = [];
+  List<trackData> _temperature2ChartData = [];
+  List<trackData> _temperature3ChartData = [];
+  List<trackData> _temperature8ChartData = [];
   List<trackData> _ddrclkChartData = [];
 
 
@@ -168,6 +151,11 @@ class _MyHomePageState extends State<MyHomePage> {
     _fpsChartData = getChartData();
     _networkChartData = getChartData();
     _temperature0ChartData = getChartData();
+    _temperature1ChartData = getChartData();
+    _temperature2ChartData = getChartData();
+    _temperature3ChartData = getChartData();
+    _temperature8ChartData = getChartData();
+
     _ddrclkChartData = getChartData();
 
     // cpuGovernor();
@@ -299,6 +287,10 @@ class _MyHomePageState extends State<MyHomePage> {
         FPS: _fpsChartData[_fpsChartData.length-1].yAxis,
         Network: _networkChartData[_networkChartData.length-1].yAxis,
         Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
+        Temp1: _temperature1ChartData[_temperature1ChartData.length-1].yAxis,
+        Temp2: _temperature2ChartData[_temperature2ChartData.length-1].yAxis,
+        Temp3: _temperature3ChartData[_temperature3ChartData.length-1].yAxis,
+        Temp8: _temperature8ChartData[_temperature8ChartData.length-1].yAxis,
         ttime: timE,
         textf: int.tryParse(myController.text),
         ddrclk: _ddrclkChartData[_ddrclkChartData.length-1].yAxis,
@@ -567,13 +559,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void tempResult() async{
     int _temp0Result = 0;
+    int _temp1Result = 0;
+    int _temp2Result = 0;
+    int _temp3Result = 0;
+    int _temp8Result = 0;
+
 
     var res = await Root.exec(cmd: temperature0G21);
     _temp0Result = (int.parse(res.toString())/1000).floor();
 
+    var res1 = await Root.exec(cmd: temperature1G21);
+    _temp1Result = (int.parse(res1.toString())/1000).floor();
+
+    var res2 = await Root.exec(cmd: temperature2G21);
+    _temp2Result = (int.parse(res2.toString())/1000).floor();
+
+    var res3 = await Root.exec(cmd: temperature3G21);
+    _temp3Result = (int.parse(res3.toString())/1000).floor();
+
+    var res8 = await Root.exec(cmd: temperature8G21);
+    _temp8Result = (int.parse(res8.toString())/1000).floor();
+
+
     _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
     _temperature0ChartData.removeAt(0);
 
+    _temperature1ChartData.add(trackData(xAxistmp, _temp1Result));
+    _temperature1ChartData.removeAt(0);
+
+    _temperature2ChartData.add(trackData(xAxistmp, _temp2Result));
+    _temperature2ChartData.removeAt(0);
+
+    _temperature3ChartData.add(trackData(xAxistmp, _temp3Result));
+    _temperature3ChartData.removeAt(0);
+
+    _temperature8ChartData.add(trackData(xAxistmp, _temp8Result));
+    _temperature8ChartData.removeAt(0);
 
     setState(() {
     });
@@ -673,6 +694,11 @@ class _MyHomePageState extends State<MyHomePage> {
               fpscheckedBox(),
               netcheckedBox(),
               temp0checkedBox(),
+              temp1checkedBox(),
+              temp2checkedBox(),
+              temp3checkedBox(),
+              temp8checkedBox(),
+
               ddrclkcheckedBox(),
               Text("${currentState}"),
               Container(
@@ -842,6 +868,61 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget temp1checkedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Temp 1'),
+          value: _temp1Checked,
+          onChanged: (bool? value){
+            setState(() {
+              _temp1Checked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget temp2checkedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Temp 2'),
+          value: _temp2Checked,
+          onChanged: (bool? value){
+            setState(() {
+              _temp2Checked = value!;
+            });
+          },
+        )
+    );
+  }
+
+  Widget temp3checkedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Temp 3'),
+          value: _temp3Checked,
+          onChanged: (bool? value){
+            setState(() {
+              _temp3Checked = value!;
+            });
+          },
+        )
+    );
+  }
+  Widget temp8checkedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Temp 8'),
+          value: _temp8Checked,
+          onChanged: (bool? value){
+            setState(() {
+              _temp8Checked = value!;
+            });
+          },
+        )
+    );
+  }
+
   Widget ddrclkcheckedBox(){
     return Container(
         child: CheckboxListTile(
@@ -868,6 +949,11 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _fps_temp = [];
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
+    List<trackData> _temperature1_temp = [];
+    List<trackData> _temperature2_temp = [];
+    List<trackData> _temperature3_temp = [];
+    List<trackData> _temperature8_temp = [];
+
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     int? textf = 0;
@@ -884,6 +970,10 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
+        if(_temp1Checked == true){_temperature1_temp.add(trackData(profiling.time, profiling.Temp1));}
+        if(_temp2Checked == true){_temperature2_temp.add(trackData(profiling.time, profiling.Temp2));}
+        if(_temp3Checked == true){_temperature3_temp.add(trackData(profiling.time, profiling.Temp3));}
+        if(_temp8Checked == true){_temperature8_temp.add(trackData(profiling.time, profiling.Temp8));}
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         time = profiling.ttime;
         textf = profiling.textf;
@@ -905,7 +995,11 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_gpuFreq_temp, _gpufreqChecked, "GPU Freq"),
           oldgraph(_fps_temp, _fpsChecked, "FPS"),
           oldgraph(_network_temp, _networkChecked, "Network"),
-          oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
+          oldgraph(_temperature0_temp, _temp0Checked, "Temp 0"),
+          oldgraph(_temperature1_temp, _temp1Checked, "Temp 1"),
+          oldgraph(_temperature2_temp, _temp2Checked, "Temp 2"),
+          oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
+          oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
 
 
@@ -939,7 +1033,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // borderRadius: BorderRadius.circular(50)
             ),
           ),onTap: () async{
-            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, ddrclkChecked: _ddrclkChecked,)) );
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, temp1Checked: _temp1Checked, temp2Checked: _temp2Checked, temp3Checked: _temp3Checked, temp8Checked: _temp8Checked,ddrclkChecked: _ddrclkChecked,)) );
 
           },
           );

@@ -13,6 +13,10 @@ class Profiling {
   final int? FPS;
   final int? Network;
   final int? Temp0;
+  final int? Temp1;
+  final int? Temp2;
+  final int? Temp3;
+  final int? Temp8;
   final int? ttime;
   final int? textf;
   final int? ddrclk;
@@ -31,6 +35,10 @@ class Profiling {
     this.FPS,
     this.Network,
     this.Temp0,
+    this.Temp1,
+    this.Temp2,
+    this.Temp3,
+    this.Temp8,
     this.ttime,
     this.textf,
     this.ddrclk,
@@ -48,6 +56,10 @@ class Profiling {
     'FPS': this.FPS,
     'Network': this.Network,
     'Temp0': this.Temp0,
+    'Temp1': this.Temp1,
+    'Temp2': this.Temp2,
+    'Temp3': this.Temp3,
+    'Temp8': this.Temp8,
     'ttime': this.ttime,
     'textf': this.textf,
     'ddrclk': this.ddrclk,

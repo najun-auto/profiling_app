@@ -19,10 +19,15 @@ class GetAllDataPage extends StatefulWidget{
   final bool fpsChecked;
   final bool networkChecked;
   final bool temp0Checked;
+  final bool temp1Checked;
+  final bool temp2Checked;
+  final bool temp3Checked;
+  final bool temp8Checked;
+
   final bool ddrclkChecked;
 
 
-  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.ddrclkChecked}) : super(key: key);
+  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -47,6 +52,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   bool _fpsChecked = true;
   bool _networkChecked = true;
   bool _temp0Checked = true;
+  bool _temp1Checked = true;
+  bool _temp2Checked = true;
+  bool _temp3Checked = true;
+  bool _temp8Checked = true;
+
   bool _ddrclkChecked = true;
 
 
@@ -66,6 +76,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     _fpsChecked = widget.fpsChecked;
     _networkChecked = widget.networkChecked;
     _temp0Checked = widget.temp0Checked;
+    _temp1Checked = widget.temp1Checked;
+    _temp2Checked = widget.temp2Checked;
+    _temp3Checked = widget.temp3Checked;
+    _temp8Checked = widget.temp8Checked;
+
     _ddrclkChecked = widget.ddrclkChecked;
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
@@ -104,6 +119,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _fps_temp = [];
     List<trackData> _network_temp = [];
     List<trackData> _temperature0_temp = [];
+    List<trackData> _temperature1_temp = [];
+    List<trackData> _temperature2_temp = [];
+    List<trackData> _temperature3_temp = [];
+    List<trackData> _temperature8_temp = [];
+
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     int? textf = 0;
@@ -120,6 +140,10 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
         if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
+        if(_temp1Checked == true){_temperature1_temp.add(trackData(profiling.time, profiling.Temp1));}
+        if(_temp2Checked == true){_temperature2_temp.add(trackData(profiling.time, profiling.Temp2));}
+        if(_temp3Checked == true){_temperature3_temp.add(trackData(profiling.time, profiling.Temp3));}
+        if(_temp8Checked == true){_temperature8_temp.add(trackData(profiling.time, profiling.Temp8));}
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         time = profiling.ttime;
         textf = profiling.textf;
@@ -141,6 +165,10 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_fps_temp, _fpsChecked, "FPS"),
           oldgraph(_network_temp, _networkChecked, "Network"),
           oldgraph(_temperature0_temp, _temp0Checked, "Temp"),
+          oldgraph(_temperature1_temp, _temp1Checked, "Temp 1"),
+          oldgraph(_temperature2_temp, _temp2Checked, "Temp 2"),
+          oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
+          oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
 
       // time = profiling.ttime;

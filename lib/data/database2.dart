@@ -11,7 +11,7 @@ import 'profiling.dart';
 
 class DatabaseHelper {
   static final _databaseName = "profiling.db";
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 2;
   // static final profilingTable = "profilingtable";
 
   Database? _database;
@@ -47,7 +47,11 @@ class DatabaseHelper {
     GPUFreq INTEGER DEFAULT 0,
     FPS INTEGER DEFAULT 0,
     Network INTEGER DEFAULT 0,
-    Temp0 INTEGER DEFAULT 0, 
+    Temp0 INTEGER DEFAULT 0,
+    Temp1 INTEGER DEFAULT 0,
+    Temp2 INTEGER DEFAULT 0,
+    Temp3 INTEGER DEFAULT 0,
+    Temp8 INTEGER DEFAULT 0,   
     ttime INTEGER DEFAULT 0,
     textf INTEGER DEFAULT 0,
     ddrclk INTEGER DEFAULT 0
@@ -89,6 +93,10 @@ class DatabaseHelper {
           FPS: maps[index]['FPS'] as int,
           Network: maps[index]['Network'] as int,
           Temp0: maps[index]['Temp0'] as int,
+          Temp1: maps[index]['Temp1'] as int,
+          Temp2: maps[index]['Temp2'] as int,
+          Temp3: maps[index]['Temp3'] as int,
+          Temp8: maps[index]['Temp8'] as int,
           ttime: maps[index]['ttime'] as int,
           textf: maps[index]['textf'] as int,
           ddrclk: maps[index]['ddrclk'] as int,
