@@ -1,4 +1,9 @@
 
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+
 class Utils {
 
   static int getFormatTime(DateTime date){
@@ -17,4 +22,23 @@ class Utils {
   static String makeTwoDigit(int num){
     return num.toString().padLeft(2, "0");
   }
+
+  static Image imageFromBase64String(String? base64String) {
+    return Image.memory(
+      base64Decode(base64String!),
+      // fit: BoxFit,
+      width: 40,
+      height: 200,
+      alignment: Alignment.center,
+    );
+  }
+
+  static Uint8List dataFromBase64String(String base64String) {
+    return base64Decode(base64String);
+  }
+
+  static String base64String(Uint8List data) {
+    return base64Encode(data);
+  }
+
 }

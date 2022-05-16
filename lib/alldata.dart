@@ -126,7 +126,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
 
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
-    int? textf = 0;
+    String? textf;
 
 
     for(var profiling in profilings){

@@ -53,8 +53,9 @@ class DatabaseHelper {
     Temp3 INTEGER DEFAULT 0,
     Temp8 INTEGER DEFAULT 0,   
     ttime INTEGER DEFAULT 0,
-    textf INTEGER DEFAULT 0,
-    ddrclk INTEGER DEFAULT 0
+    textf String,
+    ddrclk INTEGER DEFAULT 0,
+    capimg String
     )
   ''';
 
@@ -98,8 +99,9 @@ class DatabaseHelper {
           Temp3: maps[index]['Temp3'] as int,
           Temp8: maps[index]['Temp8'] as int,
           ttime: maps[index]['ttime'] as int,
-          textf: maps[index]['textf'] as int,
+          textf: maps[index]['textf'],
           ddrclk: maps[index]['ddrclk'] as int,
+          capimg: maps[index]['capimg'],
       );
     });
   }
