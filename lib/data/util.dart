@@ -24,11 +24,18 @@ class Utils {
   }
 
   static Image imageFromBase64String(String? base64String) {
+    // return Container(
+    //   height: 40,
+    //   width: 200,
+    //   Image.memory(base64Decode(base64String!),
+    //     fit: BoxFit,)
+    // );
+
     return Image.memory(
       base64Decode(base64String!),
-      // fit: BoxFit,
-      width: 40,
-      height: 200,
+      fit: BoxFit.fill,
+      width: 150,
+      height: 300,
       alignment: Alignment.center,
     );
   }

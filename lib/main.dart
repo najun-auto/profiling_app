@@ -2,11 +2,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
+// import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:root/root.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -14,6 +15,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:untitled2/alldata.dart';
 import 'package:untitled2/data/database2.dart';
 import 'package:untitled2/data/profiling.dart';
+import 'package:untitled2/getpicture.dart';
 
 import 'data/util.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -114,8 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final myController = TextEditingController();
   final cpu0freqctrl = TextEditingController();
-  final capimgctrl = TextEditingController();
-  int imgcounter = 1;
+  // final capimgctrl = TextEditingController();
+  // int imgcounter = 1;
 
 
   List<trackData> _cpuUsageChartData = [];
@@ -132,6 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<trackData> _temperature3ChartData = [];
   List<trackData> _temperature8ChartData = [];
   List<trackData> _ddrclkChartData = [];
+
+  List<String?> capresult = [];
+
 
 
   int cpuUsageTemp_f = 0;
@@ -172,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _ddrclkChartData = getChartData();
 
-    capimgctrl.text = "0";
+    // capimgctrl.text = "0";
     // cpuGovernor();
 
     // clockSet();
@@ -680,11 +685,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     floatingCounter++;
                   }),
               FloatingActionButton(
-                child: Icon(Icons.wb_incandescent_outlined),
-                onPressed: () {
+                child: Icon(Icons.photo_camera),
+                onPressed: () async {
+
+
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
 
                   // xAxistmp = 2;
-                  imgcounter = int.parse(capimgctrl.text);
+                  // imgcounter = int.parse(capimgctrl.text);
                   setState(() {
                   });
                   // await dbHelper.InsertProfiling(todayProfiling);
@@ -1012,7 +1020,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     String? textf;
-    List<String?> capresult = [];
+    // List<String?> capresult = [];
 
     // int temp = 0;
 
@@ -1060,13 +1068,16 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
 
-          Container(
-            margin: EdgeInsets.all(8),
-            child: TextField(
-              controller: capimgctrl,
-            ),
-          ),
-          Utils.imageFromBase64String(capresult[imgcounter]),
+          // Container(
+          //   margin: EdgeInsets.all(8),
+          //   child: TextField(
+          //     controller: capimgctrl,
+          //   ),
+          // ),
+          // Text("1"),
+          // getAllpicture(capresult),
+          // Utils.imageFromBase64String(capresult[1]),
+          // Utils.imageFromBase64String(capresult[2]),
 
 
           // oldgraph(_cpu0Freq_temp),
@@ -1079,6 +1090,53 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+  // Widget getAllpicture(List<String?> capresulttemp){
+  //   // int temp = 0;
+  //   // print(capresulttemp.length);
+  //   return capresulttemp.isEmpty ? Container() : Container(
+  //     margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
+  //     child: ListView(
+  //       scrollDirection: Axis.vertical,
+  //       children: List.generate(capresulttemp.length, (_idx){
+  //         // temp++;
+  //         // print(_idx);
+  //         return Container(
+  //           height: 70,
+  //           width: 700,
+  //           margin: EdgeInsets.symmetric(vertical: 10),
+  //           child: Text("${_idx}"),
+  //         );
+  //       }),
+  //     ),
+  //   );
+  // }
+
+  Widget getAllpicture(){
+    int temp = 0;
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: List.generate(1, (_idx){
+          temp++;
+          return InkWell(child: Container(
+            height: 70,
+            width: 700,
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Text("Picture List"),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blue),
+              // borderRadius: BorderRadius.circular(50)
+            ),
+          ),onTap: () async{
+            // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, temp1Checked: _temp1Checked, temp2Checked: _temp2Checked, temp3Checked: _temp3Checked, temp8Checked: _temp8Checked,ddrclkChecked: _ddrclkChecked,)) );
+
+          },
+          );
+        }),
+      ),
+    );
+  }
 
   Widget getAllData(){
     int temp = 0;
