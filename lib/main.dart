@@ -120,20 +120,20 @@ class _MyHomePageState extends State<MyHomePage> {
   // int imgcounter = 1;
 
 
-  List<trackData> _cpuUsageChartData = [];
-  List<trackData> _gpuUsageChartData = [];
-  List<trackData> _cpu0FreqChartData = [];
-  List<trackData> _cpu4FreqChartData = [];
-  List<trackData> _cpu7FreqChartData = [];
-  List<trackData> _gpuFreqChartData = [];
-  List<trackData> _fpsChartData = [];
-  List<trackData> _networkChartData = [];
-  List<trackData> _temperature0ChartData = [];
-  List<trackData> _temperature1ChartData = [];
-  List<trackData> _temperature2ChartData = [];
-  List<trackData> _temperature3ChartData = [];
-  List<trackData> _temperature8ChartData = [];
-  List<trackData> _ddrclkChartData = [];
+  List<int> _cpuUsageChartData = [];
+  List<int> _gpuUsageChartData = [];
+  List<int> _cpu0FreqChartData = [];
+  List<int> _cpu4FreqChartData = [];
+  List<int> _cpu7FreqChartData = [];
+  List<int> _gpuFreqChartData = [];
+  List<int> _fpsChartData = [];
+  List<int> _networkChartData = [];
+  List<int> _temperature0ChartData = [];
+  List<int> _temperature1ChartData = [];
+  List<int> _temperature2ChartData = [];
+  List<int> _temperature3ChartData = [];
+  List<int> _temperature8ChartData = [];
+  List<int> _ddrclkChartData = [];
 
   List<String?> capresult = [];
 
@@ -148,7 +148,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // late ChartSeriesController _chartSeriesController;
   Timer _timer = Timer(const Duration(seconds: 100), (){});
-  int floatingCounter = 0;
+  // int floatingCounter = 0;
+
+  int screenCoutner = 0;
 
   @override
   void initState() {
@@ -161,21 +163,21 @@ class _MyHomePageState extends State<MyHomePage> {
     getCounter();
     bakgroundset();
     // _start();
-    _cpuUsageChartData = getChartData();
-    _gpuUsageChartData = getChartData();
-    _cpu0FreqChartData = getChartData();
-    _cpu4FreqChartData = getChartData();
-    _cpu7FreqChartData = getChartData();
-    _gpuFreqChartData = getChartData();
-    _fpsChartData = getChartData();
-    _networkChartData = getChartData();
-    _temperature0ChartData = getChartData();
-    _temperature1ChartData = getChartData();
-    _temperature2ChartData = getChartData();
-    _temperature3ChartData = getChartData();
-    _temperature8ChartData = getChartData();
+    // _cpuUsageChartData = getChartData();
+    // _gpuUsageChartData = getChartData();
+    // _cpu0FreqChartData = getChartData();
+    // _cpu4FreqChartData = getChartData();
+    // _cpu7FreqChartData = getChartData();
+    // _gpuFreqChartData = getChartData();
+    // _fpsChartData = getChartData();
+    // _networkChartData = getChartData();
+    // _temperature0ChartData = getChartData();
+    // _temperature1ChartData = getChartData();
+    // _temperature2ChartData = getChartData();
+    // _temperature3ChartData = getChartData();
+    // _temperature8ChartData = getChartData();
 
-    _ddrclkChartData = getChartData();
+    // _ddrclkChartData = getChartData();
 
     // capimgctrl.text = "0";
     // cpuGovernor();
@@ -257,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-  int xAxistmp = 2;
+  int xAxistmp = 1;
   List<trackData> getChartData(){
     final List<trackData> chartData = [
       trackData(1, 1),
@@ -278,6 +280,34 @@ class _MyHomePageState extends State<MyHomePage> {
     return chartData;
   }
 
+  void dbUpate(){
+
+    for(int j = 1; j < xAxistmp; j++) {
+      Profiling todayProfiling = Profiling(
+        time: j,
+        count: testCounter,
+        CPUusage: _cpuUsageChartData[j],
+        GPUusage: _gpuUsageChartData[j],
+        CPU0Freq: _cpu0FreqChartData[j],
+        CPU4Freq: _cpu4FreqChartData[j],
+        CPU7Freq: _cpu7FreqChartData[j],
+        GPUFreq: _gpuFreqChartData[j],
+        FPS: _fpsChartData[j],
+        Network: _networkChartData[j],
+        Temp0: _temperature0ChartData[j],
+        Temp1: _temperature1ChartData[j],
+        Temp2: _temperature2ChartData[j],
+        Temp3: _temperature3ChartData[j],
+        Temp8: _temperature8ChartData[j],
+        ttime: timE,
+        textf: myController.text,
+        ddrclk: _ddrclkChartData[j],
+        capimg: capResult,
+      );
+      putProfiling(todayProfiling);
+    }
+
+  }
 
   void updateDataSource(Timer timer){
 
@@ -302,28 +332,28 @@ class _MyHomePageState extends State<MyHomePage> {
     // if(_temp0Checked == true){tempResult();}
 
 
-    Profiling todayProfiling = Profiling(
-        time: xAxistmp,
-        count: testCounter,
-        CPUusage: _cpuUsageChartData[_cpuUsageChartData.length-1].yAxis,
-        GPUusage: _gpuUsageChartData[_gpuUsageChartData.length-1].yAxis,
-        CPU0Freq: _cpu0FreqChartData[_cpu0FreqChartData.length-1].yAxis,
-        CPU4Freq: _cpu4FreqChartData[_cpu4FreqChartData.length-1].yAxis,
-        CPU7Freq: _cpu7FreqChartData[_cpu7FreqChartData.length-1].yAxis,
-        GPUFreq: _gpuFreqChartData[_gpuFreqChartData.length-1].yAxis,
-        FPS: _fpsChartData[_fpsChartData.length-1].yAxis,
-        Network: _networkChartData[_networkChartData.length-1].yAxis,
-        Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
-        Temp1: _temperature1ChartData[_temperature1ChartData.length-1].yAxis,
-        Temp2: _temperature2ChartData[_temperature2ChartData.length-1].yAxis,
-        Temp3: _temperature3ChartData[_temperature3ChartData.length-1].yAxis,
-        Temp8: _temperature8ChartData[_temperature8ChartData.length-1].yAxis,
-        ttime: timE,
-        textf: myController.text,
-        ddrclk: _ddrclkChartData[_ddrclkChartData.length-1].yAxis,
-        capimg: capResult,
-    );
-    putProfiling(todayProfiling);
+    // Profiling todayProfiling = Profiling(
+    //     time: xAxistmp,
+    //     count: testCounter,
+    //     CPUusage: _cpuUsageChartData[_cpuUsageChartData.length-1].yAxis,
+    //     GPUusage: _gpuUsageChartData[_gpuUsageChartData.length-1].yAxis,
+    //     CPU0Freq: _cpu0FreqChartData[_cpu0FreqChartData.length-1].yAxis,
+    //     CPU4Freq: _cpu4FreqChartData[_cpu4FreqChartData.length-1].yAxis,
+    //     CPU7Freq: _cpu7FreqChartData[_cpu7FreqChartData.length-1].yAxis,
+    //     GPUFreq: _gpuFreqChartData[_gpuFreqChartData.length-1].yAxis,
+    //     FPS: _fpsChartData[_fpsChartData.length-1].yAxis,
+    //     Network: _networkChartData[_networkChartData.length-1].yAxis,
+    //     Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
+    //     Temp1: _temperature1ChartData[_temperature1ChartData.length-1].yAxis,
+    //     Temp2: _temperature2ChartData[_temperature2ChartData.length-1].yAxis,
+    //     Temp3: _temperature3ChartData[_temperature3ChartData.length-1].yAxis,
+    //     Temp8: _temperature8ChartData[_temperature8ChartData.length-1].yAxis,
+    //     ttime: timE,
+    //     textf: myController.text,
+    //     ddrclk: _ddrclkChartData[_ddrclkChartData.length-1].yAxis,
+    //     capimg: capResult,
+    // );
+    // putProfiling(todayProfiling);
 
 
     xAxistmp++;
@@ -342,12 +372,13 @@ class _MyHomePageState extends State<MyHomePage> {
     //   print(onError);
     // });
 
-    int screen = 0;
-    var res = await Root.exec(cmd: screencap);
-    String imagepath = "/storage/emulated/0/Download/screen.jpg";
-    File imagefile = File(imagepath);
-    Uint8List imagebytes = await imagefile.readAsBytes();
-    capResult = Utils.base64String(imagebytes);
+    // int screen = 0;
+    var res = await Root.exec(cmd: "screencap -p /storage/emulated/0/Download/screen${screenCoutner}.jpg");
+    screenCoutner++;
+    // String imagepath = "/storage/emulated/0/Download/screen.jpg";
+    // File imagefile = File(imagepath);
+    // Uint8List imagebytes = await imagefile.readAsBytes();
+    // capResult = Utils.base64String(imagebytes);
     setState(() {
       // gpuUsageResult = int.parse(res.toString());
       // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
@@ -362,8 +393,12 @@ class _MyHomePageState extends State<MyHomePage> {
     var res = await Root.exec(cmd: gpuUsageG21);
     setState(() {
       gpuUsageResult = int.parse(res.toString());
-      _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
-      _gpuUsageChartData.removeAt(0);
+      // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
+      // _gpuUsageChartData.removeAt(0);
+
+      _gpuUsageChartData.add(gpuUsageResult);
+
+
     });
 
     // print("${await pipeline.stdout.text} instances of waitFor");
@@ -461,9 +496,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     oldCpuUsageTemp = cpuUsageTemp;
 
-    _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
-    _cpuUsageChartData.removeAt(0);
-
+    // _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
+    // _cpuUsageChartData.removeAt(0);
+    _cpuUsageChartData.add(cpuUsageResult);
 
 
     setState(() {
@@ -491,20 +526,29 @@ class _MyHomePageState extends State<MyHomePage> {
     cpu4FreqResult = int.parse(res4.toString())/1000;
     cpu7FreqResult = int.parse(res7.toString())/1000;
 
-    _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
-    _cpu0FreqChartData.removeAt(0);
+    // _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
+    // _cpu0FreqChartData.removeAt(0);
+    //
+    // _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
+    // _cpu4FreqChartData.removeAt(0);
+    //
+    // _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
+    // _cpu7FreqChartData.removeAt(0);
+
+    //
+    // _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
+    // _cpu0FreqChartData.removeAt(0);
+
+    _cpu0FreqChartData.add(cpu0FreqResult.toInt());
+    _cpu4FreqChartData.add(cpu4FreqResult.toInt());
+    _cpu7FreqChartData.add(cpu7FreqResult.toInt());
 
 
-
-    _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
-    _cpu4FreqChartData.removeAt(0);
-
-
-
-    _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
-    _cpu7FreqChartData.removeAt(0);
-
-
+    // _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
+    // _cpu4FreqChartData.removeAt(0);
+    //
+    // _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
+    // _cpu7FreqChartData.removeAt(0);
 
     setState(() {
 
@@ -519,9 +563,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     gpuFreqResult = int.parse(res0.toString())/1000;
 
-    _gpuFreqChartData.add(trackData(xAxistmp, gpuFreqResult.toInt()));
-    _gpuFreqChartData.removeAt(0);
+    // _gpuFreqChartData.add(trackData(xAxistmp, gpuFreqResult.toInt()));
+    // _gpuFreqChartData.removeAt(0);
 
+    _gpuFreqChartData.add(gpuFreqResult.toInt());
 
     setState(() {
 
@@ -546,10 +591,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // _fpsnum = int.parse(_fpsResult[7].substring(_framecounterEnd, _fpsResult[7].length));
 
     _fpsValueResult = _fpsResult - oldFpsValue;
+    //
+    // _fpsChartData.add(trackData(xAxistmp, _fpsValueResult));
+    // _fpsChartData.removeAt(0);
 
-    _fpsChartData.add(trackData(xAxistmp, _fpsValueResult));
-    _fpsChartData.removeAt(0);
-
+    _fpsChartData.add(_fpsValueResult);
 
     oldFpsValue = _fpsResult;
 
@@ -578,8 +624,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     oldNetTraffic = _netRecv + _netSend;
 
-    _networkChartData.add(trackData(xAxistmp, _netTraffic.toInt()));
-    _networkChartData.removeAt(0);
+    // _networkChartData.add(trackData(xAxistmp, _netTraffic.toInt()));
+    // _networkChartData.removeAt(0);
+
+    _networkChartData.add(_netTraffic.toInt());
 
 
     setState(() {
@@ -602,8 +650,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(_ddrtemp);
     // _ddrtemp = int.parse(_ddrResult[1]);
 
-    _ddrclkChartData.add(trackData(xAxistmp, _ddrtemp.toInt()));
-    _ddrclkChartData.removeAt(0);
+    // _ddrclkChartData.add(trackData(xAxistmp, _ddrtemp.toInt()));
+    // _ddrclkChartData.removeAt(0);
+
+    _ddrclkChartData.add(_ddrtemp.toInt());
+    // _ddrclkChartData.removeAt(0);
+
 
 
     setState(() {
@@ -639,20 +691,26 @@ class _MyHomePageState extends State<MyHomePage> {
     _temp8Result = (int.parse(res8.toString())/1000).floor();
 
 
-    _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
-    _temperature0ChartData.removeAt(0);
+    // _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
+    // _temperature0ChartData.removeAt(0);
+    //
+    // _temperature1ChartData.add(trackData(xAxistmp, _temp1Result));
+    // _temperature1ChartData.removeAt(0);
+    //
+    // _temperature2ChartData.add(trackData(xAxistmp, _temp2Result));
+    // _temperature2ChartData.removeAt(0);
+    //
+    // _temperature3ChartData.add(trackData(xAxistmp, _temp3Result));
+    // _temperature3ChartData.removeAt(0);
+    //
+    // _temperature8ChartData.add(trackData(xAxistmp, _temp8Result));
+    // _temperature8ChartData.removeAt(0);
 
-    _temperature1ChartData.add(trackData(xAxistmp, _temp1Result));
-    _temperature1ChartData.removeAt(0);
-
-    _temperature2ChartData.add(trackData(xAxistmp, _temp2Result));
-    _temperature2ChartData.removeAt(0);
-
-    _temperature3ChartData.add(trackData(xAxistmp, _temp3Result));
-    _temperature3ChartData.removeAt(0);
-
-    _temperature8ChartData.add(trackData(xAxistmp, _temp8Result));
-    _temperature8ChartData.removeAt(0);
+    _temperature0ChartData.add(_temp0Result);
+    _temperature1ChartData.add(_temp1Result);
+    _temperature2ChartData.add(_temp2Result);
+    _temperature3ChartData.add(_temp3Result);
+    _temperature8ChartData.add(_temp8Result);
 
     setState(() {
     });
@@ -671,33 +729,37 @@ class _MyHomePageState extends State<MyHomePage> {
               FloatingActionButton(
                 child: Icon(Icons.wb_incandescent_rounded),
                   onPressed: (){
-                    if(floatingCounter % 2 == 1) {
-                      _timer.cancel();
-                      currentState = false;
-                    }else{
+                    // if(floatingCounter % 2 == 1) {
+                    //   _timer.cancel();
+                    //   currentState = false;
+                    // }else{
                       testCounter++;
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
                       currentState = true;
                       timE = Utils.getFormatTime(DateTime.now());
-                      xAxistmp = 2;
+                      xAxistmp = 1;
                       clockSet();
-                    }
-                    floatingCounter++;
+                    // }
+                    // floatingCounter++;
                   }),
-              // FloatingActionButton(
-              //   child: Icon(Icons.photo_camera),
-              //   onPressed: () async {
-              //
-              //
-              //     await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
-              //
-              //     // xAxistmp = 2;
-              //     // imgcounter = int.parse(capimgctrl.text);
-              //     setState(() {
-              //     });
-              //     // await dbHelper.InsertProfiling(todayProfiling);
-              //   },
-              // ),
+              FloatingActionButton(
+                child: Icon(Icons.wb_incandescent_outlined),
+                onPressed: () {
+                  _timer.cancel();
+                  currentState = false;
+                  dbUpate();
+
+
+
+                  // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
+
+                  // xAxistmp = 2;
+                  // imgcounter = int.parse(capimgctrl.text);
+                  setState(() {
+                  });
+                  // await dbHelper.InsertProfiling(todayProfiling);
+                },
+              ),
 
             ],
           ),
@@ -1079,7 +1141,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text("pciture"),
           ),
             onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
+              // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
               setState(() {});
             },
           ),
