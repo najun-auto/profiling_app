@@ -109,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String ddrclk = "su -c /data/local/tmp/clk_s.sh -d";
 
   String screencap = "screencap -p /storage/emulated/0/Download/screen.jpg";
-  String capResult = "";
+  // String capResult = "";
 
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -280,9 +280,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return chartData;
   }
 
-  void dbUpate(){
+  void dbUpate() async {
 
-    for(int j = 1; j < xAxistmp; j++) {
+    String capResult = "";
+
+    // print("last temp: ${xAxistmp}");
+    for(int j = 1; j < xAxistmp-1; j++) {
+
+      String imagepath = "/storage/emulated/0/Download/screen${j}.jpg";
+      File imagefile = File(imagepath);
+      Uint8List imagebytes = await imagefile.readAsBytes();
+      capResult = Utils.base64String(imagebytes);
+
       Profiling todayProfiling = Profiling(
         time: j,
         count: testCounter,
@@ -306,6 +315,12 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       putProfiling(todayProfiling);
     }
+
+  }
+
+  void imgRemove() async{
+
+    var res = await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
   }
 
@@ -373,8 +388,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // });
 
     // int screen = 0;
-    var res = await Root.exec(cmd: "screencap -p /storage/emulated/0/Download/screen${screenCoutner}.jpg");
-    screenCoutner++;
+    var res = await Root.exec(cmd: "screencap -p /storage/emulated/0/Download/screen${xAxistmp}.jpg");
+    // print("temp: ${xAxistmp}");
+    // screenCoutner++;
     // String imagepath = "/storage/emulated/0/Download/screen.jpg";
     // File imagefile = File(imagepath);
     // Uint8List imagebytes = await imagefile.readAsBytes();
@@ -748,8 +764,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _timer.cancel();
                   currentState = false;
                   dbUpate();
-
-
+                  // imgRemove();
 
                   // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
 
@@ -1082,7 +1097,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     String? textf;
-    // List<String?> capresult = [];
+    List<String?> capresultTemp = [];
 
     // int temp = 0;
 
@@ -1104,7 +1119,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         time = profiling.ttime;
         textf = profiling.textf;
-        capresult.add(profiling.capimg);
+        capresultTemp.add(profiling.capimg);
       }
 
     }
@@ -1141,7 +1156,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text("pciture"),
           ),
             onTap: () async {
-              // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
+              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresultTemp)) );
               setState(() {});
             },
           ),
