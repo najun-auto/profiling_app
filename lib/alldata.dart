@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:untitled2/data/database2.dart';
+import 'package:untitled2/getpicture.dart';
 
 import 'data/profiling.dart';
 
@@ -127,6 +128,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     String? textf;
+    List<String?> capresultTemp = [];
 
 
     for(var profiling in profilings){
@@ -147,6 +149,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         time = profiling.ttime;
         textf = profiling.textf;
+        capresultTemp.add(profiling.capimg);
       }
 
     }
@@ -170,6 +173,21 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
+          InkWell(child: Container(
+            margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blue),
+              // borderRadius: BorderRadius.circular(100)
+            ),
+            child: Text("pciture"),
+          ),
+            onTap: () async {
+              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresultTemp)) );
+              setState(() {});
+            },
+          ),
 
       // time = profiling.ttime;
           // Text("${_cpu0freqChecked}"),

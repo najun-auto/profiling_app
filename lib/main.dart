@@ -316,6 +316,8 @@ class _MyHomePageState extends State<MyHomePage> {
       putProfiling(todayProfiling);
     }
 
+
+
   }
 
   void imgRemove() async{
@@ -749,6 +751,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     //   _timer.cancel();
                     //   currentState = false;
                     // }else{
+
+                      _cpuUsageChartData.clear();
+                      _gpuUsageChartData.clear();
+                      _cpu0FreqChartData.clear();
+                      _cpu4FreqChartData.clear();
+                      _cpu7FreqChartData.clear();
+                      _gpuFreqChartData.clear();
+                      _fpsChartData.clear();
+                      _networkChartData.clear();
+                      _temperature0ChartData.clear();
+                      _temperature1ChartData.clear();
+                      _temperature2ChartData.clear();
+                      _temperature3ChartData.clear();
+                      _temperature8ChartData.clear();
+                      _ddrclkChartData.clear();
+
                       testCounter++;
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
                       currentState = true;

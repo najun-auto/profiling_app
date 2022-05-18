@@ -48,12 +48,12 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(child: getAllPicture()),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.arrow_back),
+      //   onPressed: () {
+      //     Navigator.of(context).pop();
+      //   },
+      // ),
     );
   }
 
