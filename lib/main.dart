@@ -684,20 +684,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                     floatingCounter++;
                   }),
-              FloatingActionButton(
-                child: Icon(Icons.photo_camera),
-                onPressed: () async {
-
-
-                  await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
-
-                  // xAxistmp = 2;
-                  // imgcounter = int.parse(capimgctrl.text);
-                  setState(() {
-                  });
-                  // await dbHelper.InsertProfiling(todayProfiling);
-                },
-              ),
+              // FloatingActionButton(
+              //   child: Icon(Icons.photo_camera),
+              //   onPressed: () async {
+              //
+              //
+              //     await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
+              //
+              //     // xAxistmp = 2;
+              //     // imgcounter = int.parse(capimgctrl.text);
+              //     setState(() {
+              //     });
+              //     // await dbHelper.InsertProfiling(todayProfiling);
+              //   },
+              // ),
 
             ],
           ),
@@ -1047,6 +1047,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     }
 
+
     return profilings.isEmpty ? Container() : Container(
       child: ListView(
         children: [
@@ -1067,23 +1068,21 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
-
-          // Container(
-          //   margin: EdgeInsets.all(8),
-          //   child: TextField(
-          //     controller: capimgctrl,
-          //   ),
-          // ),
-          // Text("1"),
-          // getAllpicture(capresult),
-          // Utils.imageFromBase64String(capresult[1]),
-          // Utils.imageFromBase64String(capresult[2]),
-
-
-          // oldgraph(_cpu0Freq_temp),
-          // oldgraph(_cpu4Freq_temp),
-          // oldgraph(_cpu7Freq_temp),
-          // oldgraph(_temperature0_temp),
+          InkWell(child: Container(
+            margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue),
+                // borderRadius: BorderRadius.circular(100)
+            ),
+            child: Text("pciture"),
+          ),
+            onTap: () async {
+              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
+              setState(() {});
+            },
+          ),
         ],
       ),
     );
