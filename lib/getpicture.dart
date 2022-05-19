@@ -62,8 +62,8 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
 
   Widget getAllPicture(){
     int temp = 0;
-    int imgCounter = 100;
-    Uint8List temp2 = Uint8List(0);
+    int imgCounter = capResult.length > 100 ? 100 : capResult.length;
+    // Uint8List temp2 = Uint8List(0);
     // print("capresult length : ${capResult.length}");
     return Container(
       // margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
@@ -78,7 +78,7 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text("Time : ${_idx}"),
-                Utils.imageFromBase64String(capResult[_idx] != null ? capResult[_idx] : temp2),
+                Utils.imageFromBase64String(capResult[_idx]),
               ],
 
             ),
