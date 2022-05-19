@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _temperature8ChartData = [];
   List<int> _ddrclkChartData = [];
 
-  List<String?> capresult = [];
+  List<Uint8List> capresultData = [];
 
 
 
@@ -280,18 +280,42 @@ class _MyHomePageState extends State<MyHomePage> {
     return chartData;
   }
 
+  // void imgdbUpdate() async {
+  //
+  //
+  //   for(int j = 3; j < xAxistmp-2; j++) {
+  //     String imagepath = "/storage/emulated/0/Download/screen${j}.jpg";
+  //     File imagefile = File(imagepath);
+  //     Uint8List imagebytes = await imagefile.readAsBytes();
+  //     capresultData[j-3] = Utils.base64String(imagebytes);
+  //     // if(capResult == null){
+  //     //   capResult = "";
+  //     //   print("Nullllllllllllllll");
+  //     // }
+  //   }
+  //
+  // }
+
   void dbUpate() async {
 
     String capResult = "";
 
     // print("last temp: ${xAxistmp}");
-    for(int j = 1; j < xAxistmp-1; j++) {
-
+    for(int j = 1; j < xAxistmp-2; j++) {
       String imagepath = "/storage/emulated/0/Download/screen${j}.jpg";
       File imagefile = File(imagepath);
       Uint8List imagebytes = await imagefile.readAsBytes();
-      capResult = Utils.base64String(imagebytes);
+      // String temp = utf8.decode(imagebytes);
+      // imagepath.fromCharCodes(imagebytes);
+      capresultData.add(imagebytes);
+      // capresultData.add(Utils.base64String(imagebytes));
+      // if(capResult == null){
+      //   capResult = "";
+      //   print("Nullllllllllllllll");
+      // }
+    }
 
+    for(int j = 1; j < xAxistmp-3; j++) {
       Profiling todayProfiling = Profiling(
         time: j,
         count: testCounter,
@@ -311,8 +335,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ttime: timE,
         textf: myController.text,
         ddrclk: _ddrclkChartData[j],
-        capimg: capResult,
+        capimg: capresultData[j],
       );
+      // print(capresultData[j-3]);
       putProfiling(todayProfiling);
     }
 
@@ -746,7 +771,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FloatingActionButton(
                 child: Icon(Icons.wb_incandescent_rounded),
-                  onPressed: (){
+                  onPressed: () {
                     // if(floatingCounter % 2 == 1) {
                     //   _timer.cancel();
                     //   currentState = false;
@@ -766,6 +791,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _temperature3ChartData.clear();
                       _temperature8ChartData.clear();
                       _ddrclkChartData.clear();
+                      capresultData.clear();
+
+                      // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
                       testCounter++;
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
@@ -819,6 +847,7 @@ class _MyHomePageState extends State<MyHomePage> {
               });
               if(selectIndex == 1){
                 getAllProfilingData();
+                // dbUpate();
                 // getAllProfiling();
                 // print(allprofilings[0].title);
               }
@@ -1115,7 +1144,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     String? textf;
-    List<String?> capresultTemp = [];
+    List<Uint8List> capresultTemp = [];
 
     // int temp = 0;
 

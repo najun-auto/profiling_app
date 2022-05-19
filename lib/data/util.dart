@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class Utils {
     return num.toString().padLeft(2, "0");
   }
 
-  static Image imageFromBase64String(String? base64String) {
+  static Image imageFromBase64String(Uint8List base64String) {
     // return Container(
     //   height: 40,
     //   width: 200,
@@ -31,8 +32,15 @@ class Utils {
     //     fit: BoxFit,)
     // );
 
+    // String temp = (num.tryParse(base64String)).toString();
+
+    // String temp = "";
+    // if(base64String != null) {
+    //   temp = base64String;
+    // }
     return Image.memory(
-      base64Decode(base64String!),
+      // base64Decode(base64String), //base64String),
+      base64String,
       fit: BoxFit.fill,
       width: 150,
       height: 300,

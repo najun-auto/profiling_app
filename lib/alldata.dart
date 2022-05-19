@@ -1,6 +1,8 @@
 
 
 // import 'package:flutter/cupertino.dart';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:untitled2/data/database2.dart';
@@ -128,7 +130,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     String? textf;
-    List<String?> capresultTemp = [];
+    List<Uint8List> capresultTemp = [];
 
 
     for(var profiling in profilings){

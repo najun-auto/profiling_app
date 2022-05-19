@@ -2,6 +2,8 @@
 
 
 
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +13,7 @@ import 'data/util.dart';
 
 class getAllPicturePage extends StatefulWidget{
 
-  final List<String?> capresult;
+  final List<Uint8List> capresult;
 
   getAllPicturePage({Key? key, required this.capresult}) : super(key: key);
 
@@ -25,14 +27,14 @@ class getAllPicturePage extends StatefulWidget{
 
 class _getAllPicturePageState extends State<getAllPicturePage>{
 
-  List<String?> capResult = [];
+  List<Uint8List> capResult = [];
 
   @override
   void initState() {
     // TODO: implement initState
     // getCounterProfilinig();
     capResult = widget.capresult;
-    print(capResult);
+    // print(capResult);
 
     super.initState();
   }
@@ -48,22 +50,26 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(child: getAllPicture()),
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.arrow_back),
-      //   onPressed: () {
-      //     Navigator.of(context).pop();
-      //   },
-      // ),
+      floatingActionButton: FloatingActionButton(
+        // heroTag: Text("${capResult.length?}"),
+        child: Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
     );
   }
 
   Widget getAllPicture(){
     int temp = 0;
+    int imgCounter = 100;
+    Uint8List temp2 = Uint8List(0);
+    // print("capresult length : ${capResult.length}");
     return Container(
       // margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
       child: ListView(
         scrollDirection: Axis.vertical,
-        children: List.generate(capResult.length, (_idx){
+        children: List.generate(imgCounter, (_idx){
           return Container(
             // width: 500,
             margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
@@ -72,7 +78,7 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text("Time : ${_idx}"),
-                Utils.imageFromBase64String(capResult[_idx]),
+                Utils.imageFromBase64String(capResult[_idx] != null ? capResult[_idx] : temp2),
               ],
 
             ),

@@ -1,5 +1,7 @@
 
 
+import 'dart:typed_data';
+
 class Profiling {
   final int? id;
   final int? count;
@@ -20,7 +22,7 @@ class Profiling {
   final int? ttime;
   final String? textf;
   final int? ddrclk;
-  final String? capimg;
+  final Uint8List capimg;
 
 
   Profiling({
@@ -43,7 +45,7 @@ class Profiling {
     this.ttime,
     this.textf,
     this.ddrclk,
-    this.capimg,
+    required this.capimg,
   });
 
   Map<String, dynamic> toMap() => {

@@ -1,6 +1,7 @@
 
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -55,7 +56,7 @@ class DatabaseHelper {
     ttime INTEGER DEFAULT 0,
     textf String,
     ddrclk INTEGER DEFAULT 0,
-    capimg String
+    capimg BLOB
     )
   ''';
 
@@ -76,6 +77,7 @@ class DatabaseHelper {
 
   Future<List<Profiling>> getAllProfilinig() async {
     var db = await database;
+    Uint8List temp2 = Uint8List(0);
 
     // testTable 테이블에 있는 모든 field 값을 maps에 저장한다.
     final List<Map<String, dynamic>> maps = await db.query('ProfilingTable');
@@ -101,7 +103,7 @@ class DatabaseHelper {
           ttime: maps[index]['ttime'] as int,
           textf: maps[index]['textf'],
           ddrclk: maps[index]['ddrclk'] as int,
-          capimg: maps[index]['capimg'],
+          capimg: maps[index]['capimg'] != null ? maps[index]['capimg'] : temp2,
       );
     });
   }
