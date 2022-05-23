@@ -56,7 +56,8 @@ class DatabaseHelper {
     ttime INTEGER DEFAULT 0,
     textf String,
     ddrclk INTEGER DEFAULT 0,
-    capimg BLOB
+    capimg BLOB,
+    currentNow INTEGER DEFAULT 0
     )
   ''';
 
@@ -104,6 +105,8 @@ class DatabaseHelper {
           textf: maps[index]['textf'],
           ddrclk: maps[index]['ddrclk'] as int,
           capimg: maps[index]['capimg'] != null ? maps[index]['capimg'] : temp2,
+          currentNow: maps[index]['currentNow'] as int,
+
       );
     });
   }

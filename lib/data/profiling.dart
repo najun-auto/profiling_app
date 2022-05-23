@@ -23,6 +23,7 @@ class Profiling {
   final String? textf;
   final int? ddrclk;
   final Uint8List capimg;
+  final int? currentNow;
 
 
   Profiling({
@@ -46,6 +47,7 @@ class Profiling {
     this.textf,
     this.ddrclk,
     required this.capimg,
+    this.currentNow,
   });
 
   Map<String, dynamic> toMap() => {
@@ -68,5 +70,7 @@ class Profiling {
     'textf': this.textf,
     'ddrclk': this.ddrclk,
     'capimg': this.capimg,
+    'currentNow': this.currentNow,
+
   };
 }

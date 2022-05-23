@@ -42,6 +42,7 @@ dependencies:
   path_provider: ^2.0.10
   screenshot: ^1.2.3
   permission_handler: ^9.2.0
+  battery_info: ^1.1.1
 
 
 dev_dependencies:

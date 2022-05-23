@@ -6,6 +6,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+
+import 'package:battery_info/battery_info_plugin.dart';
 import 'package:flutter/material.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:root/root.dart';
@@ -82,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _temp8Checked = false;
 
   bool _ddrclkChecked = true;
+  bool _currentNowChecked = true;
 
   String gpuUsageG21 = "cat /sys/devices/platform/18500000.mali/utilization";
   String cpuUsageG21 = "cat /proc/stat";
@@ -135,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _temperature3ChartData = [];
   List<int> _temperature8ChartData = [];
   List<int> _ddrclkChartData = [];
+  List<int> _currentNowChartData = [];
 
   List<Uint8List> capresultData = [];
 
@@ -183,6 +187,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // capimgctrl.text = "0";
     // cpuGovernor();
 
+    myController.text = "test";
+    cpu0freqctrl.text = "3172000";
+    countingController.text = "0";
     // clockSet();
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
@@ -337,6 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
         textf: myController.text,
         ddrclk: _ddrclkChartData[j],
         capimg: capresultData[j],
+        currentNow: _currentNowChartData[j],
       );
       // print(capresultData[j-3]);
       putProfiling(todayProfiling);
@@ -363,6 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
     tempResult();
     ddrResult();
     screencapDo();
+    batteryCheck();
 
     // if(_cpuChecked == true){cpuUsage();}
     // if(_gpuChecked == true){ gpuUsage();}
@@ -405,6 +414,23 @@ class _MyHomePageState extends State<MyHomePage> {
     //   removedDataIndex: 0
     // );
 
+  }
+
+  void batteryCheck() async {
+    // print("Battery CurrentNow: ${(await BatteryInfoPlugin().androidBatteryInfo)!.currentNow}");
+    // print("Battery CurrentAvg: ${(await BatteryInfoPlugin().androidBatteryInfo)!.currentAverage}");
+
+    var res = (await BatteryInfoPlugin().androidBatteryInfo)!.currentNow;
+
+    setState(() {
+      // gpuUsageResult = int.parse(res.toString());
+      // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
+      // _gpuUsageChartData.removeAt(0);
+
+      _currentNowChartData.add(int.parse(res.toString()));
+
+
+    });
   }
 
   void screencapDo() async{
@@ -793,6 +819,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       _temperature8ChartData.clear();
                       _ddrclkChartData.clear();
                       capresultData.clear();
+                      _currentNowChartData.clear();
 
                       // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
@@ -887,7 +914,9 @@ class _MyHomePageState extends State<MyHomePage> {
               temp3checkedBox(),
               temp8checkedBox(),
 
+
               ddrclkcheckedBox(),
+              currentNowcheckedBox(),
               Text("${currentState}"),
               Container(
                 margin: EdgeInsets.all(8),
@@ -1125,6 +1154,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget currentNowcheckedBox(){
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Current Now'),
+          value: _currentNowChecked,
+          onChanged: (bool? value){
+            setState(() {
+              _currentNowChecked = value!;
+            });
+          },
+        )
+    );
+  }
+
   Widget getOldProfiling(){
     final List<trackData> chartData = [ trackData(1, 0), trackData(2, 0)];
 
@@ -1141,6 +1184,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _temperature2_temp = [];
     List<trackData> _temperature3_temp = [];
     List<trackData> _temperature8_temp = [];
+    List<trackData> _currentNow_temp = [];
 
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
@@ -1165,6 +1209,8 @@ class _MyHomePageState extends State<MyHomePage> {
         if(_temp3Checked == true){_temperature3_temp.add(trackData(profiling.time, profiling.Temp3));}
         if(_temp8Checked == true){_temperature8_temp.add(trackData(profiling.time, profiling.Temp8));}
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
+        if(_currentNowChecked == true){_currentNow_temp.add(trackData(profiling.time, profiling.currentNow));}
+
         time = profiling.ttime;
         textf = profiling.textf;
         capresultTemp.add(profiling.capimg);
@@ -1193,6 +1239,7 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
+          oldgraph(_currentNow_temp, _currentNowChecked, "Current Now"),
           Container(
             // margin: EdgeInsets.all(8),
             child: TextField(
@@ -1286,7 +1333,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // borderRadius: BorderRadius.circular(50)
             ),
           ),onTap: () async{
-            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, temp1Checked: _temp1Checked, temp2Checked: _temp2Checked, temp3Checked: _temp3Checked, temp8Checked: _temp8Checked,ddrclkChecked: _ddrclkChecked,)) );
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, temp1Checked: _temp1Checked, temp2Checked: _temp2Checked, temp3Checked: _temp3Checked, temp8Checked: _temp8Checked,ddrclkChecked: _ddrclkChecked, currentNowChecked: _currentNowChecked,)) );
 
           },
           );

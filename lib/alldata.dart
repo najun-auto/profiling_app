@@ -28,9 +28,10 @@ class GetAllDataPage extends StatefulWidget{
   final bool temp8Checked;
 
   final bool ddrclkChecked;
+  final bool currentNowChecked;
 
 
-  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked}) : super(key: key);
+  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -61,6 +62,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   bool _temp8Checked = true;
 
   bool _ddrclkChecked = true;
+  bool _currentNowChecked = true;
 
   final countingController = TextEditingController();
 
@@ -86,6 +88,9 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     _temp8Checked = widget.temp8Checked;
 
     _ddrclkChecked = widget.ddrclkChecked;
+    _currentNowChecked = widget.currentNowChecked;
+
+    countingController.text = "0";
 
     _tooltipBehavior =  TooltipBehavior(enable: true);
     _zoomPanBehavior = ZoomPanBehavior(enablePinching: true, zoomMode: ZoomMode.x, enablePanning: true);
@@ -127,6 +132,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _temperature2_temp = [];
     List<trackData> _temperature3_temp = [];
     List<trackData> _temperature8_temp = [];
+    List<trackData> _currentNow_temp = [];
 
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
@@ -150,6 +156,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_temp3Checked == true){_temperature3_temp.add(trackData(profiling.time, profiling.Temp3));}
         if(_temp8Checked == true){_temperature8_temp.add(trackData(profiling.time, profiling.Temp8));}
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
+        if(_currentNowChecked == true){_currentNow_temp.add(trackData(profiling.time, profiling.currentNow));}
         time = profiling.ttime;
         textf = profiling.textf;
         capresultTemp.add(profiling.capimg);
@@ -176,6 +183,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
+          oldgraph(_currentNow_temp, _currentNowChecked, "Current Now"),
           Container(
             // margin: EdgeInsets.all(8),
             child: TextField(
