@@ -11,7 +11,8 @@ import 'package:battery_info/battery_info_plugin.dart';
 import 'package:flutter/material.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:root/root.dart';
-import 'package:screenshot/screenshot.dart';
+// import 'package:screen_capturer/screen_capturer.dart';
+// import 'package:screenshot/screenshot.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:untitled2/alldata.dart';
@@ -80,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _temp0Checked = true;
   bool _temp1Checked = true;
   bool _temp2Checked = true;
-  bool _temp3Checked = false;
-  bool _temp8Checked = false;
+  bool _temp3Checked = true;
+  bool _temp8Checked = true;
 
   bool _ddrclkChecked = true;
   bool _currentNowChecked = true;
@@ -114,12 +115,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String screencap = "screencap -p /storage/emulated/0/Download/screen.jpg";
   // String capResult = "";
 
-  ScreenshotController screenshotController = ScreenshotController();
+  // ScreenshotController screenshotController = ScreenshotController();
 
 
   final myController = TextEditingController();
   final cpu0freqctrl = TextEditingController();
   final countingController = TextEditingController();
+  // final screenshotController = ScreenshotController();
   // final capimgctrl = TextEditingController();
   // int imgcounter = 1;
 
@@ -363,7 +365,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void updateDataSource(Timer timer){
 
     cpuUsage();
+    // _cpuUsageChartData.add(0);
     gpuUsage();
+    // _gpuUsageChartData.add(0);
     cpuFreq();
     gpuFreq();
     fpsResult();
@@ -443,6 +447,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // int screen = 0;
     var res = await Root.exec(cmd: "screencap -p /storage/emulated/0/Download/screen${xAxistmp}.jpg");
+
+    // var screenCapturer;
+    // CapturedData? capturedData = await screenCapturer.capture(
+    //   mode: CaptureMode.region, // screen, window
+    //   imagePath: '/storage/emulated/0/Download/screen${xAxistmp}.jpg',
+    // );
     // print("temp: ${xAxistmp}");
     // screenCoutner++;
     // String imagepath = "/storage/emulated/0/Download/screen.jpg";
@@ -752,12 +762,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // var res2 = 0;
     _temp2Result = (int.parse(res2.toString())/1000).floor();
 
-    // var res3 = await Root.exec(cmd: temperature3G21);
-    var res3 = 0;
+    var res3 = await Root.exec(cmd: temperature3G21);
+    // var res3 = 0;
     _temp3Result = (int.parse(res3.toString())/1000).floor();
 
-    // var res8 = await Root.exec(cmd: temperature8G21);
-    var res8 = 0;
+    var res8 = await Root.exec(cmd: temperature8G21);
+    // var res8 = 0;
     _temp8Result = (int.parse(res8.toString())/1000).floor();
 
 
@@ -824,7 +834,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
                       testCounter++;
-                      _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
+                      _timer = Timer.periodic(const Duration(seconds: 2), updateDataSource);
                       currentState = true;
                       timE = Utils.getFormatTime(DateTime.now());
                       xAxistmp = 1;
@@ -890,6 +900,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }else if(selectIndex == 1){
       return getOldProfiling();
     }else{
+      // return Container();
       return getAllData();
     }
   }
