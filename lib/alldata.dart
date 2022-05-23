@@ -62,6 +62,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
 
   bool _ddrclkChecked = true;
 
+  final countingController = TextEditingController();
 
   @override
   void initState() {
@@ -175,6 +176,12 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
+          Container(
+            // margin: EdgeInsets.all(8),
+            child: TextField(
+              controller: countingController,
+            ),
+          ),
           InkWell(child: Container(
             margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             width: 100,
@@ -186,7 +193,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
             child: Text("pciture"),
           ),
             onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresultTemp)) );
+              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresultTemp, counting: int.parse(countingController.text),)) );
               setState(() {});
             },
           ),

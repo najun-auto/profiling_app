@@ -14,8 +14,9 @@ import 'data/util.dart';
 class getAllPicturePage extends StatefulWidget{
 
   final List<Uint8List> capresult;
+  final int counting;
 
-  getAllPicturePage({Key? key, required this.capresult}) : super(key: key);
+  getAllPicturePage({Key? key, required this.capresult, required this.counting}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -28,12 +29,15 @@ class getAllPicturePage extends StatefulWidget{
 class _getAllPicturePageState extends State<getAllPicturePage>{
 
   List<Uint8List> capResult = [];
+  int counting = 0;
+  // final countingController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     // getCounterProfilinig();
     capResult = widget.capresult;
+    counting = widget.counting;
     // print(capResult);
 
     super.initState();
@@ -62,14 +66,16 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
 
   Widget getAllPicture(){
     int temp = 0;
-    int imgCounter = capResult.length > 100 ? 100 : capResult.length;
+
+    int imgCounterStart = capResult.length < counting ? capResult.length : counting;
+    int imgCounterLast = capResult.length-imgCounterStart > 50 ? 50 : capResult.length-imgCounterStart;
     // Uint8List temp2 = Uint8List(0);
     // print("capresult length : ${capResult.length}");
     return Container(
       // margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
       child: ListView(
         scrollDirection: Axis.vertical,
-        children: List.generate(imgCounter, (_idx){
+        children: List.generate(imgCounterLast, (_idx){
           return Container(
             // width: 500,
             margin: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
@@ -77,8 +83,14 @@ class _getAllPicturePageState extends State<getAllPicturePage>{
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text("Time : ${_idx}"),
-                Utils.imageFromBase64String(capResult[_idx]),
+                Text("Time : ${_idx+imgCounterStart}"),
+                // Container(
+                //   // margin: EdgeInsets.all(8),
+                //   child: TextField(
+                //     controller: countingController,
+                //   ),
+                // ),
+                Utils.imageFromBase64String(capResult[_idx+imgCounterStart]),
               ],
 
             ),

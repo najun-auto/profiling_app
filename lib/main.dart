@@ -116,6 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final myController = TextEditingController();
   final cpu0freqctrl = TextEditingController();
+  final countingController = TextEditingController();
   // final capimgctrl = TextEditingController();
   // int imgcounter = 1;
 
@@ -1192,6 +1193,12 @@ class _MyHomePageState extends State<MyHomePage> {
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
+          Container(
+            // margin: EdgeInsets.all(8),
+            child: TextField(
+              controller: countingController,
+            ),
+          ),
           InkWell(child: Container(
             margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             width: 100,
@@ -1203,7 +1210,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text("pciture"),
           ),
             onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresultTemp)) );
+              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresultTemp, counting: int.parse(countingController.text),)) );
               setState(() {});
             },
           ),
