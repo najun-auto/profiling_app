@@ -24,7 +24,7 @@ class Utils {
     return num.toString().padLeft(2, "0");
   }
 
-  static Image imageFromBase64String(Uint8List base64String) {
+  static Image imageFromBase64String(Uint8List? base64String) {
     // return Container(
     //   height: 40,
     //   width: 200,
@@ -38,9 +38,10 @@ class Utils {
     // if(base64String != null) {
     //   temp = base64String;
     // }
+    // print(base64)
     return Image.memory(
       // base64Decode(base64String), //base64String),
-      base64String,
+      base64String!,
       fit: BoxFit.fill,
       width: 150,
       height: 300,
@@ -52,7 +53,7 @@ class Utils {
     return base64Decode(base64String);
   }
 
-  static String base64String(Uint8List data) {
+  static String base64String(List<int> data) {
     return base64Encode(data);
   }
 

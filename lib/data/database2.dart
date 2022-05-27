@@ -78,7 +78,8 @@ class DatabaseHelper {
 
   Future<List<Profiling>> getAllProfilinig() async {
     var db = await database;
-    Uint8List temp2 = Uint8List(0);
+    Uint8List? temp2 = Uint8List(0);
+    // String temp2 = "";
 
     // testTable 테이블에 있는 모든 field 값을 maps에 저장한다.
     final List<Map<String, dynamic>> maps = await db.query('ProfilingTable');
@@ -104,7 +105,7 @@ class DatabaseHelper {
           ttime: maps[index]['ttime'] as int,
           textf: maps[index]['textf'],
           ddrclk: maps[index]['ddrclk'] as int,
-          capimg: maps[index]['capimg'] != null ? maps[index]['capimg'] : temp2,
+          capimg: maps[index]['capimg'] ?? temp2,
           currentNow: maps[index]['currentNow'] as int,
 
       );

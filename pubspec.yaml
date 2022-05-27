@@ -40,9 +40,15 @@ dependencies:
   path: ^1.8.0
   flutter_background: ^1.1.0
   path_provider: ^2.0.10
-#  screenshot: ^1.2.3
+#  screenshots: ^2.1.1
   permission_handler: ^9.2.0
   battery_info: ^1.1.1
+  flutter_image_compress: ^1.0.0-nullsafety
+#  pip_view: ^0.9.5
+#  floating: ^1.0.0
+#  simple_pip_mode: ^0.6.0
+#  flutter_android_pip: ^0.0.2
+#  native_screenshot: ^1.0.0
 
 
 dev_dependencies:

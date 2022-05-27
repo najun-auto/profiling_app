@@ -2,6 +2,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 // import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -9,8 +11,13 @@ import 'dart:typed_data';
 
 import 'package:battery_info/battery_info_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+// import 'package:pip_view/pip_view.dart';
+// import 'package:native_screenshot/native_screenshot.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:root/root.dart';
+// import 'package:screenshot/screenshot.dart';
 // import 'package:screen_capturer/screen_capturer.dart';
 // import 'package:screenshot/screenshot.dart';
 
@@ -25,7 +32,7 @@ import 'package:flutter_background/flutter_background.dart';
 // import 'package:intl/intl.dart';
 
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:flutter/services.dart';
 // https://pub.dev/packages/syncfusion_flutter_charts
 
 void main() {
@@ -69,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int timE = 0;
   int selectIndex = 0;
   bool currentState = false;
+  bool finState = false;
 
   bool _cpuChecked = false;
   bool _gpuChecked = false;
@@ -142,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _ddrclkChartData = [];
   List<int> _currentNowChartData = [];
 
-  List<Uint8List> capresultData = [];
+  List<Uint8List?> capresultData = [];
 
 
 
@@ -158,9 +166,13 @@ class _MyHomePageState extends State<MyHomePage> {
   // int floatingCounter = 0;
 
   int screenCoutner = 0;
+  int pipresult = 0;
+
+  var stopwatch = Stopwatch();
 
   @override
   void initState() {
+
 
 
 
@@ -200,6 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
   }
+
 
   void permissionset() async {
     var status = await Permission.storage.status;
@@ -306,26 +319,102 @@ class _MyHomePageState extends State<MyHomePage> {
   //
   // }
 
+  Future<Uint8List?> testCompressFile(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      minWidth: 300,
+      minHeight: 150,
+      quality: 10,
+      // rotate: 90,
+    );
+    // print(file.lengthSync());
+    // print(result?.length);
+    return result;
+  }
+
   void dbUpate() async {
 
     String capResult = "";
 
+    // Uint8List? testbytes = Uint8List(0);
     // print("last temp: ${xAxistmp}");
-    for(int j = 1; j < xAxistmp-2; j++) {
-      String imagepath = "/storage/emulated/0/Download/screen${j}.jpg";
+    for(int j = 1; j < xAxistmp-4; j++) {
+      // try {
+      String imagepath = "/storage/emulated/0/Download/screen${j}.png";
       File imagefile = File(imagepath);
-      Uint8List imagebytes = await imagefile.readAsBytes();
-      // String temp = utf8.decode(imagebytes);
+      // Uint8List imagebytes = await imagefile.readAsBytes();
+      // List<int> imagebytes = await imagefile.readAsBytes();
+
+      Uint8List? testbytes = await testCompressFile(imagefile);
+      // } finally{
+      //   testbytes = Uint8List(0);
+      // }
+      // String temputf8 = utf8.decode(imagebytes);
+      // String temputf8 = Utils.base64String(imagebytes);
+      // String temputf8 = "";
       // imagepath.fromCharCodes(imagebytes);
-      capresultData.add(imagebytes);
+      // imagebytes == null ? print("nulllllll ${j}") : print("OK!!!");
+      // print(imagebytes);
+      capresultData.add(testbytes);
+//       Future.delayed(const Duration(milliseconds: 100), () {
+//
+// // Here you can write your code
+//
+//         setState(() {
+//           // Here you can write your code for open new view
+//         });
+//
+//       });
       // capresultData.add(Utils.base64String(imagebytes));
       // if(capResult == null){
       //   capResult = "";
       //   print("Nullllllllllllllll");
       // }
     }
+    // print("test11111111111");
+    // print(capresultData);
+    // print(capresultData.length);
+    // print("-=------");
 
-    for(int j = 1; j < xAxistmp-3; j++) {
+    dbUpdateLate();
+    //
+    // for(int j = 1; j < xAxistmp-4; j++) {
+    //   Profiling todayProfiling = Profiling(
+    //     time: j,
+    //     count: testCounter,
+    //     CPUusage: _cpuUsageChartData[j],
+    //     GPUusage: _gpuUsageChartData[j],
+    //     CPU0Freq: _cpu0FreqChartData[j],
+    //     CPU4Freq: _cpu4FreqChartData[j],
+    //     CPU7Freq: _cpu7FreqChartData[j],
+    //     GPUFreq: _gpuFreqChartData[j],
+    //     FPS: _fpsChartData[j],
+    //     Network: _networkChartData[j],
+    //     Temp0: _temperature0ChartData[j],
+    //     Temp1: _temperature1ChartData[j],
+    //     Temp2: _temperature2ChartData[j],
+    //     Temp3: _temperature3ChartData[j],
+    //     Temp8: _temperature8ChartData[j],
+    //     ttime: timE,
+    //     textf: myController.text,
+    //     ddrclk: _ddrclkChartData[j],
+    //     // capimg: capresultData[j],
+    //     capimg: capresultData[j] != null ? capresultData[j] : Uint8List(0),
+    //     currentNow: _currentNowChartData[j],
+    //   );
+    //   // print(capresultData[j-3]);
+    //   putProfiling(todayProfiling);
+    // }
+
+
+
+  }
+
+  void dbUpdateLate(){
+
+
+    for(int j = 0; j < xAxistmp-5; j++) {
+      // print(j);
       Profiling todayProfiling = Profiling(
         time: j,
         count: testCounter,
@@ -345,14 +434,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ttime: timE,
         textf: myController.text,
         ddrclk: _ddrclkChartData[j],
-        capimg: capresultData[j],
+        // capimg: capresultData[j],
+        capimg: capresultData[j] ?? Uint8List(0),
         currentNow: _currentNowChartData[j],
       );
       // print(capresultData[j-3]);
       putProfiling(todayProfiling);
     }
 
-
+    finState = true;
 
   }
 
@@ -363,6 +453,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void updateDataSource(Timer timer){
+
+    // var stopwatch = Stopwatch();
+    // stopwatch.start();
 
     cpuUsage();
     // _cpuUsageChartData.add(0);
@@ -376,7 +469,12 @@ class _MyHomePageState extends State<MyHomePage> {
     ddrResult();
     screencapDo();
     batteryCheck();
-
+    //
+    // stopwatch.stop();
+    //
+    // print(stopwatch.elapsedMilliseconds);
+    //
+    // stopwatch.start();
     // if(_cpuChecked == true){cpuUsage();}
     // if(_gpuChecked == true){ gpuUsage();}
     // if(_cpu0freqChecked == true){cpuFreq();}
@@ -437,7 +535,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void screencapDo() async{
+  void screencapDo() {
 
     // screenshotController.capture().then((Uint8List image) {
     //   print(image);
@@ -446,7 +544,31 @@ class _MyHomePageState extends State<MyHomePage> {
     // });
 
     // int screen = 0;
-    var res = await Root.exec(cmd: "screencap -p /storage/emulated/0/Download/screen${xAxistmp}.jpg");
+    // if(xAxistmp % 4 == 0) {
+    // var stopwatch = Stopwatch();
+    // stopwatch.start();
+// iWonderHowLongThisTakes();
+
+
+    // if(xAxistmp % 5 == 0) {
+      Root.exec(
+          cmd: "screencap -p /storage/emulated/0/Download/screen${xAxistmp}.png");
+    // }else{
+    //   Root.exec(
+    //       cmd: "touch /storage/emulated/0/Download/screen${xAxistmp}.png");
+    // }
+
+    // stopwatch.stop();
+    //
+    // print(stopwatch.elapsedMilliseconds);
+    // stopwatch.start();
+    // }else{
+    //   await Root.exec(
+    //       cmd: "touch /storage/emulated/0/Download/screen${xAxistmp}.png");
+    // }
+
+    // String? path = await NativeScreenshot.takeScreenshot();
+    // print(path);
 
     // var screenCapturer;
     // CapturedData? capturedData = await screenCapturer.capture(
@@ -459,14 +581,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // File imagefile = File(imagepath);
     // Uint8List imagebytes = await imagefile.readAsBytes();
     // capResult = Utils.base64String(imagebytes);
-    setState(() {
-      // gpuUsageResult = int.parse(res.toString());
-      // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
-      // _gpuUsageChartData.removeAt(0);
-    });
+    // setState(() {
+    //   // gpuUsageResult = int.parse(res.toString());
+    //   // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
+    //   // _gpuUsageChartData.removeAt(0);
+    // });
 
     // print("${await pipeline.stdout.text} instances of waitFor");
   }
+
 
   void gpuUsage() async{
     int gpuUsageResult = 0;
@@ -575,7 +698,7 @@ class _MyHomePageState extends State<MyHomePage> {
     cpuUsageResult = cpuTotal ~/ 8;
 
     oldCpuUsageTemp = cpuUsageTemp;
-
+    //
     // _cpuUsageChartData.add(trackData(xAxistmp, cpuUsageResult));
     // _cpuUsageChartData.removeAt(0);
     _cpuUsageChartData.add(cpuUsageResult);
@@ -606,29 +729,10 @@ class _MyHomePageState extends State<MyHomePage> {
     cpu4FreqResult = int.parse(res4.toString())/1000;
     cpu7FreqResult = int.parse(res7.toString())/1000;
 
-    // _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
-    // _cpu0FreqChartData.removeAt(0);
-    //
-    // _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
-    // _cpu4FreqChartData.removeAt(0);
-    //
-    // _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
-    // _cpu7FreqChartData.removeAt(0);
-
-    //
-    // _cpu0FreqChartData.add(trackData(xAxistmp, cpu0FreqResult.toInt()));
-    // _cpu0FreqChartData.removeAt(0);
-
     _cpu0FreqChartData.add(cpu0FreqResult.toInt());
     _cpu4FreqChartData.add(cpu4FreqResult.toInt());
     _cpu7FreqChartData.add(cpu7FreqResult.toInt());
 
-
-    // _cpu4FreqChartData.add(trackData(xAxistmp, cpu4FreqResult.toInt()));
-    // _cpu4FreqChartData.removeAt(0);
-    //
-    // _cpu7FreqChartData.add(trackData(xAxistmp, cpu7FreqResult.toInt()));
-    // _cpu7FreqChartData.removeAt(0);
 
     setState(() {
 
@@ -642,9 +746,6 @@ class _MyHomePageState extends State<MyHomePage> {
     var res0 = await Root.exec(cmd: gpuFreqG21);
 
     gpuFreqResult = int.parse(res0.toString())/1000;
-
-    // _gpuFreqChartData.add(trackData(xAxistmp, gpuFreqResult.toInt()));
-    // _gpuFreqChartData.removeAt(0);
 
     _gpuFreqChartData.add(gpuFreqResult.toInt());
 
@@ -666,14 +767,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var res = await Root.exec(cmd: fpsG21);
     // _fpsResult = res.toString().split(" ");
 
-    _fpsResult = int.parse(res.toString().replaceAll(RegExp(r'[^0-9]'),""));
-    // print(_fpsResult);
-    // _fpsnum = int.parse(_fpsResult[7].substring(_framecounterEnd, _fpsResult[7].length));
+    try {
+      _fpsResult = int.parse(res.toString().replaceAll(RegExp(r'[^0-9]'),""));
+    } finally{
+      _fpsResult = 0;
+    }
 
     _fpsValueResult = _fpsResult - oldFpsValue;
-    //
-    // _fpsChartData.add(trackData(xAxistmp, _fpsValueResult));
-    // _fpsChartData.removeAt(0);
 
     _fpsChartData.add(_fpsValueResult);
 
@@ -690,8 +790,8 @@ class _MyHomePageState extends State<MyHomePage> {
     int _netSend = 0;
     double _netTraffic = 0;
 
-    // var res = await Root.exec(cmd: netUsageG21);
-    var res = 0;
+    var res = await Root.exec(cmd: netUsageG21);
+    // var res = 0;
     _netResult = res.toString().split(" ");
 
     // _netRecv = int.parse(_netResult[1]);
@@ -703,9 +803,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _netTraffic = ((_netRecv + _netSend) - oldNetTraffic)/1000;
 
     oldNetTraffic = _netRecv + _netSend;
-
-    // _networkChartData.add(trackData(xAxistmp, _netTraffic.toInt()));
-    // _networkChartData.removeAt(0);
 
     _networkChartData.add(_netTraffic.toInt());
 
@@ -721,18 +818,10 @@ class _MyHomePageState extends State<MyHomePage> {
     double _ddrtemp = 0;
 
     var res = await Root.exec(cmd: ddrclk);
-    // _ddrResult = res.toString().replaceAll("[^0-9]","");
-    // _ddrResult = res.toString();
     _ddrResult = res.toString().replaceAll(RegExp(r'[^0-9]'),"");
-    // print(_ddrResult);
 
     _ddrtemp = int.parse(_ddrResult)/1000;
-    // print(_ddrtemp);
-    // _ddrtemp = int.parse(_ddrResult[1]);
-
-    // _ddrclkChartData.add(trackData(xAxistmp, _ddrtemp.toInt()));
-    // _ddrclkChartData.removeAt(0);
-
+    //
     _ddrclkChartData.add(_ddrtemp.toInt());
     // _ddrclkChartData.removeAt(0);
 
@@ -769,23 +858,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var res8 = await Root.exec(cmd: temperature8G21);
     // var res8 = 0;
     _temp8Result = (int.parse(res8.toString())/1000).floor();
-
-
-    // _temperature0ChartData.add(trackData(xAxistmp, _temp0Result));
-    // _temperature0ChartData.removeAt(0);
     //
-    // _temperature1ChartData.add(trackData(xAxistmp, _temp1Result));
-    // _temperature1ChartData.removeAt(0);
-    //
-    // _temperature2ChartData.add(trackData(xAxistmp, _temp2Result));
-    // _temperature2ChartData.removeAt(0);
-    //
-    // _temperature3ChartData.add(trackData(xAxistmp, _temp3Result));
-    // _temperature3ChartData.removeAt(0);
-    //
-    // _temperature8ChartData.add(trackData(xAxistmp, _temp8Result));
-    // _temperature8ChartData.removeAt(0);
-
     _temperature0ChartData.add(_temp0Result);
     _temperature1ChartData.add(_temp1Result);
     _temperature2ChartData.add(_temp2Result);
@@ -800,8 +873,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
+
+
     return SafeArea(
+
         child: Scaffold(
+          // appBar: AppBar(
+          //   systemOverlayStyle: SystemUiOverlayStyle.dark,
+          //   elevation: 0.0,
+          // ),
           body:Container(child: getPage()),
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -813,6 +893,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     //   _timer.cancel();
                     //   currentState = false;
                     // }else{
+
+
 
                       _cpuUsageChartData.clear();
                       _gpuUsageChartData.clear();
@@ -834,8 +916,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
                       testCounter++;
-                      _timer = Timer.periodic(const Duration(seconds: 2), updateDataSource);
+                      // var stopwatch = Stopwatch();
+                      // stopwatch.start();
+                      _timer = Timer.periodic(const Duration(seconds: 4), updateDataSource);
+                      //
+                      // stopwatch.stop();
+                      //
+                      // print(stopwatch.elapsedMilliseconds);
+
                       currentState = true;
+                      finState = false;
                       timE = Utils.getFormatTime(DateTime.now());
                       xAxistmp = 1;
                       clockSet();
@@ -855,6 +945,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   // xAxistmp = 2;
                   // imgcounter = int.parse(capimgctrl.text);
                   setState(() {
+                  });
+                  // await dbHelper.InsertProfiling(todayProfiling);
+                },
+              ),
+              FloatingActionButton(
+                child: Icon(Icons.wb_incandescent_outlined),
+                onPressed: () async {
+
+                  // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => PIPView()));
+
+                      setState(() {
                   });
                   // await dbHelper.InsertProfiling(todayProfiling);
                 },
@@ -911,6 +1012,18 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Center(
         child: ListView(
             children: [
+              // Screenshot(
+              //   controller: screenshotController,
+              //   child: Container(
+              //       padding: const EdgeInsets.all(30.0),
+              //       decoration: BoxDecoration(
+              //         border: Border.all(color: Colors.blueAccent, width: 5.0),
+              //         color: Colors.amberAccent,
+              //       ),
+              //       child: Text("This widget will be captured as an image")),
+              // ),
+
+
               cpucheckedBox(),
               cpu0freqcheckedBox(),
               cpu4freqcheckedBox(),
@@ -928,7 +1041,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
               ddrclkcheckedBox(),
               currentNowcheckedBox(),
-              Text("${currentState}"),
+              Text("Working? ${currentState}"),
+              Text("Finish? ${finState}"),
               Container(
                 margin: EdgeInsets.all(8),
                 child: TextField(
@@ -1200,7 +1314,8 @@ class _MyHomePageState extends State<MyHomePage> {
     List<trackData> _ddrclk_temp = [];
     int? time = 0;
     String? textf;
-    List<Uint8List> capresultTemp = [];
+    // List<Uint8List> capresultTemp = [];
+    List<Uint8List?> capresultTemp = [];
 
     // int temp = 0;
 
@@ -1317,7 +1432,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // borderRadius: BorderRadius.circular(50)
             ),
           ),onTap: () async{
-            // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, temp1Checked: _temp1Checked, temp2Checked: _temp2Checked, temp3Checked: _temp3Checked, temp8Checked: _temp8Checked,ddrclkChecked: _ddrclkChecked,)) );
+            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => GetAllDataPage(testCounter: _idx, cpuChecked: _cpuChecked, gpuChecked: _gpuChecked, cpu0freqChecked: _cpu0freqChecked, cpu4freqChecked: _cpu4freqChecked, cpu7freqChecked: _cpu7freqChecked, gpufreqChecked: _gpufreqChecked, fpsChecked: _fpsChecked, networkChecked: _networkChecked, temp0Checked: _temp0Checked, temp1Checked: _temp1Checked, temp2Checked: _temp2Checked, temp3Checked: _temp3Checked, temp8Checked: _temp8Checked,ddrclkChecked: _ddrclkChecked, currentNowChecked: _currentNowChecked,)) );
 
           },
           );
@@ -1424,6 +1539,36 @@ class trackData{
   final int? yAxis;
 }
 
-
-
-
+//
+// class PipViewPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return PIPView(
+//       builder: (context, isFloating){
+//         return Scaffold(
+//           body: Column(
+//             children: [
+//               Text('This is the screen that will float!'),
+//               MaterialButton(
+//                 child: Text('Start floating'),
+//                 onPressed: () {
+//                   PIPView.of(context).presentBelow(MyBackgroundScreen());
+//                 },
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//
+//     );
+//   }
+// }
+//
+// class MyBackgroundScreen extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         body: Text('This is my background screen!'),
+//     );
+//   }
+// }

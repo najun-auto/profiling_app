@@ -13,7 +13,7 @@ import 'data/util.dart';
 
 class getAllPicturePage extends StatefulWidget{
 
-  final List<Uint8List> capresult;
+  final List<Uint8List?> capresult;
   final int counting;
 
   getAllPicturePage({Key? key, required this.capresult, required this.counting}) : super(key: key);
@@ -28,7 +28,7 @@ class getAllPicturePage extends StatefulWidget{
 
 class _getAllPicturePageState extends State<getAllPicturePage>{
 
-  List<Uint8List> capResult = [];
+  List<Uint8List?> capResult = [];
   int counting = 0;
   // final countingController = TextEditingController();
 
