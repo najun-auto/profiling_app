@@ -25,6 +25,10 @@ class Profiling {
   final Uint8List? capimg;
   // final String capimg;
   final int? currentNow;
+  final int? memBuffer;
+  final int? memCached;
+  final int? memSwapCached;
+
 
 
   Profiling({
@@ -49,6 +53,9 @@ class Profiling {
     this.ddrclk,
     required this.capimg,
     this.currentNow,
+    this.memBuffer,
+    this.memCached,
+    this.memSwapCached,
   });
 
   Map<String, dynamic> toMap() => {
@@ -72,6 +79,8 @@ class Profiling {
     'ddrclk': this.ddrclk,
     'capimg': this.capimg,
     'currentNow': this.currentNow,
-
+    'memBuffer': this.memBuffer,
+    'memCached': this.memCached,
+    'memSwapCached': this.memSwapCached,
   };
 }

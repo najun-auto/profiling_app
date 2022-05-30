@@ -57,7 +57,10 @@ class DatabaseHelper {
     textf String,
     ddrclk INTEGER DEFAULT 0,
     capimg BLOB,
-    currentNow INTEGER DEFAULT 0
+    currentNow INTEGER DEFAULT 0,
+    memBuffer INTEGER DEFAULT 0,
+    memCached INTEGER DEFAULT 0,
+    memSwapCached INTEGER DEFAULT 0
     )
   ''';
 
@@ -107,6 +110,9 @@ class DatabaseHelper {
           ddrclk: maps[index]['ddrclk'] as int,
           capimg: maps[index]['capimg'] ?? temp2,
           currentNow: maps[index]['currentNow'] as int,
+          memBuffer: maps[index]['memBuffer'] as int,
+          memCached: maps[index]['memCached'] as int,
+          memSwapCached: maps[index]['memSwapCached'] as int,
 
       );
     });

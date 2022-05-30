@@ -30,8 +30,13 @@ class GetAllDataPage extends StatefulWidget{
   final bool ddrclkChecked;
   final bool currentNowChecked;
 
+  final bool memBufferChecked;
+  final bool memCachedChecked;
+  final bool memSwapCachedChecked;
 
-  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked}) : super(key: key);
+
+
+  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked, required this.memBufferChecked, required this.memCachedChecked, required this.memSwapCachedChecked}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -64,6 +69,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   bool _ddrclkChecked = true;
   bool _currentNowChecked = true;
 
+  bool _memBufferChecked = true;
+  bool _memCachedChecked = true;
+  bool _memSwapCachedChecked = true;
+
+
   final countingController = TextEditingController();
 
   @override
@@ -89,6 +99,10 @@ class _GetAllDataPage extends State<GetAllDataPage>{
 
     _ddrclkChecked = widget.ddrclkChecked;
     _currentNowChecked = widget.currentNowChecked;
+
+    _memBufferChecked = widget.memBufferChecked;
+    _memCachedChecked = widget.memCachedChecked;
+    _memSwapCachedChecked = widget.memSwapCachedChecked;
 
     countingController.text = "0";
 
@@ -135,6 +149,10 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<trackData> _currentNow_temp = [];
 
     List<trackData> _ddrclk_temp = [];
+
+    List<trackData> _memBuffer_temp = [];
+    List<trackData> _memCached_temp = [];
+    List<trackData> _memSwapCached_temp = [];
     int? time = 0;
     String? textf;
     // List<Uint8List> capresultTemp = [];
@@ -158,6 +176,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_temp8Checked == true){_temperature8_temp.add(trackData(profiling.time, profiling.Temp8));}
         if(_ddrclkChecked == true){_ddrclk_temp.add(trackData(profiling.time, profiling.ddrclk));}
         if(_currentNowChecked == true){_currentNow_temp.add(trackData(profiling.time, profiling.currentNow));}
+
+        if(_memBufferChecked == true){_memBuffer_temp.add(trackData(profiling.time, profiling.memBuffer));}
+        if(_memCachedChecked == true){_memCached_temp.add(trackData(profiling.time, profiling.memCached));}
+        if(_memSwapCachedChecked == true){_memSwapCached_temp.add(trackData(profiling.time, profiling.memSwapCached));}
+
         time = profiling.ttime;
         textf = profiling.textf;
         capresultTemp.add(profiling.capimg);
@@ -185,6 +208,10 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
           oldgraph(_currentNow_temp, _currentNowChecked, "Current Now"),
+
+          oldgraph(_memBuffer_temp, _memBufferChecked, "MEM Buffer"),
+          oldgraph(_memCached_temp, _memCachedChecked, "MEM Cached"),
+          oldgraph(_memSwapCached_temp, _memSwapCachedChecked, "MEM SwapCached"),
           Container(
             // margin: EdgeInsets.all(8),
             child: TextField(
