@@ -180,7 +180,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int screenCoutner = 0;
   int pipresult = 0;
 
-  var stopwatch = Stopwatch();
+  // var stopwatch = Stopwatch();
+
+  int StartTemp = 0;
+  int EndTemp = 0;
 
   @override
   void initState() {
@@ -344,33 +347,26 @@ class _MyHomePageState extends State<MyHomePage> {
     return result;
   }
 
-  void dbUpate() async {
+  void dbUpate(int Start, int End) async {
 
     String capResult = "";
 
-    for(int j = 1; j < xAxistmp-4; j++) {
-
-      // String imagepath = "/storage/emulated/0/Download/screen${j}.png";
-      // File imagefile = File(imagepath);
-      //
-      // Uint8List? testbytes = await testCompressFile(imagefile);
-      // capresultData.add(testbytes);
-
-      capresultData.add(Uint8List(0));
-
-    }
-
-
-
-    dbUpdateLate();
+    // for(int j = Start; j < xAxistmp-4; j++) {
+    // for(int j = Start; j < End+1; j++) {
+    //
+    //   // String imagepath = "/storage/emulated/0/Download/screen${j}.png";
+    //   // File imagefile = File(imagepath);
+    //   //
+    //   // Uint8List? testbytes = await testCompressFile(imagefile);
+    //   // capresultData.add(testbytes);
+    //
+    //   //// capresultData.add(Uint8List(0));
+    //
+    // }
 
 
-  }
-
-  void dbUpdateLate(){
-
-
-    for(int j = 0; j < xAxistmp-5; j++) {
+    // for(int j = 0; j < xAxistmp-5; j++) {
+    for(int j = Start; j < End; j++) {
       // print(j);
       Profiling todayProfiling = Profiling(
         time: j,
@@ -392,7 +388,8 @@ class _MyHomePageState extends State<MyHomePage> {
         textf: myController.text,
         ddrclk: _ddrclkChartData[j],
         // capimg: capresultData[j],
-        capimg: capresultData[j] ?? Uint8List(0),
+        // capimg: capresultData[j] ?? Uint8List(0),
+        capimg: Uint8List(0),
         currentNow: _currentNowChartData[j],
         memBuffer: _memBufferChartData[j],
         memCached: _memCachedChartData[j],
@@ -403,6 +400,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     finState = true;
+
 
   }
 
@@ -472,6 +470,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
     xAxistmp++;
+    EndTemp++;
+    if(EndTemp % 60 == 0){
+      dbUpate(StartTemp, EndTemp-5);
+      print(EndTemp-5);
+      StartTemp = EndTemp-5;
+    }
     // _chartSeriesController.updateDataSource(
     //   addedDataIndex: _cpuUsageChartData.length -1,
     //   removedDataIndex: 0
@@ -916,6 +920,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
                       testCounter++;
+                      StartTemp = 1;
+                      EndTemp = 1;
                       // var stopwatch = Stopwatch();
                       // stopwatch.start();
                       _timer = Timer.periodic(const Duration(seconds: 1), updateDataSource);
@@ -937,7 +943,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   _timer.cancel();
                   currentState = false;
-                  dbUpate();
+                  // Start
+                  // dbUpate(StartTemp, EndTemp);
                   // imgRemove();
 
                   // await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => getAllPicturePage(capresult: capresult)) );
