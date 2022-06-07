@@ -44,6 +44,10 @@ dependencies:
   permission_handler: ^9.2.0
   battery_info: ^1.1.1
   flutter_image_compress: ^1.0.0-nullsafety
+  simple_pip_mode: ^0.6.0
+#  floating: ^1.0.0
+#  fast_overlays: ^0.1.5
+#  overlay_support: ^2.0.0
 #  pip_view: ^0.9.5
 #  floating: ^1.0.0
 #  simple_pip_mode: ^0.6.0

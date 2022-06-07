@@ -263,6 +263,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  simple_pip_mode:
+    dependency: "direct main"
+    description:
+      name: simple_pip_mode
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   sky_engine:
     dependency: transitive
     description: flutter
