@@ -22,12 +22,13 @@ class Profiling {
   final int? ttime;
   final String? textf;
   final int? ddrclk;
-  final Uint8List? capimg;
-  // final String capimg;
+  // final Uint8List? capimg;
+  final String? capimg;
   final int? currentNow;
   final int? memBuffer;
   final int? memCached;
   final int? memSwapCached;
+  final String? deviceName;
 
 
 
@@ -56,6 +57,7 @@ class Profiling {
     this.memBuffer,
     this.memCached,
     this.memSwapCached,
+    this.deviceName,
   });
 
   Map<String, dynamic> toMap() => {
@@ -82,5 +84,6 @@ class Profiling {
     'memBuffer': this.memBuffer,
     'memCached': this.memCached,
     'memSwapCached': this.memSwapCached,
+    'deviceName': this.deviceName,
   };
 }

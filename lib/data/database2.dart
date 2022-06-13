@@ -56,11 +56,12 @@ class DatabaseHelper {
     ttime INTEGER DEFAULT 0,
     textf String,
     ddrclk INTEGER DEFAULT 0,
-    capimg BLOB,
+    capimg String,
     currentNow INTEGER DEFAULT 0,
     memBuffer INTEGER DEFAULT 0,
     memCached INTEGER DEFAULT 0,
-    memSwapCached INTEGER DEFAULT 0
+    memSwapCached INTEGER DEFAULT 0,
+    deviceName String
     )
   ''';
 
@@ -81,8 +82,8 @@ class DatabaseHelper {
 
   Future<List<Profiling>> getAllProfilinig() async {
     var db = await database;
-    Uint8List? temp2 = Uint8List(0);
-    // String temp2 = "";
+    // Uint8List? temp2 = Uint8List(0);
+    String temp2 = "";
 
     // testTable 테이블에 있는 모든 field 값을 maps에 저장한다.
     final List<Map<String, dynamic>> maps = await db.query('ProfilingTable');
@@ -113,7 +114,7 @@ class DatabaseHelper {
           memBuffer: maps[index]['memBuffer'] as int,
           memCached: maps[index]['memCached'] as int,
           memSwapCached: maps[index]['memSwapCached'] as int,
-
+          deviceName: maps[index]['deviceName'],
       );
     });
   }

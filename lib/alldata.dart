@@ -33,10 +33,11 @@ class GetAllDataPage extends StatefulWidget{
   final bool memBufferChecked;
   final bool memCachedChecked;
   final bool memSwapCachedChecked;
+  final String deviceName;
 
 
 
-  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked, required this.memBufferChecked, required this.memCachedChecked, required this.memSwapCachedChecked}) : super(key: key);
+  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked, required this.memBufferChecked, required this.memCachedChecked, required this.memSwapCachedChecked, required this.deviceName}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -156,11 +157,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     int? time = 0;
     String? textf;
     // List<Uint8List> capresultTemp = [];
-    List<Uint8List?> capresultTemp = [];
+    List<String?> capresultTemp = [];
 
 
     for(var profiling in profilings){
-      if(profiling.count == testCounter){
+      if(profiling.count == testCounter && profiling.deviceName == widget.deviceName){
         if(_cpuChecked == true){_cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));}
         if(_gpuChecked == true){ _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));}
         if(_cpu0freqChecked == true){_cpu0Freq_temp.add(trackData(profiling.time, profiling.CPU0Freq));}

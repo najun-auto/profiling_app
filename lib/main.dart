@@ -8,11 +8,14 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:battery_info/battery_info_plugin.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_name/device_name.dart';
 // import 'package:floating/floating.dart';
 // import 'package:fast_overlays/fast_overlays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+// import 'package:provider/provider.dart';
 // import 'package:overlay_support/overlay_support.dart';
 // import 'package:overlay/overlay.dart';
 // import 'package:pip_view/pip_view.dart';
@@ -29,6 +32,7 @@ import 'package:untitled2/data/database2.dart';
 import 'package:untitled2/data/profiling.dart';
 import 'package:untitled2/getpicture.dart';
 
+
 import 'data/util.dart';
 import 'package:flutter_background/flutter_background.dart';
 // import 'package:intl/intl.dart';
@@ -38,7 +42,13 @@ import 'package:flutter/services.dart';
 // https://pub.dev/packages/syncfusion_flutter_charts
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MyApp()
+    // ChangeNotifierProvider.value(
+    //   value: HomeViewModel(BoardRepositoryImpl(api: BoardApi())),
+    //   child: const MyApp(),
+    // ),
+      );
 }
 
 class MyApp extends StatelessWidget {
@@ -53,6 +63,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(),
+      // home: const HomeScreen(),
     );
   }
 }
@@ -144,6 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String memdumpCached = "su -c cat /proc/meminfo | grep Cached | head -1";
   String memdumpSwapCached = "su -c cat /proc/meminfo | grep Cached | tail -1";
   // String capResult = "";
+  // String deviceName = "getprop | grep product.model] | head -1";
 
   // ScreenshotController screenshotController = ScreenshotController();
 
@@ -173,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _memCachedChartData = [];
   List<int> _memSwapCachedChartData = [];
 
-  List<Uint8List?> capresultData = [];
+  List<String> capresultData = [];
 
   int cpuUsageTemp_f = 0;
   int testCounter = 0;
@@ -194,6 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int StartTemp = 0;
   int EndTemp = 0;
 
+  String _deviceName = "";
 
   @override
   void initState() {
@@ -202,6 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     getCounter();
     bakgroundset();
+    deviceNameSet();
     // _start();
     // _cpuUsageChartData = getChartData();
     // _gpuUsageChartData = getChartData();
@@ -240,6 +254,21 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!status.isGranted) {
       await Permission.storage.request();
     }
+  }
+
+  void deviceNameSet() async {
+
+    // String temp = "";
+    // var res = await Root.exec(cmd: deviceName);
+    // // var res = 0;
+    // temp = res.toString().split(" ") as String;
+    // print(temp);
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // print('Running on ${androidInfo.model}');
+    _deviceName = androidInfo.model!;
+
   }
 
   void clockSet() async {
@@ -318,15 +347,16 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return chartData;
   }
-
-  // void imgdbUpdate() async {
+  //
+  // void imgdbUpdate(int Start,  int End) async {
   //
   //
-  //   for(int j = 3; j < xAxistmp-2; j++) {
-  //     String imagepath = "/storage/emulated/0/Download/screen${j}.jpg";
+  //   for(int j = Start; j < End+1; j++) {
+  //     String imagepath = "/storage/emulated/0/Download/screen${j}.png";
   //     File imagefile = File(imagepath);
-  //     Uint8List imagebytes = await imagefile.readAsBytes();
-  //     capresultData[j-3] = Utils.base64String(imagebytes);
+  //     // Uint8List imagebytes = await imagefile.readAsBytes();
+  //     Uint8List? imagebytes = await testCompressFile(imagefile);
+  //     capresultData.add(Utils.base64String(imagebytes));
   //     // if(capResult == null){
   //     //   capResult = "";
   //     //   print("Nullllllllllllllll");
@@ -350,6 +380,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void dbUpate(int Start, int End) async {
     String capResult = "";
+    // await imgdbUpdate(Start, End);
+
+    for(int j = Start; j < End; j++) {
+      String imagepath = "/storage/emulated/0/Download/screen${j}.png";
+      // if(imagepath.isEmpty) {
+      //   capresultData.add("");
+      // }else {
+      File imagefile = File(imagepath);
+      // Uint8List imagebytes = await imagefile.readAsBytes();
+      Uint8List? imagebytes = await testCompressFile(imagefile);
+      capresultData.add(Utils.base64String(imagebytes));
+      // }
+    }
 
     // for(int j = Start; j < xAxistmp-4; j++) {
     // for(int j = Start; j < End+1; j++) {
@@ -365,7 +408,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
 
     // for(int j = 0; j < xAxistmp-5; j++) {
-    for (int j = Start; j < End; j++) {
+    for (int j = Start; j < End-1; j++) {
       // print(j);
       Profiling todayProfiling = Profiling(
         time: j,
@@ -387,12 +430,13 @@ class _MyHomePageState extends State<MyHomePage> {
         textf: myController.text,
         ddrclk: _ddrclkChartData[j],
         // capimg: capresultData[j],
-        // capimg: capresultData[j] ?? Uint8List(0),
-        capimg: Uint8List(0),
+        capimg: capresultData[j]?? "",
+        // capimg: Uint8List(0),
         currentNow: _currentNowChartData[j],
         memBuffer: _memBufferChartData[j],
         memCached: _memCachedChartData[j],
         memSwapCached: _memSwapCachedChartData[j],
+        deviceName: _deviceName,
       );
       // print(capresultData[j-3]);
       putProfiling(todayProfiling);
@@ -420,7 +464,7 @@ class _MyHomePageState extends State<MyHomePage> {
     netResult();
     tempResult();
     ddrResult();
-    // screencapDo();
+    screencapDo();
     batteryCheck();
     memdumpUsage();
     //
@@ -878,7 +922,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // var stopwatch = Stopwatch();
                 // stopwatch.start();
                 _timer = Timer.periodic(
-                    const Duration(seconds: 1), updateDataSource);
+                    const Duration(seconds: 4), updateDataSource);
                 //
                 // stopwatch.stop();
                 //
@@ -1306,12 +1350,12 @@ class _MyHomePageState extends State<MyHomePage> {
     int? time = 0;
     String? textf;
     // List<Uint8List> capresultTemp = [];
-    List<Uint8List?> capresultTemp = [];
+    List<String?> capresultTemp = [];
 
     // int temp = 0;
 
     for (var profiling in profilings) {
-      if (profiling.count == testCounter) {
+      if (profiling.count == testCounter && profiling.deviceName == _deviceName) {
         if (_cpuChecked == true) {
           _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
         }
@@ -1523,6 +1567,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               memBufferChecked: _memBufferChecked,
                               memCachedChecked: _memCachedChecked,
                               memSwapCachedChecked: _memSwapCachedChecked,
+                              deviceName: _deviceName,
                             )));
                   },
                 );

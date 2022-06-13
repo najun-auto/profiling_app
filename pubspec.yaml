@@ -45,14 +45,7 @@ dependencies:
   battery_info: ^1.1.1
   flutter_image_compress: ^1.0.0-nullsafety
   simple_pip_mode: ^0.6.0
-#  floating: ^1.0.0
-#  fast_overlays: ^0.1.5
-#  overlay_support: ^2.0.0
-#  pip_view: ^0.9.5
-#  floating: ^1.0.0
-#  simple_pip_mode: ^0.6.0
-#  flutter_android_pip: ^0.0.2
-#  native_screenshot: ^1.0.0
+  device_info_plus: ^3.2.4
 
 
 dev_dependencies:
@@ -65,6 +58,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
