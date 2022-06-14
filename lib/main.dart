@@ -1513,7 +1513,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: List.generate(testCounter, (_idx) {
                 temp++;
                 for (var profiling in profilings) {
-                  if (profiling.count == testCounter &&
+                  if (profiling.count == _idx &&
                       profiling.deviceName == _deviceName) {
                     _date = profiling.ttime;
                     _text = profiling.textf;
