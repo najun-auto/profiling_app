@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 class Utils {
 
   static int getFormatTime(DateTime date){
-    return int.parse("${date.year}${makeTwoDigit(date.month)}${makeTwoDigit(date.day)}${makeTwoDigit(date.hour)}${makeTwoDigit(date.minute)}");
+    // return int.parse("${date.year}${makeTwoDigit(date.month)}${makeTwoDigit(date.day)}${makeTwoDigit(date.hour)}${makeTwoDigit(date.minute)}");
+    return int.parse("${makeTwoDigit(date.month)}${makeTwoDigit(date.day)}${makeTwoDigit(date.hour)}${makeTwoDigit(date.minute)}");
   }
 
   static DateTime numTwoDateTime(int date){

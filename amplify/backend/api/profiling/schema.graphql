@@ -1,0 +1,27 @@
+type Profiling @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  count: Int!
+  time: Int
+  CPUusage: Int
+  GPUusage: Int
+  CPU0Freq: Int
+  CPU4Freq: Int
+  CPU7Freq: Int
+  GPUFreq: Int
+  FPS_Value: Int
+  Network_Value: Int
+  Temp0: Int
+  Temp1: Int
+  Temp2: Int
+  Temp3: Int
+  Temp8: Int
+  ttime: Int
+  textf: String
+  ddrclk: Int
+  capimg: String
+  currentNow: Int
+  memBuffer: Int
+  memCached: Int
+  memSwapCached: Int
+  deviceName: String
+}

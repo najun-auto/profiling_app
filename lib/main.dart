@@ -1,45 +1,30 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-// import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:battery_info/battery_info_plugin.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-// import 'package:device_name/device_name.dart';
-// import 'package:floating/floating.dart';
-// import 'package:fast_overlays/fast_overlays.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-// import 'package:provider/provider.dart';
-// import 'package:overlay_support/overlay_support.dart';
-// import 'package:overlay/overlay.dart';
-// import 'package:pip_view/pip_view.dart';
-// import 'package:native_screenshot/native_screenshot.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:root/root.dart';
-// import 'package:screenshot/screenshot.dart';
-// import 'package:screen_capturer/screen_capturer.dart';
-// import 'package:screenshot/screenshot.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:untitled2/alldata.dart';
-import 'package:untitled2/data/database2.dart';
-import 'package:untitled2/data/profiling.dart';
+import 'package:untitled2/amplifyconfiguration.dart';
 import 'package:untitled2/getpicture.dart';
+import 'package:untitled2/models/ModelProvider.dart';
 
 
 import 'data/util.dart';
 import 'package:flutter_background/flutter_background.dart';
-// import 'package:intl/intl.dart';
 
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/services.dart';
-// https://pub.dev/packages/syncfusion_flutter_charts
 
 void main() {
   runApp(
@@ -68,6 +53,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
+enum FileType { Nothing, Delete, Update }
+
+extension ParseToString on FileType {
+  String toShortString() {
+    return this.toString().split('.').last;
+  }
+}
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
@@ -76,7 +69,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final dbHelper = DatabaseHelper();
+  // amplify plugins
+  final AmplifyDataStore _dataStorePlugin =
+  AmplifyDataStore(modelProvider: ModelProvider.instance);
+  final AmplifyAPI _apiPlugin = AmplifyAPI();
+  final AmplifyAuthCognito _authPlugin = AmplifyAuthCognito();
+
+  late StreamSubscription<QuerySnapshot<Profiling>> _subscription;
+
+  // final dbHelper = DatabaseHelper();
   late TooltipBehavior _tooltipBehavior;
   late ZoomPanBehavior _zoomPanBehavior;
 
@@ -166,24 +167,24 @@ class _MyHomePageState extends State<MyHomePage> {
   // final capimgctrl = TextEditingController();
   // int imgcounter = 1;
 
-  List<int> _cpuUsageChartData = [];
-  List<int> _gpuUsageChartData = [];
-  List<int> _cpu0FreqChartData = [];
-  List<int> _cpu4FreqChartData = [];
-  List<int> _cpu7FreqChartData = [];
-  List<int> _gpuFreqChartData = [];
-  List<int> _fpsChartData = [];
-  List<int> _networkChartData = [];
-  List<int> _temperature0ChartData = [];
-  List<int> _temperature1ChartData = [];
-  List<int> _temperature2ChartData = [];
-  List<int> _temperature3ChartData = [];
-  List<int> _temperature8ChartData = [];
-  List<int> _ddrclkChartData = [];
-  List<int> _currentNowChartData = [];
-  List<int> _memBufferChartData = [];
-  List<int> _memCachedChartData = [];
-  List<int> _memSwapCachedChartData = [];
+  List<int?> _cpuUsageChartData = [];
+  List<int?> _gpuUsageChartData = [];
+  List<int?> _cpu0FreqChartData = [];
+  List<int?> _cpu4FreqChartData = [];
+  List<int?> _cpu7FreqChartData = [];
+  List<int?> _gpuFreqChartData = [];
+  List<int?> _fpsChartData = [];
+  List<int?> _networkChartData = [];
+  List<int?> _temperature0ChartData = [];
+  List<int?> _temperature1ChartData = [];
+  List<int?> _temperature2ChartData = [];
+  List<int?> _temperature3ChartData = [];
+  List<int?> _temperature8ChartData = [];
+  List<int?> _ddrclkChartData = [];
+  List<int?> _currentNowChartData = [];
+  List<int?> _memBufferChartData = [];
+  List<int?> _memCachedChartData = [];
+  List<int?> _memSwapCachedChartData = [];
 
   List<String> capresultData = [];
 
@@ -211,31 +212,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     permissionset();
-    // screencapDo();
 
-    getCounter();
+    _initializeApp();
+
+    // getCounter();
     bakgroundset();
     deviceNameSet();
-    // _start();
-    // _cpuUsageChartData = getChartData();
-    // _gpuUsageChartData = getChartData();
-    // _cpu0FreqChartData = getChartData();
-    // _cpu4FreqChartData = getChartData();
-    // _cpu7FreqChartData = getChartData();
-    // _gpuFreqChartData = getChartData();
-    // _fpsChartData = getChartData();
-    // _networkChartData = getChartData();
-    // _temperature0ChartData = getChartData();
-    // _temperature1ChartData = getChartData();
-    // _temperature2ChartData = getChartData();
-    // _temperature3ChartData = getChartData();
-    // _temperature8ChartData = getChartData();
-
-    // _ddrclkChartData = getChartData();
-
-    // capimgctrl.text = "0";
-    // cpuGovernor();
-
 
 
     myController.text = "test";
@@ -249,6 +231,38 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  Future<void> _initializeApp() async {
+
+    // configure Amplify
+    await _configureAmplify();
+
+    _subscription = Amplify.DataStore.observeQuery(Profiling.classType)
+        .listen((QuerySnapshot<Profiling> snapshot) {
+      setState(() {
+        // if (_isLoading) _isLoading = false;
+        profilings = snapshot.items;
+        testCounter = profilings.last.count;
+        // print('testCounter = ============ : ${testCounter}');
+      });
+    });
+  }
+
+  Future<void> _configureAmplify() async {
+    try {
+
+      // add Amplify plugins
+      await Amplify.addPlugins([_dataStorePlugin, _apiPlugin, _authPlugin]);
+      // configure Amplify
+      //
+      // note that Amplify cannot be configured more than once!
+      await Amplify.configure(amplifyconfig);
+    } catch (e) {
+
+      // error handling can be improved for sure!
+      // but this will be sufficient for the purposes of this tutorial
+      print('An error occurred while configuring Amplify: $e');
+    }
+  }
   void permissionset() async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -258,16 +272,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void deviceNameSet() async {
 
-    // String temp = "";
-    // var res = await Root.exec(cmd: deviceName);
-    // // var res = 0;
-    // temp = res.toString().split(" ") as String;
-    // print(temp);
-
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    // print('Running on ${androidInfo.model}');
     _deviceName = androidInfo.model!;
+
 
   }
 
@@ -276,21 +284,6 @@ class _MyHomePageState extends State<MyHomePage> {
     await Root.exec(
         cmd:
             "su -c echo $clocktemp0 >> /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/exynos_data/debug_scaling_devfreq_max");
-    // await Root.exec(
-    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy0/scaling_governor");
-    // //
-    // //
-    // // int clocktemp4 = int.parse(cpu4freqctrl.text);
-    // //
-    // await Root.exec(
-    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_governor");
-    // // await Root.exec(
-    // //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq");
-    // //
-    // await Root.exec(
-    //     cmd: "su -c echo $clocktemp0 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_governor");
-    // await Root.exec(
-    //     cmd: "su -c echo $clocktemp4 >> /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq");
 
     setState(() {});
   }
@@ -309,23 +302,42 @@ class _MyHomePageState extends State<MyHomePage> {
         await FlutterBackground.initialize(androidConfig: androidConfig);
   }
 
-  void putProfiling(Profiling pro) async {
-    await dbHelper.InsertProfiling(pro);
+  void putProfiling(Profiling pro) async { //db
+    // await dbHelper.InsertProfiling(pro);
+
+    try {
+      // to write data to DataStore, we simply pass an instance of a model to
+      // Amplify.DataStore.save()
+      await Amplify.DataStore.save(pro);
+
+      // print("yes~~~~~~~~~~~~~~~~~~~~~~");
+    } catch (e) {
+      // print("nooooooooooooooooooooooooooooo");
+      print('An error occurred while saving Todo: $e');
+    }
+
+
     setState(() {});
   }
 
-  void getAllProfilingData() async {
-    profilings = await dbHelper.getAllProfilinig();
-    setState(() {});
-  }
+  // void getAllProfilingData() async { //db
+  //   profilings = await dbHelper.getAllProfilinig();
+  //   setState(() {});
+  // }
 
-  void getCounter() async {
-    testCounter = await dbHelper.getLastRow();
-    setState(() {});
-    // final data = await dbHelper.rawQuery()
-    // profilings = await dbHelper.getAllProfilinig();
-    // testCounter = profilings.
-  }
+  // void getCounter() {
+  //   if(profilings.isEmpty){
+  //    testCounter = 0;
+  //    print("----------");
+  //   }else {
+  //     testCounter = profilings.last.count;
+  //     print(testCounter);
+  //   }// testCounter = await dbHelper.getLastRow(); //db
+  //   setState(() {});
+  //   // final data = await dbHelper.rawQuery()
+  //   // profilings = await dbHelper.getAllProfilinig();
+  //   // testCounter = profilings.
+  // }
 
   int xAxistmp = 1;
   List<trackData> getChartData() {
@@ -382,65 +394,91 @@ class _MyHomePageState extends State<MyHomePage> {
     String capResult = "";
     // await imgdbUpdate(Start, End);
 
-    for(int j = Start; j < End; j++) {
-      String imagepath = "/storage/emulated/0/Download/screen${j}.png";
-      // if(imagepath.isEmpty) {
-      //   capresultData.add("");
-      // }else {
-      File imagefile = File(imagepath);
-      // Uint8List imagebytes = await imagefile.readAsBytes();
-      Uint8List? imagebytes = await testCompressFile(imagefile);
-      capresultData.add(Utils.base64String(imagebytes));
-      // }
-    }
-
-    // for(int j = Start; j < xAxistmp-4; j++) {
-    // for(int j = Start; j < End+1; j++) {
-    //
-    //   // String imagepath = "/storage/emulated/0/Download/screen${j}.png";
-    //   // File imagefile = File(imagepath);
-    //   //
-    //   // Uint8List? testbytes = await testCompressFile(imagefile);
-    //   // capresultData.add(testbytes);
-    //
-    //   //// capresultData.add(Uint8List(0));
-    //
+    // for(int j = Start; j < End; j++) {
+    //   String imagepath = "/storage/emulated/0/Download/screen${j}.png";
+    //   // if(imagepath.isEmpty) {
+    //   //   capresultData.add("");
+    //   // }else {
+    //   File imagefile = File(imagepath);
+    //   // Uint8List imagebytes = await imagefile.readAsBytes();
+    //   Uint8List? imagebytes = await testCompressFile(imagefile);
+    //   capresultData.add(Utils.base64String(imagebytes));
+    //   // }
     // }
 
+
     // for(int j = 0; j < xAxistmp-5; j++) {
-    for (int j = Start; j < End-1; j++) {
+    // for (int j = Start; j < End-2; j++) {
+    // for (int j = Start; j < Start; j++) {
+    // int j = Start;
+      // Profiling
       // print(j);
-      Profiling todayProfiling = Profiling(
-        time: j,
-        count: testCounter,
-        CPUusage: _cpuUsageChartData[j],
-        GPUusage: _gpuUsageChartData[j],
-        CPU0Freq: _cpu0FreqChartData[j],
-        CPU4Freq: _cpu4FreqChartData[j],
-        CPU7Freq: _cpu7FreqChartData[j],
-        GPUFreq: _gpuFreqChartData[j],
-        FPS: _fpsChartData[j],
-        Network: _networkChartData[j],
-        Temp0: _temperature0ChartData[j],
-        Temp1: _temperature1ChartData[j],
-        Temp2: _temperature2ChartData[j],
-        Temp3: _temperature3ChartData[j],
-        Temp8: _temperature8ChartData[j],
-        ttime: timE,
-        textf: myController.text,
-        ddrclk: _ddrclkChartData[j],
-        // capimg: capresultData[j],
-        capimg: capresultData[j]?? "",
-        // capimg: Uint8List(0),
-        currentNow: _currentNowChartData[j],
-        memBuffer: _memBufferChartData[j],
-        memCached: _memCachedChartData[j],
-        memSwapCached: _memSwapCachedChartData[j],
-        deviceName: _deviceName,
-      );
-      // print(capresultData[j-3]);
-      putProfiling(todayProfiling);
-    }
+      try {
+        for (int j = Start; j < End - 2; j++) {
+          Profiling todayProfiling = Profiling( // db
+            time: j,
+            count: testCounter,
+            CPUusage: _cpuUsageChartData[j] ?? 0,
+            GPUusage: _gpuUsageChartData[j] ?? 0,
+            CPU0Freq: _cpu0FreqChartData[j] ?? 0,
+            CPU4Freq: _cpu4FreqChartData[j] ?? 0,
+            CPU7Freq: _cpu7FreqChartData[j] ?? 0,
+            GPUFreq: _gpuFreqChartData[j] ?? 0,
+            FPS_Value: _fpsChartData[j] ?? 0,
+            Network_Value: _networkChartData[j] ?? 0,
+            Temp0: _temperature0ChartData[j] ?? 0,
+            Temp1: _temperature1ChartData[j] ?? 0,
+            Temp2: _temperature2ChartData[j] ?? 0,
+            Temp3: _temperature3ChartData[j] ?? 0,
+            Temp8: _temperature8ChartData[j] ?? 0,
+            ttime: timE,
+            textf: myController.text,
+            ddrclk: _ddrclkChartData[j] ?? 0,
+            // capimg: capresultData[j],
+            // capimg: capresultData[j],
+            capimg: "test",
+            currentNow: _currentNowChartData[j] ?? 0,
+            memBuffer: _memBufferChartData[j] ?? 0,
+            memCached: _memCachedChartData[j] ?? 0,
+            memSwapCached: _memSwapCachedChartData[j] ?? 0,
+            deviceName: _deviceName,
+          );
+          putProfiling(todayProfiling); //db
+        }
+      }
+      catch (e) {
+        print('An error occurred while deleting Todo: $e');
+      }
+
+    // }
+
+    //
+    // final item = Profiling(
+    //     count: testCounter,
+    //     time: 7,
+    //     CPUusage: _cpuUsageChartData[j],
+    //     GPUusage: _gpuUsageChartData[j],
+    //     CPU0Freq: _cpu0FreqChartData[j],
+    //     CPU4Freq: _cpu4FreqChartData[j],
+    //     CPU7Freq: _cpu7FreqChartData[j],
+    //     GPUFreq: _gpuFreqChartData[j],
+    //     FPS_Value: _fpsChartData[j],
+    //     Network_Value: _networkChartData[j],
+    //     Temp0: _temperature0ChartData[j],
+    //     Temp1: _temperature1ChartData[j],
+    //     Temp2: _temperature2ChartData[j],
+    //     Temp3: _temperature3ChartData[j],
+    //     Temp8: _temperature8ChartData[j],
+    //     ttime: 2022,
+    //     textf: myController.text,
+    //     ddrclk: _ddrclkChartData[j],
+    //     capimg: "Lorem ipsum dolor sit amet",
+    //     currentNow: _currentNowChartData[j],
+    //     memBuffer: _memBufferChartData[j],
+    //     memCached: _memCachedChartData[j],
+    //     memSwapCached: _memSwapCachedChartData[j],
+    //     deviceName: _deviceName);
+    // await Amplify.DataStore.save(item);
 
     finState = true;
   }
@@ -467,44 +505,7 @@ class _MyHomePageState extends State<MyHomePage> {
     screencapDo();
     batteryCheck();
     memdumpUsage();
-    //
-    // stopwatch.stop();
-    //
-    // print(stopwatch.elapsedMilliseconds);
-    //
-    // stopwatch.start();
-    // if(_cpuChecked == true){cpuUsage();}
-    // if(_gpuChecked == true){ gpuUsage();}
-    // if(_cpu0freqChecked == true){cpuFreq();}
-    // if(_cpu4freqChecked == true){cpuFreq();}
-    // if(_cpu7freqChecked == true){cpuFreq();}
-    // if(_gpufreqChecked == true){gpuFreq();}
-    // if(_fpsChecked == true){fpsResult();}
-    // if(_networkChecked == true){netResult();}
-    // if(_temp0Checked == true){tempResult();}
 
-    // Profiling todayProfiling = Profiling(
-    //     time: xAxistmp,
-    //     count: testCounter,
-    //     CPUusage: _cpuUsageChartData[_cpuUsageChartData.length-1].yAxis,
-    //     GPUusage: _gpuUsageChartData[_gpuUsageChartData.length-1].yAxis,
-    //     CPU0Freq: _cpu0FreqChartData[_cpu0FreqChartData.length-1].yAxis,
-    //     CPU4Freq: _cpu4FreqChartData[_cpu4FreqChartData.length-1].yAxis,
-    //     CPU7Freq: _cpu7FreqChartData[_cpu7FreqChartData.length-1].yAxis,
-    //     GPUFreq: _gpuFreqChartData[_gpuFreqChartData.length-1].yAxis,
-    //     FPS: _fpsChartData[_fpsChartData.length-1].yAxis,
-    //     Network: _networkChartData[_networkChartData.length-1].yAxis,
-    //     Temp0: _temperature0ChartData[_temperature0ChartData.length-1].yAxis,
-    //     Temp1: _temperature1ChartData[_temperature1ChartData.length-1].yAxis,
-    //     Temp2: _temperature2ChartData[_temperature2ChartData.length-1].yAxis,
-    //     Temp3: _temperature3ChartData[_temperature3ChartData.length-1].yAxis,
-    //     Temp8: _temperature8ChartData[_temperature8ChartData.length-1].yAxis,
-    //     ttime: timE,
-    //     textf: myController.text,
-    //     ddrclk: _ddrclkChartData[_ddrclkChartData.length-1].yAxis,
-    //     capimg: capResult,
-    // );
-    // putProfiling(todayProfiling);
 
     xAxistmp++;
     EndTemp++;
@@ -535,56 +536,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void screencapDo() {
-    // screenshotController.capture().then((Uint8List image) {
-    //   print(image);
-    // }).catchError((onError) {
-    //   print(onError);
-    // });
 
-    // int screen = 0;
-    // if(xAxistmp % 4 == 0) {
-    // var stopwatch = Stopwatch();
-    // stopwatch.start();
-// iWonderHowLongThisTakes();
-
-    // if(xAxistmp % 5 == 0) {
     Root.exec(
         cmd: "screencap -p /storage/emulated/0/Download/screen${xAxistmp}.png");
-    // }else{
-    //   Root.exec(
-    //       cmd: "touch /storage/emulated/0/Download/screen${xAxistmp}.png");
-    // }
 
-    // stopwatch.stop();
-    //
-    // print(stopwatch.elapsedMilliseconds);
-    // stopwatch.start();
-    // }else{
-    //   await Root.exec(
-    //       cmd: "touch /storage/emulated/0/Download/screen${xAxistmp}.png");
-    // }
-
-    // String? path = await NativeScreenshot.takeScreenshot();
-    // print(path);
-
-    // var screenCapturer;
-    // CapturedData? capturedData = await screenCapturer.capture(
-    //   mode: CaptureMode.region, // screen, window
-    //   imagePath: '/storage/emulated/0/Download/screen${xAxistmp}.jpg',
-    // );
-    // print("temp: ${xAxistmp}");
-    // screenCoutner++;
-    // String imagepath = "/storage/emulated/0/Download/screen.jpg";
-    // File imagefile = File(imagepath);
-    // Uint8List imagebytes = await imagefile.readAsBytes();
-    // capResult = Utils.base64String(imagebytes);
-    // setState(() {
-    //   // gpuUsageResult = int.parse(res.toString());
-    //   // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
-    //   // _gpuUsageChartData.removeAt(0);
-    // });
-
-    // print("${await pipeline.stdout.text} instances of waitFor");
   }
 
   void memdumpUsage() async {
@@ -922,7 +877,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // var stopwatch = Stopwatch();
                 // stopwatch.start();
                 _timer = Timer.periodic(
-                    const Duration(seconds: 4), updateDataSource);
+                    const Duration(seconds: 1), updateDataSource);
                 //
                 // stopwatch.stop();
                 //
@@ -931,6 +886,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 currentState = true;
                 finState = false;
                 timE = Utils.getFormatTime(DateTime.now());
+                // print(timE);
+                // print(int.parse(DateTime.now().toString().replaceAll(RegExp(r'[^0-9]'), "")));
+                // res.toString().replaceAll(RegExp(r'[^0-9]'), "");
                 xAxistmp = 1;
                 // clockSet();
                 // }
@@ -974,11 +932,8 @@ class _MyHomePageState extends State<MyHomePage> {
             selectIndex = idx;
           });
           if (selectIndex == 1) {
-            getAllProfilingData();
-            // dbUpate();
-            // getAllProfiling();
-            // print(allprofilings[0].title);
-          }
+            // getAllProfilingData(); //db
+             }
           // }else if(selectIndex == 3){
           //   FutureBuilder<bool>(
           //     future: floating.isPipAvailable,
@@ -1002,11 +957,13 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 
+
   Widget getPage() {
     if (selectIndex == 0) {
       return getCurrentProfiling();
     } else if (selectIndex == 1) {
       return getOldProfiling();
+      // return Container();
     } else {
       // return Container();
       return getAllData();
@@ -1326,9 +1283,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getOldProfiling() {
-    final List<trackData> chartData = [trackData(1, 0), trackData(2, 0)];
-
-    List<trackData> _cpuUsage_temp = [];
+    // return Container();
+    //
+    List<trackData> _cpuUsage_temp = []; // db
     List<trackData> _gpuUsage_temp = [];
     List<trackData> _cpu0Freq_temp = [];
     List<trackData> _cpu4Freq_temp = [];
@@ -1353,11 +1310,14 @@ class _MyHomePageState extends State<MyHomePage> {
     List<String?> capresultTemp = [];
 
     // int temp = 0;
+    // print(_deviceName);
+
 
     for (var profiling in profilings) {
       if (profiling.count == testCounter && profiling.deviceName == _deviceName) {
         if (_cpuChecked == true) {
           _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
+          // print("===== ${_cpuUsage_temp}");
         }
         if (_gpuChecked == true) {
           _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));
@@ -1375,10 +1335,10 @@ class _MyHomePageState extends State<MyHomePage> {
           _gpuFreq_temp.add(trackData(profiling.time, profiling.GPUFreq));
         }
         if (_fpsChecked == true) {
-          _fps_temp.add(trackData(profiling.time, profiling.FPS));
+          _fps_temp.add(trackData(profiling.time, profiling.FPS_Value));
         }
         if (_networkChecked == true) {
-          _network_temp.add(trackData(profiling.time, profiling.Network));
+          _network_temp.add(trackData(profiling.time, profiling.Network_Value));
         }
         if (_temp0Checked == true) {
           _temperature0_temp.add(trackData(profiling.time, profiling.Temp0));
@@ -1524,8 +1484,26 @@ class _MyHomePageState extends State<MyHomePage> {
   //   );
   // }
 
+
+  // void _deleteTodo(BuildContext context) async {
+  //   try {
+  //     // to delete data from DataStore, we pass the model instance to
+  //     // Amplify.DataStore.delete()
+  //     await Amplify.DataStore.delete(todo);
+  //   } catch (e) {
+  //     print('An error occurred while deleting Todo: $e');
+  //   }
+  // }
+
   Widget getAllData() {
+
+
+    // return Container();
     int temp = 0;
+    List<bool> _selections1 = List.generate(3, (index) => false);
+    int? _date = 0;
+    String? _text = "";
+    // bool _selections1 = false;
     return profilings.isEmpty
         ? Container()
         : Container(
@@ -1534,47 +1512,106 @@ class _MyHomePageState extends State<MyHomePage> {
               scrollDirection: Axis.vertical,
               children: List.generate(testCounter, (_idx) {
                 temp++;
-                return InkWell(
-                  child: Container(
-                    height: 70,
-                    width: 700,
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Text("${temp}"),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue),
-                      // borderRadius: BorderRadius.circular(50)
+                for (var profiling in profilings) {
+                  if (profiling.count == testCounter &&
+                      profiling.deviceName == _deviceName) {
+                    _date = profiling.ttime;
+                    _text = profiling.textf;
+                    break;
+                  }
+                }
+                // profilings.
+                // return InkWell(
+                  // title: "ToggleButtons,
+                  return Card(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // CognitoUserAttributeKey.par
+                        // Text("Text ", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                        Container(
+                          child: InkWell(
+                            child: Column(
+                              children: [
+                                Text("Date : ${_date} ", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                Text("Note : ${_text} ", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+
+                              ],
+                            ),onTap: () async {
+                            await Navigator.of(context).push(MaterialPageRoute(
+                                builder: (ctx) => GetAllDataPage(
+                                  testCounter: _idx,
+                                  cpuChecked: _cpuChecked,
+                                  gpuChecked: _gpuChecked,
+                                  cpu0freqChecked: _cpu0freqChecked,
+                                  cpu4freqChecked: _cpu4freqChecked,
+                                  cpu7freqChecked: _cpu7freqChecked,
+                                  gpufreqChecked: _gpufreqChecked,
+                                  fpsChecked: _fpsChecked,
+                                  networkChecked: _networkChecked,
+                                  temp0Checked: _temp0Checked,
+                                  temp1Checked: _temp1Checked,
+                                  temp2Checked: _temp2Checked,
+                                  temp3Checked: _temp3Checked,
+                                  temp8Checked: _temp8Checked,
+                                  ddrclkChecked: _ddrclkChecked,
+                                  currentNowChecked: _currentNowChecked,
+                                  memBufferChecked: _memBufferChecked,
+                                  memCachedChecked: _memCachedChecked,
+                                  memSwapCachedChecked: _memSwapCachedChecked,
+                                  deviceName: _deviceName,
+                                  profilings: profilings,
+                                )));
+                          },
+                          ),
+                        ),
+                        ToggleButtons(
+                          children: <Widget>[
+                            Icon(Icons.delete_forever),
+                            Icon(Icons.delete_forever),
+                            Icon(Icons.delete_forever),
+                          ],
+                          onPressed: (int index) async {
+                            deleteProfiling(_idx+1);
+                            setState(() {
+                              _selections1[index] = !_selections1[index];
+                              // deleteProfiling(_idx+1);
+
+                            });
+                          },
+                          isSelected: _selections1,
+
+                        ),
+                      ],
                     ),
-                  ),
-                  onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => GetAllDataPage(
-                              testCounter: _idx,
-                              cpuChecked: _cpuChecked,
-                              gpuChecked: _gpuChecked,
-                              cpu0freqChecked: _cpu0freqChecked,
-                              cpu4freqChecked: _cpu4freqChecked,
-                              cpu7freqChecked: _cpu7freqChecked,
-                              gpufreqChecked: _gpufreqChecked,
-                              fpsChecked: _fpsChecked,
-                              networkChecked: _networkChecked,
-                              temp0Checked: _temp0Checked,
-                              temp1Checked: _temp1Checked,
-                              temp2Checked: _temp2Checked,
-                              temp3Checked: _temp3Checked,
-                              temp8Checked: _temp8Checked,
-                              ddrclkChecked: _ddrclkChecked,
-                              currentNowChecked: _currentNowChecked,
-                              memBufferChecked: _memBufferChecked,
-                              memCachedChecked: _memCachedChecked,
-                              memSwapCachedChecked: _memSwapCachedChecked,
-                              deviceName: _deviceName,
-                            )));
-                  },
+
                 );
               }),
             ),
           );
   }
+
+
+  void deleteProfiling(int deleteCounter) async {
+
+    // print("counter!!!!!!!! ${deleteCounter}");
+
+    for (var profiling in profilings) {
+      if (profiling.count == deleteCounter &&
+          profiling.deviceName == _deviceName) {
+
+        try {
+          // to delete data from DataStore, we pass the model instance to
+          // Amplify.DataStore.delete()
+          await Amplify.DataStore.delete(profiling);
+        } catch (e) {
+          print('An error occurred while deleting Todo: $e');
+        }
+      }
+    }
+
+  }
+
 
   Widget oldgraph(List<trackData> chartData, bool temp, String Tempstr) {
     // _tooltipBehavior =  TooltipBehavior(enable: true);
@@ -1608,36 +1645,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ]));
   }
 
-  // Widget graphArc(List<trackData> _cpuUsageChartData, double height, String title){
-  //
-  //   return Container(
-  //     height: height,
-  //     child:
-  //     SfCartesianChart(
-  //       title: ChartTitle(text: title),
-  //       // legend: Legend(isVisible: true),
-  //       series: <SplineSeries>[
-  //         SplineSeries<trackData, int>(
-  //           onRendererCreated: (ChartSeriesController controller) {
-  //             _chartSeriesController = controller;
-  //           },
-  //           name: title,
-  //           dataSource: _cpuUsageChartData,
-  //           xValueMapper: (trackData yAxis, _) => yAxis.xAxis,
-  //           yValueMapper: (trackData yAxis, _) => yAxis.yAxis,
-  //           dataLabelSettings: DataLabelSettings(isVisible: true),
-  //           color: Colors.orange,
-  //           width: 10,
-  //           opacity: 0.5,
-  //         )
-  //       ],
-  //       primaryXAxis: NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
-  //       // primaryYAxis: NumericAxis(
-  //       //     labelFormat: '{value}M',
-  //       //     numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)),
-  //     ),
-  //   );
-  // }
 }
 
 class trackData {
@@ -1645,37 +1652,3 @@ class trackData {
   final int? xAxis;
   final int? yAxis;
 }
-
-//
-// class PipViewPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return PIPView(
-//       builder: (context, isFloating){
-//         return Scaffold(
-//           body: Column(
-//             children: [
-//               Text('This is the screen that will float!'),
-//               MaterialButton(
-//                 child: Text('Start floating'),
-//                 onPressed: () {
-//                   PIPView.of(context).presentBelow(MyBackgroundScreen());
-//                 },
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//
-//     );
-//   }
-// }
-//
-// class MyBackgroundScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         body: Text('This is my background screen!'),
-//     );
-//   }
-// }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:untitled2/data/database2.dart';
 import 'package:untitled2/getpicture.dart';
+import 'package:untitled2/models/Profiling.dart';
 
 import 'data/profiling.dart';
 
@@ -35,9 +36,10 @@ class GetAllDataPage extends StatefulWidget{
   final bool memSwapCachedChecked;
   final String deviceName;
 
+  final List<Profiling> profilings;
 
 
-  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked, required this.memBufferChecked, required this.memCachedChecked, required this.memSwapCachedChecked, required this.deviceName}) : super(key: key);
+  GetAllDataPage({Key? key, required this.testCounter, required this.cpuChecked, required this.gpuChecked, required this.cpu0freqChecked, required this.cpu4freqChecked, required this.cpu7freqChecked, required this.gpufreqChecked, required this.fpsChecked, required this.networkChecked, required this.temp0Checked, required this.temp1Checked, required this.temp2Checked, required this.temp3Checked, required this.temp8Checked, required this.ddrclkChecked, required this.currentNowChecked, required this.memBufferChecked, required this.memCachedChecked, required this.memSwapCachedChecked, required this.deviceName, required this.profilings}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -48,8 +50,8 @@ class GetAllDataPage extends StatefulWidget{
 
 class _GetAllDataPage extends State<GetAllDataPage>{
 
-  final dbHelper = DatabaseHelper();
-  List<Profiling> profilings = [];
+  // final dbHelper = DatabaseHelper();
+  // List<Profiling> profilings = [];
   late TooltipBehavior _tooltipBehavior;
   late ZoomPanBehavior _zoomPanBehavior;
   int testCounter = 0;
@@ -80,7 +82,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   @override
   void initState() {
     // TODO: implement initState
-    getAllProfilingData();
+    // getAllProfilingData();
     testCounter = widget.testCounter;
     testCounter++;
 
@@ -112,12 +114,12 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     super.initState();
   }
 
-  void getAllProfilingData() async{
-    profilings = await dbHelper.getAllProfilinig();
-    setState(() {
-
-    });
-  }
+  // void getAllProfilingData() async{
+  //   profilings = await dbHelper.getAllProfilinig();
+  //   setState(() {
+  //
+  //   });
+  // }
 
   Widget build(BuildContext context){
     return Scaffold(
@@ -160,7 +162,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     List<String?> capresultTemp = [];
 
 
-    for(var profiling in profilings){
+    for(var profiling in widget.profilings){
       if(profiling.count == testCounter && profiling.deviceName == widget.deviceName){
         if(_cpuChecked == true){_cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));}
         if(_gpuChecked == true){ _gpuUsage_temp.add(trackData(profiling.time, profiling.GPUusage));}
@@ -168,8 +170,8 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         if(_cpu4freqChecked == true){_cpu4Freq_temp.add(trackData(profiling.time, profiling.CPU4Freq));}
         if(_cpu7freqChecked == true){_cpu7Freq_temp.add(trackData(profiling.time, profiling.CPU7Freq));}
         if(_gpufreqChecked == true){_gpuFreq_temp.add(trackData(profiling.time, profiling.GPUFreq));}
-        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS));}
-        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network));}
+        if(_fpsChecked == true){_fps_temp.add(trackData(profiling.time, profiling.FPS_Value));}
+        if(_networkChecked == true){_network_temp.add(trackData(profiling.time, profiling.Network_Value));}
         if(_temp0Checked == true){_temperature0_temp.add(trackData(profiling.time, profiling.Temp0));}
         if(_temp1Checked == true){_temperature1_temp.add(trackData(profiling.time, profiling.Temp1));}
         if(_temp2Checked == true){_temperature2_temp.add(trackData(profiling.time, profiling.Temp2));}
@@ -189,7 +191,7 @@ class _GetAllDataPage extends State<GetAllDataPage>{
 
     }
 
-    return profilings.isEmpty ? Container() : Container(
+    return widget.profilings.isEmpty ? Container() : Container(
       child: ListView(
         children: [
           Text("${time}"),
