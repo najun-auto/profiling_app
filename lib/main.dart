@@ -12,6 +12,7 @@ import 'package:battery_info/battery_info_plugin.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:root/root.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -25,6 +26,12 @@ import 'data/util.dart';
 import 'package:flutter_background/flutter_background.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+
+// import 'package:csv/csv.dart';
+// import 'package:flutter/material.dart';
+// import 'package:ext_storage/ext_storage.dart';
+// import 'dart:io';
+// import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(
@@ -209,12 +216,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String _deviceName = "";
 
+  bool camera_on = false;
+
   @override
   void initState() {
     permissionset();
 
     _initializeApp();
 
+    imgRemove();
     // getCounter();
     bakgroundset();
     deviceNameSet();
@@ -301,6 +311,74 @@ class _MyHomePageState extends State<MyHomePage> {
     bool success =
         await FlutterBackground.initialize(androidConfig: androidConfig);
   }
+
+  // Future<String> get _localPath async {
+  //   // final directory = await getApplicationDocumentsDirectory();
+  //   final directory = Directory('/storage/emulated/0/Download');
+  //
+  //   return directory.path;
+  // }
+  //
+  // Future<File> get _localFile async {
+  //   final path = await _localPath;
+  //   print(path);
+  //   return File('$path/profiling_data.csv');
+  // }
+  //
+  // Future<File> writeCounter(String csv) async {
+  //   final file = await _localFile;
+  //
+  //   // 파일 쓰기
+  //   return file.writeAsString('$csv');
+  // }
+  //
+  // void _generateCsvFile() async {
+  //   // Map<Permission, PermissionStatus> statuses = await [
+  //   //   Permission.storage,
+  //   // ].request();
+  //
+  //   List<dynamic> associateList = [
+  //     {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+  //     {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+  //     {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+  //     {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
+  //   ];
+  //   List<int> number = [5, 5, 5, 5];
+  //
+  //
+  //   List<List<dynamic>> rows = [];
+  //
+  //   List<dynamic> row = [];
+  //   row.add("number");
+  //   row.add("latitude");
+  //   row.add("longitude");
+  //   rows.add(row);
+  //   for (int i = 0; i < associateList.length; i++) {
+  //     List<dynamic> row = [];
+  //     // row.add(associateList[i]["number"] - 1);
+  //     row.add(number[i]);
+  //     row.add(associateList[i]["lat"]);
+  //     row.add(associateList[i]["lon"]);
+  //     rows.add(row);
+  //   }
+  //
+  //   String csv = const ListToCsvConverter().convert(rows);
+  //
+  //
+  //   writeCounter(csv);
+  //   // String dir = await ExtStorage.getExternalStoragePublicDirectory(
+  //   //     ExtStorage.DIRECTORY_DOWNLOADS);
+  //   // print("dir $dir");
+  //   // String file = "$dir";
+  //
+  //   // File f = File("./filename.csv");
+  //   //
+  //   // f.writeAsString(csv);
+  //
+  //   setState(() {
+  //     // _counter++;
+  //   });
+  // }
 
   void putProfiling(Profiling pro) async { //db
     // await dbHelper.InsertProfiling(pro);
@@ -394,25 +472,20 @@ class _MyHomePageState extends State<MyHomePage> {
     String capResult = "";
     // await imgdbUpdate(Start, End);
 
-    // for(int j = Start; j < End; j++) {
-    //   String imagepath = "/storage/emulated/0/Download/screen${j}.png";
-    //   // if(imagepath.isEmpty) {
-    //   //   capresultData.add("");
-    //   // }else {
-    //   File imagefile = File(imagepath);
-    //   // Uint8List imagebytes = await imagefile.readAsBytes();
-    //   Uint8List? imagebytes = await testCompressFile(imagefile);
-    //   capresultData.add(Utils.base64String(imagebytes));
-    //   // }
+    // if(camera_on) {
+    for (int j = Start; j < End-2; j++) {
+      if (camera_on) {
+        String imagepath = "/storage/emulated/0/Download/screen${j}.png";
+        File imagefile = File(imagepath);
+        Uint8List? imagebytes = await testCompressFile(imagefile);
+        capresultData.add(Utils.base64String(imagebytes));
+        // }
+      }else{
+        capresultData.add("");
+      }
+    }
     // }
 
-
-    // for(int j = 0; j < xAxistmp-5; j++) {
-    // for (int j = Start; j < End-2; j++) {
-    // for (int j = Start; j < Start; j++) {
-    // int j = Start;
-      // Profiling
-      // print(j);
       try {
         for (int j = Start; j < End - 2; j++) {
           Profiling todayProfiling = Profiling( // db
@@ -435,8 +508,8 @@ class _MyHomePageState extends State<MyHomePage> {
             textf: myController.text,
             ddrclk: _ddrclkChartData[j] ?? 0,
             // capimg: capresultData[j],
-            // capimg: capresultData[j],
-            capimg: "test",
+            capimg: capresultData[j],
+            // capimg: "test",
             currentNow: _currentNowChartData[j] ?? 0,
             memBuffer: _memBufferChartData[j] ?? 0,
             memCached: _memCachedChartData[j] ?? 0,
@@ -485,7 +558,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void imgRemove() async {
     var res = await Root.exec(
-        cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
+        cmd: "su -c rm /storage/emulated/0/Download/screen*.png");
   }
 
   void updateDataSource(Timer timer) {
@@ -502,7 +575,9 @@ class _MyHomePageState extends State<MyHomePage> {
     netResult();
     tempResult();
     ddrResult();
-    screencapDo();
+    if(camera_on) {
+      screencapDo();
+    }
     batteryCheck();
     memdumpUsage();
 
@@ -876,8 +951,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 EndTemp = 1;
                 // var stopwatch = Stopwatch();
                 // stopwatch.start();
-                _timer = Timer.periodic(
-                    const Duration(seconds: 1), updateDataSource);
+                if(camera_on){
+                  _timer = Timer.periodic(
+                      const Duration(seconds: 4), updateDataSource);
+                }else {
+                  _timer = Timer.periodic(
+                      const Duration(seconds: 1), updateDataSource);
+                }
                 //
                 // stopwatch.stop();
                 //
@@ -912,6 +992,11 @@ class _MyHomePageState extends State<MyHomePage> {
               // await dbHelper.InsertProfiling(todayProfiling);
             },
           ),
+          // FloatingActionButton(
+          //   child: Icon(Icons.wb_incandescent_outlined),
+          //   onPressed: _generateCsvFile,
+          //   tooltip: 'Increment',
+          // ),
         ],
       ),
 
@@ -1005,6 +1090,8 @@ class _MyHomePageState extends State<MyHomePage> {
         memBuffercheckedBox(),
         memCachedcheckedBox(),
         memSwapCachedcheckedBox(),
+        scrrenOncheckedBox(),
+        Container(height: 50,),
 
         Text("Working? ${currentState}"),
         Text("Finish? ${finState}"),
@@ -1046,6 +1133,19 @@ class _MyHomePageState extends State<MyHomePage> {
     //   ],
     // ),
     // );
+  }
+
+  Widget scrrenOncheckedBox() {
+    return Container(
+        child: CheckboxListTile(
+          title: const Text('Screen Capture On'),
+          value: camera_on,
+          onChanged: (bool? value) {
+            setState(() {
+              camera_on = value!;
+            });
+          },
+        ));
   }
 
   Widget memBuffercheckedBox() {
@@ -1400,11 +1500,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
                 oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
                 oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
-                oldgraph(_currentNow_temp, _currentNowChecked, "Current Now"),
-                oldgraph(_memBuffer_temp, _memBufferChecked, "MEM Buffer"),
-                oldgraph(_memCached_temp, _memCachedChecked, "MEM Cached"),
+                oldgraph(_currentNow_temp, _currentNowChecked, "Current Now(mA)"),
+                oldgraph(_memBuffer_temp, _memBufferChecked, "MEM Buffer(KB)"),
+                oldgraph(_memCached_temp, _memCachedChecked, "MEM Cached(KB)"),
                 oldgraph(_memSwapCached_temp, _memSwapCachedChecked,
-                    "MEM SwapCached"),
+                    "MEM SwapCached(KB)"),
                 Container(
                   // margin: EdgeInsets.all(8),
                   child: TextField(

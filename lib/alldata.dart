@@ -1,6 +1,7 @@
 
 
 // import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:untitled2/getpicture.dart';
 import 'package:untitled2/models/Profiling.dart';
 
 import 'data/profiling.dart';
+import 'package:csv/csv.dart';
 
 class GetAllDataPage extends StatefulWidget{
 
@@ -79,6 +81,8 @@ class _GetAllDataPage extends State<GetAllDataPage>{
 
   final countingController = TextEditingController();
 
+  bool csvwrite = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -121,14 +125,100 @@ class _GetAllDataPage extends State<GetAllDataPage>{
   //   });
   // }
 
+
+  Future<String> get _localPath async {
+    // final directory = await getApplicationDocumentsDirectory();
+    final directory = Directory('/storage/emulated/0/Download');
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    print(path);
+    return File('$path/profiling_data.csv');
+  }
+
+  Future<File> writeCounter(String csv) async {
+    final file = await _localFile;
+
+    // 파일 쓰기
+    return file.writeAsString('$csv');
+  }
+  //
+  // void _generateCsvFile() async {
+  //   // Map<Permission, PermissionStatus> statuses = await [
+  //   //   Permission.storage,
+  //   // ].request();
+  //
+  //   // List<dynamic> associateList = [
+  //   //   {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+  //   //   {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+  //   //   {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+  //   //   {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
+  //   // ];
+  //   // List<int> number = [6, 6, 6, 6];
+  //
+  //
+  //   // List<List<dynamic>> rows = [];
+  //   //
+  //   // List<dynamic> row = [];
+  //   // row.add("number");
+  //   // row.add("latitude");
+  //   // row.add("longitude");
+  //   // rows.add(row);
+  //   // for (int i = 0; i < associateList.length; i++) {
+  //   //   List<dynamic> row = [];
+  //   //   // row.add(associateList[i]["number"] - 1);
+  //   //   row.add(number[i]);
+  //   //   row.add(associateList[i]["lat"]);
+  //   //   row.add(associateList[i]["lon"]);
+  //   //   rows.add(row);
+  //   // }
+  //
+  //   String csv = const ListToCsvConverter().convert(rows);
+  //
+  //
+  //   writeCounter(csv);
+  //   // String dir = await ExtStorage.getExternalStoragePublicDirectory(
+  //   //     ExtStorage.DIRECTORY_DOWNLOADS);
+  //   // print("dir $dir");
+  //   // String file = "$dir";
+  //
+  //   // File f = File("./filename.csv");
+  //   //
+  //   // f.writeAsString(csv);
+  //
+  //   setState(() {
+  //     // _counter++;
+  //   });
+  // }
+
   Widget build(BuildContext context){
     return Scaffold(
       body: Container(child: getOldProfiling()),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.arrow_back),
+      //   onPressed: () {
+      //     Navigator.of(context).pop();
+      //   },
+      // ),
+
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+              child: Icon(Icons.wb_incandescent_rounded),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          FloatingActionButton(
+            child: Icon(Icons.wb_incandescent_outlined),
+            onPressed: () {
+              csvwrite = true;
+            },
+          ),
+        ],
       ),
     );
   }
@@ -161,6 +251,37 @@ class _GetAllDataPage extends State<GetAllDataPage>{
     // List<Uint8List> capresultTemp = [];
     List<String?> capresultTemp = [];
 
+    List<List<dynamic>> rows = [];
+
+    List<dynamic> row = [];
+    row.add("CPU Usage(%)");
+    row.add("GPU Usage(%)");
+    row.add("CPU 0 Freq(MHz)");
+    row.add("CPU 4 Freq(MHz)");
+    row.add("CPU 7 Freq(MHz)");
+    row.add("GPU Freq(MHz)");
+    row.add("FPS Value");
+    row.add("Network Value");
+    row.add("Temp 0");
+    row.add("Temp 1");
+    row.add("Temp 2");
+    row.add("Temp 3");
+    row.add("Temp 8");
+    row.add("DDR CLK");
+    row.add("Current Now(mA)");
+    row.add("MEM Buffer(KB)");
+    row.add("MEM Cache(KB)");
+    row.add("MEM SWap(KB)");
+    rows.add(row);
+    // for (int i = 0; i < associateList.length; i++) {
+    //   List<dynamic> row = [];
+    //   // row.add(associateList[i]["number"] - 1);
+    //   row.add(number[i]);
+    //   row.add(associateList[i]["lat"]);
+    //   row.add(associateList[i]["lon"]);
+    //   rows.add(row);
+    // }
+
 
     for(var profiling in widget.profilings){
       if(profiling.count == testCounter && profiling.deviceName == widget.deviceName){
@@ -187,10 +308,36 @@ class _GetAllDataPage extends State<GetAllDataPage>{
         time = profiling.ttime;
         textf = profiling.textf;
         capresultTemp.add(profiling.capimg);
+
+        List<dynamic> row = [];
+        row.add(profiling.CPUusage);
+        row.add(profiling.GPUusage);
+        row.add(profiling.CPU0Freq);
+        row.add(profiling.CPU4Freq);
+        row.add(profiling.CPU7Freq);
+        row.add(profiling.GPUFreq);
+        row.add(profiling.FPS_Value);
+        row.add(profiling.Network_Value);
+        row.add(profiling.Temp0);
+        row.add(profiling.Temp1);
+        row.add(profiling.Temp2);
+        row.add(profiling.Temp3);
+        row.add(profiling.Temp8);
+        row.add(profiling.ddrclk);
+        row.add(profiling.currentNow);
+        row.add(profiling.memBuffer);
+        row.add(profiling.memCached);
+        row.add(profiling.memSwapCached);
+
+        rows.add(row);
       }
 
     }
 
+    String csv = const ListToCsvConverter().convert(rows);
+    if(csvwrite){
+      writeCounter(csv);
+    }
     return widget.profilings.isEmpty ? Container() : Container(
       child: ListView(
         children: [
@@ -210,11 +357,11 @@ class _GetAllDataPage extends State<GetAllDataPage>{
           oldgraph(_temperature3_temp, _temp3Checked, "Temp 3"),
           oldgraph(_temperature8_temp, _temp8Checked, "Temp 8"),
           oldgraph(_ddrclk_temp, _ddrclkChecked, "DDR CLK"),
-          oldgraph(_currentNow_temp, _currentNowChecked, "Current Now"),
+          oldgraph(_currentNow_temp, _currentNowChecked, "Current Now(mA)"),
 
-          oldgraph(_memBuffer_temp, _memBufferChecked, "MEM Buffer"),
-          oldgraph(_memCached_temp, _memCachedChecked, "MEM Cached"),
-          oldgraph(_memSwapCached_temp, _memSwapCachedChecked, "MEM SwapCached"),
+          oldgraph(_memBuffer_temp, _memBufferChecked, "MEM Buffer(KB)"),
+          oldgraph(_memCached_temp, _memCachedChecked, "MEM Cached(KB)"),
+          oldgraph(_memSwapCached_temp, _memSwapCachedChecked, "MEM SwapCached(KB)"),
           Container(
             // margin: EdgeInsets.all(8),
             child: TextField(

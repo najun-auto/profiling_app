@@ -45,7 +45,7 @@ dependencies:
   flutter_image_compress: ^1.0.0-nullsafety
   simple_pip_mode: ^0.6.0
   device_info_plus: ^3.2.4
-
+  csv: ^5.0.1
 
 dev_dependencies:
   flutter_test:
