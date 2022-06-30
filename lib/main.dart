@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:amplify_datastore/amplify_datastore.dart';
@@ -218,6 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool camera_on = false;
 
+  bool buttondeactive = false;
+
   @override
   void initState() {
     permissionset();
@@ -251,7 +254,16 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         // if (_isLoading) _isLoading = false;
         profilings = snapshot.items;
-        testCounter = profilings.last.count;
+        // testCounter = profilings.last.count;
+        int maxTemp = 0;
+        for (var profiling in profilings) {
+          if(maxTemp < profiling.count){
+            maxTemp = profiling.count;
+          }
+        }
+        // print(maxTemp);
+        testCounter = maxTemp;
+        // print(testCounter);
         // print('testCounter = ============ : ${testCounter}');
       });
     });
@@ -584,7 +596,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     xAxistmp++;
     EndTemp++;
-    if (EndTemp % 60 == 0) {
+    if (EndTemp % 300 == 0) {
       dbUpate(StartTemp, EndTemp - 5);
       // print(EndTemp - 5);
       StartTemp = EndTemp - 5;
@@ -618,36 +630,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void memdumpUsage() async {
-    // int gpuUsageResult = 0;
-    // Strnig
-    var res = await Root.exec(cmd: memdumpBuffer);
-    var res2 = await Root.exec(cmd: memdumpCached);
-    var res3 = await Root.exec(cmd: memdumpSwapCached);
-    // List<String> test = res.toString().split(" ");
-    // for(test in res){
-    // print(test[5]);
 
-    String _memBufferResult = res.toString().replaceAll(RegExp(r'[^0-9]'), "");
-    String _memCachedResult = res2.toString().replaceAll(RegExp(r'[^0-9]'), "");
-    String _memSwapCachedResult =
-        res3.toString().replaceAll(RegExp(r'[^0-9]'), "");
+    // var res = await Root.exec(cmd: memdumpBuffer);
+    // var res2 = await Root.exec(cmd: memdumpCached);
+    // var res3 = await Root.exec(cmd: memdumpSwapCached);
+    //
+    // String _memBufferResult = res.toString().replaceAll(RegExp(r'[^0-9]'), "");
+    // String _memCachedResult = res2.toString().replaceAll(RegExp(r'[^0-9]'), "");
+    // String _memSwapCachedResult =
+    //     res3.toString().replaceAll(RegExp(r'[^0-9]'), "");
+    //
+    // _memBufferChartData.add(int.parse(_memBufferResult));
+    // _memCachedChartData.add(int.parse(_memCachedResult));
+    // _memSwapCachedChartData.add(int.parse(_memSwapCachedResult));
 
-    _memBufferChartData.add(int.parse(_memBufferResult));
-    _memCachedChartData.add(int.parse(_memCachedResult));
-    _memSwapCachedChartData.add(int.parse(_memSwapCachedResult));
-    // print(_memCachedResult);
-    // print(_memSwapCachedResult);
-    // print(_memBufferResult);
+    _memBufferChartData.add(0);
+    _memCachedChartData.add(0);
+    _memSwapCachedChartData.add(0);
+
 
     setState(() {
-      // gpuUsageResult = int.parse(res.toString());
-      // // _gpuUsageChartData.add(trackData(xAxistmp, gpuUsageResult));
-      // // _gpuUsageChartData.removeAt(0);
-      //
-      // _gpuUsageChartData.add(gpuUsageResult);
     });
 
-    // print("${await pipeline.stdout.text} instances of waitFor");
+
   }
 
   void gpuUsage() async {
@@ -813,16 +818,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       _fpsResult = int.parse(res.toString().replaceAll(RegExp(r'[^0-9]'), ""));
-    } finally {
+      // print("=====================");
+      // print(_fpsResult);
+    } catch(e) {
       _fpsResult = 0;
     }
 
+    // print("!!!!!!!!!!!!!!");
+    // print(oldFpsValue);
+    // print()
     _fpsValueResult = _fpsResult - oldFpsValue;
 
+    // print(_fpsValueResult);
     _fpsChartData.add(_fpsValueResult);
 
-    oldFpsValue = _fpsResult;
 
+    oldFpsValue = _fpsResult;
+    // print(oldFpsValue);
     setState(() {});
   }
 
@@ -836,8 +848,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // var res = 0;
     _netResult = res.toString().split(" ");
 
+    // print(_netResult);
+    // print("one");
+    // print(_netResult[1]);
+    // print(_netResult[39]);
     // _netRecv = int.parse(_netResult[1]);
-    // _netSend = int.parse(_netResult[42]);
+    // _netSend = int.parse(_netResult[39]);
 
     _netRecv = 10000;
     _netSend = 10000;
@@ -889,8 +905,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // var res3 = 0;
     _temp3Result = (int.parse(res3.toString()) / 1000).floor();
 
-    var res8 = await Root.exec(cmd: temperature8G21);
-    // var res8 = 0;
+    // var res8 = await Root.exec(cmd: temperature8G21);
+    var res8 = 0;
     _temp8Result = (int.parse(res8.toString()) / 1000).floor();
     //
     _temperature0ChartData.add(_temp0Result);
@@ -923,54 +939,65 @@ class _MyHomePageState extends State<MyHomePage> {
                 //   _timer.cancel();
                 //   currentState = false;
                 // }else{
+                if(buttondeactive == false) {
+                  _cpuUsageChartData.clear();
+                  _gpuUsageChartData.clear();
+                  _cpu0FreqChartData.clear();
+                  _cpu4FreqChartData.clear();
+                  _cpu7FreqChartData.clear();
+                  _gpuFreqChartData.clear();
+                  _fpsChartData.clear();
+                  _networkChartData.clear();
+                  _temperature0ChartData.clear();
+                  _temperature1ChartData.clear();
+                  _temperature2ChartData.clear();
+                  _temperature3ChartData.clear();
+                  _temperature8ChartData.clear();
+                  _ddrclkChartData.clear();
+                  capresultData.clear();
+                  _currentNowChartData.clear();
+                  _memBufferChartData.clear();
+                  _memCachedChartData.clear();
+                  _memSwapCachedChartData.clear();
 
-                _cpuUsageChartData.clear();
-                _gpuUsageChartData.clear();
-                _cpu0FreqChartData.clear();
-                _cpu4FreqChartData.clear();
-                _cpu7FreqChartData.clear();
-                _gpuFreqChartData.clear();
-                _fpsChartData.clear();
-                _networkChartData.clear();
-                _temperature0ChartData.clear();
-                _temperature1ChartData.clear();
-                _temperature2ChartData.clear();
-                _temperature3ChartData.clear();
-                _temperature8ChartData.clear();
-                _ddrclkChartData.clear();
-                capresultData.clear();
-                _currentNowChartData.clear();
-                _memBufferChartData.clear();
-                _memCachedChartData.clear();
-                _memSwapCachedChartData.clear();
+                  // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
 
-                // await Root.exec(cmd: "su -c rm /storage/emulated/0/Download/screen*.jpg");
+                  // int maxTemp = 0;
+                  // for (var profiling in profilings) {
+                  //   if(maxTemp < profiling.count){
+                  //     maxTemp = profiling.count;
+                  //   }
+                  // }
+                  // print(maxTemp);
+                  // testCounter = profilings.last.count;
+                  testCounter++;
+                  // print(testCounter);
+                  StartTemp = 1;
+                  EndTemp = 1;
+                  // var stopwatch = Stopwatch();
+                  // stopwatch.start();
+                  if (camera_on) {
+                    _timer = Timer.periodic(
+                        const Duration(seconds: 4), updateDataSource);
+                  } else {
+                    _timer = Timer.periodic(
+                        const Duration(seconds: 1), updateDataSource);
+                  }
+                  //
+                  // stopwatch.stop();
+                  //
+                  // print(stopwatch.elapsedMilliseconds);
 
-                testCounter++;
-                StartTemp = 1;
-                EndTemp = 1;
-                // var stopwatch = Stopwatch();
-                // stopwatch.start();
-                if(camera_on){
-                  _timer = Timer.periodic(
-                      const Duration(seconds: 4), updateDataSource);
-                }else {
-                  _timer = Timer.periodic(
-                      const Duration(seconds: 1), updateDataSource);
+                  currentState = true;
+                  finState = false;
+                  timE = Utils.getFormatTime(DateTime.now());
+                  // print(timE);
+                  // print(int.parse(DateTime.now().toString().replaceAll(RegExp(r'[^0-9]'), "")));
+                  // res.toString().replaceAll(RegExp(r'[^0-9]'), "");
+                  xAxistmp = 1;
+                  clockSet();
+                  buttondeactive = true;
                 }
-                //
-                // stopwatch.stop();
-                //
-                // print(stopwatch.elapsedMilliseconds);
-
-                currentState = true;
-                finState = false;
-                timE = Utils.getFormatTime(DateTime.now());
-                // print(timE);
-                // print(int.parse(DateTime.now().toString().replaceAll(RegExp(r'[^0-9]'), "")));
-                // res.toString().replaceAll(RegExp(r'[^0-9]'), "");
-                xAxistmp = 1;
-                // clockSet();
                 // }
                 // floatingCounter++;
               }),
@@ -981,6 +1008,9 @@ class _MyHomePageState extends State<MyHomePage> {
               currentState = false;
               // Start
               dbUpate(StartTemp, EndTemp);
+              if(buttondeactive == true) {
+                buttondeactive = false;
+              }
               // print(StartTemp);
               // imgRemove();
 
@@ -1093,7 +1123,7 @@ class _MyHomePageState extends State<MyHomePage> {
         scrrenOncheckedBox(),
         Container(height: 50,),
 
-        Text("Working? ${currentState}"),
+        Text("Working? ${currentState}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: Colors.red),),
         Text("Finish? ${finState}"),
         Container(
           margin: EdgeInsets.all(8),
@@ -1101,12 +1131,12 @@ class _MyHomePageState extends State<MyHomePage> {
             controller: myController,
           ),
         ),
-        // Container(
-        //   margin: EdgeInsets.all(8),
-        //   child: TextField(
-        //     controller: cpu0freqctrl,
-        //   ),
-        // ),
+        Container(
+          margin: EdgeInsets.all(8),
+          child: TextField(
+            controller: cpu0freqctrl,
+          ),
+        ),
         // Container(
         //   margin: EdgeInsets.all(8),
         //   child: TextField(
@@ -1415,6 +1445,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (var profiling in profilings) {
       if (profiling.count == testCounter && profiling.deviceName == _deviceName) {
+      // if (profiling.ttime == timE && profiling.deviceName == _deviceName) {
         if (_cpuChecked == true) {
           _cpuUsage_temp.add(trackData(profiling.time, profiling.CPUusage));
           // print("===== ${_cpuUsage_temp}");
